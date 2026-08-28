@@ -3,6 +3,10 @@
 Исходный документ не изменяется — результат сохраняется в каталог build/.
 
     python make_docx.py "Крим паспорт Каскелен.docx" --id kaskelen
+    python make_docx.py "Крим паспорт Иргели.docx" --id irgeli
+
+QR-код один для всех паспортов — на главную страницу выбора населённого пункта.
+Параметр --id используется только для имени выходного файла.
 """
 
 from __future__ import annotations
@@ -61,10 +65,10 @@ def insert_block(anchor, doc: Document, url: str, repo: str, image: Path) -> Non
 
     add(url, size=10, bold=True, color=NAVY, space_after=6)
     add(
-        "Наведите камеру телефона на QR-код, чтобы открыть интерактивное издание паспорта: "
-        "структура преступности в сравнении с аналогичным периодом прошлого года, карта точек "
-        "концентрации и криминогенных объектов, карточки приоритетных мероприятий с исполнителями, "
-        "сроками и критериями оценки.",
+        "Наведите камеру телефона на QR-код, чтобы открыть цифровое издание. "
+        "На главной странице выберите населённый пункт и откройте полный паспорт: "
+        "структура преступности, карта точек концентрации, карточки приоритетных мероприятий "
+        "с исполнителями, сроками и критериями оценки.",
         size=9,
         space_after=4,
     )
@@ -84,8 +88,8 @@ def main() -> None:
     parser.add_argument("--repo", default="github.com/adilkarimov50/krim-passport")
     args = parser.parse_args()
 
-    url = f"{args.base_url.rstrip('/')}/passport.html?id={args.id}"
-    image = qr_png(url, BUILD / f"qr-{args.id}.png")
+    url = args.base_url.rstrip("/") + "/"
+    image = qr_png(url, BUILD / "qr.png")
 
     doc = Document(args.source)
     insert_block(find_anchor(doc), doc, url, args.repo, image)
