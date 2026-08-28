@@ -14,7 +14,7 @@ DATA = ROOT / "data"
 TARGET = ROOT / "docs" / "assets" / "js" / "data.js"
 
 # Порядок населённых пунктов в интерфейсе.
-ORDER = ["kaskelen", "irgeli"]
+ORDER = ["kaskelen", "irgeli", "chundzha"]
 
 
 def load_passports() -> list[dict]:

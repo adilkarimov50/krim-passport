@@ -6,7 +6,7 @@ document.getElementById('chrome-bottom').innerHTML = renderFooter();
 const totalPop = PASSPORTS.reduce((sum, p) => sum + (p.summary.population || 0), 0);
 const totalCrimes = PASSPORTS.reduce((sum, p) => sum + (p.summary.crimes.current || 0), 0);
 
-document.getElementById('hero-count').textContent = `${PASSPORTS.length} населённых пункта`;
+document.getElementById('hero-count').textContent = `${PASSPORTS.length} ${PASSPORTS.length === 1 ? 'населённый пункт' : PASSPORTS.length < 5 ? 'населённых пункта' : 'населённых пунктов'}`;
 document.getElementById('hero-pop').textContent = `${fmt(totalPop)} жителей`;
 document.getElementById('hero-crimes').textContent = `${fmt(totalCrimes)} уголовных правонарушений`;
 
@@ -39,24 +39,35 @@ document.getElementById('picker').innerHTML = PASSPORTS.map((p) => {
 }).join('');
 
 /* Сравнительная таблица */
+function adminTotal(p) {
+  if (Array.isArray(p.admin_practice)) {
+    return p.admin_practice.find((r) => r.indicator.startsWith('Всего'))?.count;
+  }
+  return p.admin_practice?.total;
+}
+
+function registryTotal(p) {
+  if (!Array.isArray(p.registry)) return '—';
+  return fmt(p.registry.reduce((sum, r) => sum + (r.count || 0), 0));
+}
+
+function crimeValue(p, name) {
+  const row = p.crime_structure.find((r) => r.indicator === name);
+  if (!row) return '—';
+  if (row.current !== undefined) {
+    return `${fmt(row.current)} <span style="color:var(--muted)">/ ${fmt(row.previous)}</span> ${deltaBadge(deltaFromPair(row))}`;
+  }
+  return fmt(row.value);
+}
+
 const COMPARE_ROWS = [
   ['Численность населения', (p) => fmt(p.summary.population), false],
   ['Уровень преступности на 10 тыс. населения', (p) => String(p.summary.rate_per_10k).replace('.', ','), false],
   ...['Всего зарегистрировано', 'Особо тяжкие', 'Тяжкие', 'Кражи', 'Мошенничества',
     'Семейно-бытовые преступления', 'Против половой неприкосновенности',
-    'В состоянии алкогольного опьянения'].map((name) => [
-    name,
-    (p) => {
-      const row = p.crime_structure.find((r) => r.indicator === name);
-      if (!row) return '—';
-      return `${fmt(row.current)} <span style="color:var(--muted)">/ ${fmt(row.previous)}</span> ${deltaBadge(deltaFromPair(row))}`;
-    },
-    true,
-  ]),
-  ['Всего административных правонарушений',
-    (p) => fmt(p.admin_practice.find((r) => r.indicator.startsWith('Всего'))?.count), false],
-  ['Лиц на профилактическом учёте',
-    (p) => fmt(p.registry.reduce((sum, r) => sum + (r.count || 0), 0)), false],
+    'В состоянии алкогольного опьянения'].map((name) => [name, (p) => crimeValue(p, name), true]),
+  ['Всего административных правонарушений', (p) => fmt(adminTotal(p)), false],
+  ['Лиц на профилактическом учёте', registryTotal, false],
 ];
 
 document.getElementById('compare').innerHTML = `

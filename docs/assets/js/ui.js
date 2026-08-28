@@ -155,7 +155,7 @@ function renderTopbar(page, activeId) {
       <a class="brand" href="index.html${suffix}">
         <span class="brand__mark">КП</span>
         <span class="brand__text">Криминологический паспорт
-          <small>Карасайский район · Алматинская область · 2026</small>
+          <small>Алматинская область · Карасайский и Уйгурский районы · 2026</small>
         </span>
       </a>
       <nav class="topbar__nav">

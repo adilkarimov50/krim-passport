@@ -61,7 +61,134 @@ function measuresBlock(measures) {
 
 /* ---------- Разделы ---------- */
 
+function buildSectionsChundzha(p) {
+  const s = p.summary;
+  const timeTotal = p.time_of_day.reduce((sum, r) => sum + (r.count || 0), 0);
+  const nightShare = p.time_of_day
+    .filter((r) => /Ночное|Вечернее/i.test(r.period))
+    .reduce((sum, r) => sum + (r.count || 0), 0);
+
+  return [
+    {
+      title: 'Общая характеристика',
+      lead: 'Базовые сведения о населённом пункте и уровне зарегистрированной преступности.',
+      html: `
+        <div class="grid grid--4">
+          ${kpiCard(fmt(s.population), 'Численность населения')}
+          ${kpiCard(fmt(s.crimes.current), 'Зарегистрировано уголовных правонарушений',
+            `АППГ — ${fmt(s.crimes.previous)}`, deltaBadge(s.crimes.delta_pct ?? null))}
+          ${kpiCard(String(s.rate_per_10k).replace('.', ','), 'Уровень преступности на 10 тыс. населения')}
+          ${kpiCard(fmt(p.admin_practice?.total || 0), 'Административных правонарушений', p.admin_practice?.period || '')}
+        </div>
+        <div class="callout" style="margin-top:16px"><p>${esc(s.description)}</p></div>`,
+    },
+    {
+      title: 'Криминологическая характеристика',
+      lead: 'Обобщённая оценка криминогенной обстановки на территории.',
+      html: `<div class="callout"><p>${esc(p.characteristic)}</p></div>`,
+    },
+    {
+      title: 'Структура преступности',
+      lead: 'Распределение по видам уголовных правонарушений за отчётный период.',
+      html: `<div class="card">${simpleBars(
+        p.crime_structure.filter((r) => r.indicator !== 'ВСЕГО').map((r) => ({
+          label: r.indicator,
+          value: Number(String(r.value).replace(/\s/g, '')) || 0,
+        })),
+      )}</div>`,
+    },
+    {
+      title: 'Тяжесть преступлений',
+      lead: 'Сопоставление с аналогичным периодом прошлого года по категориям тяжести.',
+      html: `<div class="card">${statRows(p.crime_severity, 'category', 'current')}</div>`,
+    },
+    {
+      title: 'Портрет лица, совершившего преступление',
+      lead: 'Характеристика установленных лиц, определяющая адресность профилактической работы.',
+      html: `<div class="card">${statRows(p.offender_profile, 'indicator', 'value')}</div>`,
+    },
+    {
+      title: 'Портрет потерпевшего',
+      lead: 'Категории граждан, наиболее подверженные риску стать потерпевшими.',
+      html: `<div class="grid grid--3">${p.victim_profile.slice(0, 9).map((r) => kpiCard(esc(r.value), r.indicator)).join('')}</div>`,
+    },
+    {
+      title: 'Время и место совершения',
+      lead: `Распределение по времени суток и объекты концентрации преступности. На вечернее и ночное время приходится ${pct((nightShare / (timeTotal || 1)) * 100)} фактов.`,
+      html: `
+        <div class="grid grid--2">
+          <div class="card">
+            <div class="card__title">Время суток</div>
+            ${donutChart(p.time_of_day.map((r) => ({ label: r.period, value: r.count })))}
+          </div>
+          <div class="card">
+            <div class="card__title">Точки концентрации преступности</div>
+            ${[...p.hotspots].sort((a, b) => b.count - a.count).map((h, i, arr) => `
+              <div class="hotspot" style="padding:13px 0;border-bottom:${i < arr.length - 1 ? '1px dashed var(--line)' : '0'}">
+                <div class="hotspot__rank">${i + 1}</div>
+                <div class="hotspot__body">
+                  <h4>${esc(h.object)}</h4>
+                  <p>${esc(h.types)}</p>
+                  ${h.measures ? `<p style="font-size:12.5px;color:var(--muted);margin-top:4px">${esc(h.measures)}</p>` : ''}
+                </div>
+                <div class="hotspot__count">${fmt(h.count)}<span>фактов</span></div>
+              </div>`).join('')}
+            <p style="margin:16px 0 0">
+              <a class="tag" href="map.html?id=${p.id}" style="padding:9px 15px;text-decoration:none;font-size:13.5px">
+                Показать на карте с маршрутами →</a>
+            </p>
+          </div>
+        </div>`,
+    },
+    {
+      title: 'Основные криминогенные факторы',
+      lead: 'Факторы с количественным подтверждением по данным паспорта.',
+      html: `<div class="grid grid--2">${p.factors.map((f) => `
+        <div class="card">
+          <div class="card__title">${esc(f.factor)} <span class="tag">${esc(f.risk)}</span></div>
+          <p style="margin:0;color:var(--muted);font-size:14.5px">${esc(f.details) || '—'}</p>
+        </div>`).join('')}</div>`,
+    },
+    {
+      title: 'Причины и условия',
+      lead: 'Группировка причин и условий, способствующих совершению правонарушений.',
+      html: `<div class="grid grid--3">${p.causes.map((c) => `
+        <div class="card">
+          <div class="card__title">${esc(c.type)}</div>
+          <p style="margin:0 0 12px;font-size:14.5px">${esc(c.details)}</p>
+          ${c.examples ? `<div class="measure__why" style="margin:0">${esc(c.examples)}</div>` : ''}
+        </div>`).join('')}</div>`,
+    },
+    {
+      title: 'Криминогенные объекты',
+      lead: 'Объекты и участки, требующие профилактического контроля.',
+      html: `<div class="card">${statRows(p.criminogenic_objects, 'object', 'details')}</div>`,
+    },
+    {
+      title: 'Административная практика',
+      lead: `Форма 1-АД. За период ${esc(p.admin_practice.period)} зарегистрировано ${fmt(p.admin_practice.total)} административных правонарушений.`,
+      html: `<div class="card">${simpleBars(p.admin_practice.top_articles.map((r) => ({
+        label: `${r.article} — ${r.title}`,
+        value: Number(String(r.count).replace(/\s/g, '')) || 0,
+      })))}</div>`,
+    },
+    {
+      title: 'Приоритетные профилактические мероприятия',
+      lead: 'Мероприятия по конкретным местам, времени, способам совершения преступлений и категориям потерпевших.',
+      html: measuresBlock(p.measures),
+    },
+    {
+      title: 'Ожидаемые результаты',
+      lead: 'Результаты, ожидаемые от реализации приоритетных мероприятий.',
+      html: `<div class="card"><ul class="list-check">${p.expected_results
+        .filter((t) => !/перечень использованных/i.test(t))
+        .map((t) => `<li><span>${esc(t)}</span></li>`).join('')}</ul></div>`,
+    },
+  ];
+}
+
 function buildSections(p) {
+  if (p.id === 'chundzha') return buildSectionsChundzha(p);
   const s = p.summary;
   const admTotal = p.admin_practice.find((r) => r.indicator.startsWith('Всего'));
   const admRest = p.admin_practice.filter((r) => !r.indicator.startsWith('Всего'));
