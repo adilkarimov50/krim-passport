@@ -146,7 +146,7 @@ a { color: inherit; }
 .card__title { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
 
 .kpi b { display: block; font-size: 31px; font-weight: 700; letter-spacing: -.025em; margin-bottom: 2px; }
-.kpi span { font-size: 13px; color: var(--muted); display: block; }
+.kpi > span { font-size: 13px; color: var(--muted); display: block; }
 .kpi .note { margin-top: 9px; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
 
 .delta { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
