@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Криминологический паспорт · Карасайский район · 2026</title>
+<meta name="description" content="Цифровой криминологический паспорт населённых пунктов Карасайского района Алматинской области: г. Каскелен и Иргелинский сельский округ, 2026 год.">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div id="chrome-top"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero__eyebrow">Карасайский район · Алматинская область</div>
+    <h1>Криминологический паспорт населённых пунктов</h1>
+    <p>Цифровое издание криминологических паспортов за 2026 год: структура преступности,
+       портреты правонарушителя и потерпевшего, точки концентрации, административная практика,
+       криминогенные факторы и приоритетные профилактические мероприятия с указанием объекта,
+       исполнителя, срока и критерия оценки.</p>
+    <div class="hero__meta">
+      <span class="chip chip--gold">2026 год</span>
+      <span class="chip" id="hero-count"></span>
+      <span class="chip" id="hero-pop"></span>
+      <span class="chip" id="hero-crimes"></span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="picker" id="picker"></div>
+</div>
+
+<main class="wrap">
+  <section class="section">
+    <div class="section__head">
+      <div class="section__num">01</div>
+      <div class="section__title">
+        <h2>Сравнение населённых пунктов</h2>
+        <p>Ключевые показатели паспортов в сопоставимом виде. Рост показателя преступности
+           выделен красным, снижение — зелёным.</p>
+      </div>
+    </div>
+    <div class="card card--flush">
+      <table class="tbl" id="compare"></table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section__head">
+      <div class="section__num">02</div>
+      <div class="section__title">
+        <h2>Точки концентрации преступности</h2>
+        <p>Объекты и участки, на которых сосредоточено наибольшее количество зарегистрированных
+           уголовных правонарушений. Расположение объектов показано на интерактивной карте.</p>
+      </div>
+    </div>
+    <div class="grid grid--2" id="hotspots"></div>
+    <p style="margin-top:20px">
+      <a class="tag" href="map.html" style="padding:10px 18px;font-size:14px;text-decoration:none">
+        Открыть карту объектов →</a>
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="section__head">
+      <div class="section__num">03</div>
+      <div class="section__title">
+        <h2>Как устроено издание</h2>
+        <p>Паспорт остаётся официальным документом; цифровая версия лишь делает его данные
+           пригодными для навигации, сопоставления и контроля исполнения мероприятий.</p>
+      </div>
+    </div>
+    <div class="grid grid--3">
+      <div class="card">
+        <div class="card__title">Оцифровка из документа</div>
+        <p style="margin:0;color:var(--muted);font-size:14.5px">Скрипт <code>digitize.py</code> разбирает
+           паспорт формата .docx по 18 разделам и 16 таблицам в структурированный JSON. Добавление
+           нового населённого пункта не требует правки кода.</p>
+      </div>
+      <div class="card">
+        <div class="card__title">Карта объектов</div>
+        <p style="margin:0;color:var(--muted);font-size:14.5px">Точки концентрации, проблемные улицы,
+           криминогенные объекты и населённые пункты округа привязаны к координатам и снабжены
+           фильтрами по категориям.</p>
+      </div>
+      <div class="card">
+        <div class="card__title">Контроль мероприятий</div>
+        <p style="margin:0;color:var(--muted);font-size:14.5px">Каждое приоритетное мероприятие раскрывается
+           карточкой с объектом профилактики, исполнителями, сроком, критерием оценки и обоснованием
+           из данных паспорта.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="chrome-bottom"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/index.js"></script>
+</body>
+</html>
