@@ -11,10 +11,13 @@ document.getElementById('hero-pop').textContent = `${fmt(totalPop)} жителе
 document.getElementById('hero-crimes').textContent = `${fmt(totalCrimes)} уголовных правонарушений`;
 
 /* Карточки выбора паспорта */
+const MAP_LINKS = { kaskelen: 'kaskelen_map.html', irgeli: 'irgeli_map.html', chundzha: 'chundzha_map.html' };
 document.getElementById('picker').innerHTML = PASSPORTS.map((p) => {
   const c = p.summary.crimes;
+  const mapLink = MAP_LINKS[p.id];
   return `
-  <a class="pcard" href="passport.html?id=${p.id}">
+  <div class="pcard" style="display:flex;flex-direction:column">
+    <a href="passport.html?id=${p.id}" style="flex:1;display:block;text-decoration:none;color:inherit">
     <div class="pcard__top">
       <div class="pcard__kicker">${esc(p.summary.district)}</div>
       <h3>${esc(p.name)}</h3>
@@ -27,15 +30,18 @@ document.getElementById('picker').innerHTML = PASSPORTS.map((p) => {
       </div>
       <div class="pcard__cell">
         <b>${fmt(c.current)}</b>
-        <span>уголовных правонарушений ${deltaBadge(c.delta_pct ?? null)}</span>
+        <span>правонарушений ${deltaBadge(c.delta_pct ?? null)}</span>
       </div>
       <div class="pcard__cell">
         <b>${String(p.summary.rate_per_10k).replace('.', ',')}</b>
-        <span>на 10 тыс. населения</span>
+        <span>на 10 тыс. нас.</span>
       </div>
     </div>
     <div class="pcard__foot"><span>Открыть паспорт</span><span class="arrow">→</span></div>
-  </a>`;
+    </a>
+    ${mapLink ? `<a href="${mapLink}" style="display:block;margin:0;padding:10px 16px;background:var(--up);color:#fff;text-decoration:none;font-size:13px;font-weight:600;text-align:center">
+      Карта + маршруты патрулирования →</a>` : ''}
+  </div>`;
 }).join('');
 
 /* Сравнительная таблица */

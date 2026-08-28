@@ -136,7 +136,8 @@ function buildSectionsChundzha(p) {
             <p style="margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap">
               <a class="tag" href="map.html?id=${p.id}" style="padding:9px 15px;text-decoration:none;font-size:13.5px">
                 Карта объектов →</a>
-              ${p.id === 'chundzha' ? `<a class="tag" href="chundzha_map.html" style="padding:9px 15px;text-decoration:none;font-size:13.5px;background:var(--up);color:#fff">
+              ${{ chundzha: 'chundzha_map.html', kaskelen: 'kaskelen_map.html', irgeli: 'irgeli_map.html' }[p.id]
+                ? `<a class="tag" href="${{ chundzha: 'chundzha_map.html', kaskelen: 'kaskelen_map.html', irgeli: 'irgeli_map.html' }[p.id]}" style="padding:9px 15px;text-decoration:none;font-size:13.5px;background:var(--up);color:#fff">
                 Детальная карта + маршруты патрулирования →</a>` : ''}
             </p>
           </div>
@@ -261,9 +262,12 @@ function buildSections(p) {
                 </div>
                 <div class="hotspot__count">${fmt(h.count)}<span>фактов</span></div>
               </div>`).join('')}
-            <p style="margin:16px 0 0">
+            <p style="margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap">
               <a class="tag" href="map.html?id=${p.id}" style="padding:9px 15px;text-decoration:none;font-size:13.5px">
-                Показать на карте →</a>
+                Карта объектов →</a>
+              ${{ kaskelen: 'kaskelen_map.html', irgeli: 'irgeli_map.html', chundzha: 'chundzha_map.html' }[p.id]
+                ? `<a class="tag" href="${{ kaskelen: 'kaskelen_map.html', irgeli: 'irgeli_map.html', chundzha: 'chundzha_map.html' }[p.id]}" style="padding:9px 15px;text-decoration:none;font-size:13.5px;background:var(--up);color:#fff">
+                Детальная карта + маршруты →</a>` : ''}
             </p>
           </div>
         </div>`,
