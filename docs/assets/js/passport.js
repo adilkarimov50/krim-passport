@@ -175,7 +175,7 @@ function buildSectionsChundzha(p) {
           </div>
           <div class="card">
             <div class="card__title">Точки концентрации преступности</div>
-            ${[...p.hotspots].sort((a, b) => b.count - a.count).map((h, i, arr) => `
+            ${passportHotspots(p).map((h, i, arr) => `
               <div class="hotspot" style="padding:13px 0;border-bottom:${i < arr.length - 1 ? '1px dashed var(--line)' : '0'}">
                 <div class="hotspot__rank">${i + 1}</div>
                 <div class="hotspot__body">
@@ -183,7 +183,7 @@ function buildSectionsChundzha(p) {
                   <p>${esc(h.types)}</p>
                   ${h.measures ? `<p style="font-size:12.5px;color:var(--muted);margin-top:4px">${esc(h.measures)}</p>` : ''}
                 </div>
-                <div class="hotspot__count">${fmt(h.count)}<span>фактов</span></div>
+                <div class="hotspot__count">${hotspotCountHtml(h.count)}</div>
               </div>`).join('')}
             <p style="margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap">
               <a class="tag" href="map.html?id=${p.id}" style="padding:9px 15px;text-decoration:none;font-size:13.5px">
@@ -305,14 +305,14 @@ function buildSections(p) {
           </div>
           <div class="card">
             <div class="card__title">Точки концентрации преступности</div>
-            ${[...p.hotspots].sort((a, b) => b.count - a.count).map((h, i, arr) => `
+            ${passportHotspots(p).map((h, i, arr) => `
               <div class="hotspot" style="padding:13px 0;border-bottom:${i < arr.length - 1 ? '1px dashed var(--line)' : '0'}">
                 <div class="hotspot__rank">${i + 1}</div>
                 <div class="hotspot__body">
                   <h4>${esc(h.object)}</h4>
                   <p>${esc(h.types)}</p>
                 </div>
-                <div class="hotspot__count">${fmt(h.count)}<span>фактов</span></div>
+                <div class="hotspot__count">${hotspotCountHtml(h.count)}</div>
               </div>`).join('')}
             <p style="margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap">
               <a class="tag" href="map.html?id=${p.id}" style="padding:9px 15px;text-decoration:none;font-size:13.5px">

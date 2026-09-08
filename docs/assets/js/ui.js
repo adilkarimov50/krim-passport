@@ -45,6 +45,19 @@ function esc(text) {
   ));
 }
 
+/** Микрозоны из паспорта: hotspots_detailed приоритетнее укрупнённых hotspots. */
+function passportHotspots(p) {
+  const list = (p.hotspots_detailed?.length ? p.hotspots_detailed : p.hotspots) || [];
+  return [...list].sort((a, b) => (b.count ?? -1) - (a.count ?? -1));
+}
+
+function hotspotCountHtml(count) {
+  if (count === null || count === undefined) {
+    return '<span style="font-size:12px;color:var(--muted);font-weight:600">ожид. состав</span>';
+  }
+  return `${fmt(count)}<span>фактов</span>`;
+}
+
 /**
  * Плашка динамики. Для преступности рост — негативный сигнал, поэтому
  * положительное изменение окрашивается в красный.

@@ -87,7 +87,7 @@ document.getElementById('compare').innerHTML = `
 
 /* Точки концентрации по каждому паспорту */
 document.getElementById('hotspots').innerHTML = PASSPORTS.map((p) => {
-  const spots = [...p.hotspots].sort((a, b) => (b.count || 0) - (a.count || 0));
+  const spots = passportHotspots(p);
   return `
   <div class="card">
     <div class="card__title">${esc(p.name)}</div>
@@ -98,7 +98,7 @@ document.getElementById('hotspots').innerHTML = PASSPORTS.map((p) => {
           <h4>${esc(s.object)}</h4>
           <p>${esc(s.types)}</p>
         </div>
-        <div class="hotspot__count">${fmt(s.count)}<span>фактов</span></div>
+        <div class="hotspot__count">${hotspotCountHtml(s.count)}</div>
       </div>`).join('')}
   </div>`;
 }).join('');
