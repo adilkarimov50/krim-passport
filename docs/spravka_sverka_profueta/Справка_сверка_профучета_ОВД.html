@@ -15,7 +15,9 @@
 html{scroll-behavior:smooth}
 body{font-family:'Source Sans 3',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px}
 .doc-header{background:linear-gradient(160deg,#0f1f3d 0%,#1b4d8c 100%);color:#fff;padding:56px 24px 48px}
-.doc-header .inner{max-width:var(--max);margin:0 auto}
+.doc-header .inner{max-width:var(--max);margin:0 auto;display:flex;align-items:flex-start;gap:24px}
+.doc-header__emblem{width:88px;height:88px;flex:none;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25))}
+.doc-header__body{min-width:0;flex:1}
 .doc-header .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.75;margin-bottom:12px}
 .doc-header h1{font-family:'Literata',Georgia,serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:700;line-height:1.25;margin-bottom:10px}
 .doc-header .sub{font-size:1.05rem;opacity:.9;margin-bottom:20px}
@@ -57,6 +59,8 @@ tr:last-child td{border-bottom:none}
 
 <header class="doc-header">
   <div class="inner">
+    <img class="doc-header__emblem" src="../assets/img/prokuratura-emblem.png" width="88" height="88" alt="Эмблема органов прокуратуры Республики Казахстан">
+    <div class="doc-header__body">
     <div class="eyebrow">Карасайский район · Алматинская область</div>
     <h1>Аналитическая справка о сверке подучётных списков органов полиции</h1>
     <p class="sub">Сопоставление профучёта ОВД (август 2026) с областными реестрами, медицинскими списками и портретами подозреваемых</p>
@@ -65,6 +69,7 @@ tr:last-child td{border-bottom:none}
       <span>Уникальных лиц: 3 236</span>
       <span>Источников: 12</span>
       <span>ЕРДР / мед / ОВД</span>
+    </div>
     </div>
   </div>
 </header>

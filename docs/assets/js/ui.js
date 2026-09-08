@@ -269,7 +269,7 @@ function renderTopbar(page, activeId) {
   <header class="topbar">
     <div class="wrap topbar__inner">
       <a class="brand" href="${p}index.html">
-        <span class="brand__mark">КП</span>
+        <img class="brand__emblem" src="${p}assets/img/prokuratura-emblem.png" width="36" height="36" alt="Эмблема органов прокуратуры Республики Казахстан">
         <span class="brand__text">Криминологический паспорт
           <small>Алматинская область · Карасайский и Уйгурский районы · 2026</small>
         </span>
