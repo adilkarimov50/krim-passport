@@ -206,7 +206,7 @@
     const el = document.getElementById(`card-${id}`);
     if (el) {
       el.open = true;
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToElement(el);
       sidebar.querySelectorAll('.nav-sidebar__link').forEach((a) => a.classList.remove('is-active'));
       link.classList.add('is-active');
     }

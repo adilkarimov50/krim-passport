@@ -265,8 +265,6 @@ function renderTopbar(page, activeId) {
     ['profilaktika_navigator.html', 'Прокурору', 'Прокурору для работы · Закон № 245', 'navigator'],
     ['nauka_profilaktika.html', 'Наука', 'Наука и практика профилактики', 'library'],
   ];
-  const primary = tabs.slice(0, 2);
-  const secondary = tabs.slice(2);
   return `
   <header class="topbar">
     <div class="wrap topbar__inner">
@@ -277,15 +275,23 @@ function renderTopbar(page, activeId) {
         </span>
       </a>
       <nav class="topbar__nav" aria-label="Разделы сайта">
-        <div class="topbar__primary">
-          ${primary.map(([href, label, title, key]) => renderTopbarTab(p, href, label, title, key, page, activeId)).join('')}
-        </div>
-        <div class="topbar__secondary">
-          ${secondary.map(([href, label, title, key]) => renderTopbarTab(p, href, label, title, key, page, activeId)).join('')}
+        <div class="topbar__scroll">
+          ${tabs.map(([href, label, title, key]) => renderTopbarTab(p, href, label, title, key, page, activeId)).join('')}
         </div>
       </nav>
     </div>
   </header>`;
+}
+
+/** Высота липкой шапки — для прокрутки к якорям на телефоне. */
+function headerOffset() {
+  return document.querySelector('.topbar')?.offsetHeight || 68;
+}
+
+function scrollToElement(el, behavior) {
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.scrollY - headerOffset() - 10;
+  window.scrollTo({ top: Math.max(0, y), behavior: behavior || 'smooth' });
 }
 
 function renderFooter() {

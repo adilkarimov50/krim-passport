@@ -512,9 +512,28 @@ function render(id) {
   document.getElementById('toc').innerHTML = sections.map((sec, i) => `
     <a href="#s${i + 1}"><span>${i + 1}</span>${esc(sec.title)}</a>`).join('');
 
+  bindTocNav();
   bindMeasures();
   bindScrollSpy();
-  window.scrollTo({ top: 0 });
+  if (render.lastId && render.lastId !== id) window.scrollTo({ top: 0, behavior: 'auto' });
+  render.lastId = id;
+}
+
+function bindTocNav() {
+  const toc = document.getElementById('toc');
+  if (!toc || toc.dataset.bound) return;
+  toc.dataset.bound = '1';
+  toc.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    scrollToElement(target);
+    history.replaceState(null, '', `${location.pathname}${location.search}${a.getAttribute('href')}`);
+    toc.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
+    a.classList.add('active');
+  });
 }
 
 function bindMeasures() {
@@ -538,12 +557,9 @@ function bindScrollSpy() {
       if (!entry.isIntersecting) return;
       links.forEach((a) => a.classList.remove('active'));
       const link = links.get(entry.target.id);
-      if (link) {
-        link.classList.add('active');
-        link.scrollIntoView({ block: 'nearest' });
-      }
+      if (link) link.classList.add('active');
     });
-  }, { rootMargin: '-84px 0px -70% 0px' });
+  }, { rootMargin: `-${headerOffset() + 8}px 0px -70% 0px` });
 
   document.querySelectorAll('.section[id]').forEach((sec) => spy.observe(sec));
 }

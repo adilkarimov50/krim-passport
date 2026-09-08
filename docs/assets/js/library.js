@@ -166,13 +166,31 @@
     }).join('');
   }
 
-  function renderAll() {
-    const items = filteredItems();
-    renderCollections();
-    renderStatus(items);
+  function renderGridOnly(items) {
+    const scrollY = window.scrollY;
     renderGrid(items);
+    renderStatus(items);
+    updateCollectionButtons();
+    window.scrollTo({ top: scrollY, behavior: 'auto' });
+  }
+
+  function updateCollectionButtons() {
+    if (!collectionsEl) return;
+    collectionsEl.querySelectorAll('[data-collection]').forEach((btn) => {
+      const on = btn.dataset.collection === activeCollection;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  function renderStatic() {
+    renderCollections();
     renderApplications();
     renderFormula();
+  }
+
+  function renderAll() {
+    renderGridOnly(filteredItems());
   }
 
   if (collectionsEl) {
@@ -205,7 +223,9 @@
     btn.textContent = willOpen ? 'Свернуть ↑' : 'Читать дальше ↓';
     if (willOpen) {
       openCards.add(id);
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (window.matchMedia('(min-width: 721px)').matches) {
+        scrollToElement(card, 'smooth');
+      }
     } else {
       openCards.delete(id);
     }
@@ -225,5 +245,6 @@
     });
   });
 
+  renderStatic();
   renderAll();
 }());

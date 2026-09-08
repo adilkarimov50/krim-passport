@@ -50,7 +50,7 @@
 /* Боковая навигация по органам */
 .nav-sidebar {
   position: sticky;
-  top: 84px;
+  top: calc(var(--header-h) + 16px);
   max-height: calc(100vh - 100px);
   overflow: auto;
   background: var(--card);
@@ -147,7 +147,7 @@
 /* Липкая панель поиска и фильтров */
 .nav-sticky {
   position: sticky;
-  top: 68px;
+  top: var(--header-h);
   z-index: 50;
   background: rgba(244, 246, 250, .94);
   backdrop-filter: blur(8px);
@@ -770,9 +770,13 @@
   .nav-chain { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 640px) {
-  .nav-grid { grid-template-columns: 1fr; }
-  .nav-chain { grid-template-columns: 1fr; }
+.nav-org, .nav-qblock, .nav-hub-card { scroll-margin-top: calc(var(--header-h) + 16px); }
+
+@media (max-width: 720px) {
+  .nav-sticky__row { flex-direction: column; align-items: stretch; }
+  .nav-filter { flex: 1 1 calc(50% - 5px); text-align: center; }
+  .nav-kpi { grid-template-columns: repeat(2, 1fr); }
+  .nav-hub-card { flex-direction: column; align-items: flex-start; }
 }
 
 @media print {
