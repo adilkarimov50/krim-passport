@@ -421,27 +421,30 @@ function buildSections(p) {
     {
       title: 'Семейно-бытовая преступность',
       lead: 'Показатели семейно-бытовой сферы и работа с семьями группы риска.',
-      html: `<div class="grid grid--3">${dynamicsCards(p.domestic_crime)}</div>`,
+      html: `<div class="grid grid--3">${dynamicsCards(p.domestic_crime || [])}</div>`,
     },
     {
       title: 'Преступления в отношении несовершеннолетних',
       lead: 'Потерпевшие несовершеннолетние, причины, условия и принятые меры.',
-      html: `
-        <div class="grid grid--2">${dynamicsCards(p.minors.filter((r) => r.current !== undefined && r.current !== null))}</div>
+      html: (p.minors || []).length
+        ? `
+        <div class="grid grid--2">${dynamicsCards((p.minors || []).filter((r) => r.current !== undefined && r.current !== null))}</div>
         <div class="card" style="margin-top:16px">
-          ${statRows(p.minors.filter((r) => r.current === undefined || r.current === null), 'indicator', 'raw')}
-        </div>`,
+          ${statRows((p.minors || []).filter((r) => r.current === undefined || r.current === null), 'indicator', 'raw')}
+        </div>`
+        : narrativeBlockHtml(p, /несовершеннолетн/i)
+          || '<div class="callout"><p>Раздел уточняется в актуальной редакции паспорта.</p></div>',
     },
     {
       title: 'Скотокрадство',
       lead: 'Раздел заполняется при наличии зарегистрированных фактов.',
-      html: `<div class="card">${statRows(p.cattle_theft, 'indicator', 'value')}</div>`,
+      html: `<div class="card">${statRows(p.cattle_theft || [], 'indicator', 'value')}</div>`,
     },
-    {
+    ...(p.special?.title ? [{
       title: p.special.title,
       lead: 'Раздел, отражающий специфику территории населённого пункта.',
-      html: `<div class="card">${statRows(p.special.rows, 'indicator', 'value')}</div>`,
-    },
+      html: `<div class="card">${statRows(p.special.rows || [], 'indicator', 'value')}</div>`,
+    }] : []),
     {
       title: 'Приоритетные профилактические мероприятия',
       lead: 'Каждое мероприятие раскрывается объектом профилактики, исполнителями, сроком и критерием оценки. Нажмите на мероприятие, чтобы развернуть карточку.',
@@ -484,7 +487,16 @@ function render(id) {
 
   document.getElementById('p-switch').innerHTML = renderSwitch(id, render);
 
-  const sections = buildSections(p);
+  let sections;
+  try {
+    sections = buildSections(p);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('sections').innerHTML = '<div class="card" style="padding:24px"><p style="margin:0">Не удалось загрузить разделы паспорта. Обновите страницу: <b>Cmd+Shift+R</b> (Mac) или <b>Ctrl+Shift+R</b> (Windows).</p></div>';
+    document.getElementById('toc').innerHTML = '';
+    return;
+  }
+
   document.getElementById('sections').innerHTML = sections.map((sec, i) => `
     <section class="section" id="s${i + 1}">
       <div class="section__head">

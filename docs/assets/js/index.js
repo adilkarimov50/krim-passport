@@ -142,7 +142,7 @@ function passportNarrative(p) {
   return block?.text || (p.narrative_blocks || [])[0]?.text || p.summary?.description || '';
 }
 
-document.getElementById('dash-kpi').innerHTML = PASSPORTS.map((p) => {
+setHtml('dash-kpi', PASSPORTS.map((p) => {
   const c = p.summary.crimes;
   const adm = adminTotal(p);
   return `<div class="card">
@@ -155,18 +155,18 @@ document.getElementById('dash-kpi').innerHTML = PASSPORTS.map((p) => {
     </div>
     <p style="margin:14px 0 0"><a class="tag" href="passport.html?id=${p.id}" style="padding:8px 14px;text-decoration:none;font-size:13px">Открыть паспорт →</a></p>
   </div>`;
-}).join('');
+}).join(''));
 
-document.getElementById('dash-crime').innerHTML = PASSPORTS.map((p) => {
+setHtml('dash-crime', PASSPORTS.map((p) => {
   const rows = (p.crime_structure || []).filter((r) => r.current != null && !/^всего/i.test(r.indicator));
   if (!rows.length) return `<div class="card"><div class="card__title">${esc(p.name)}</div><p style="margin:0;color:var(--muted)">Нет данных</p></div>`;
   return `<div class="card card--flush" style="padding:16px 18px">
     <div class="card__title">${esc(p.name)}</div>
     ${barsChart(rows)}
   </div>`;
-}).join('');
+}).join(''));
 
-document.getElementById('dash-admin').innerHTML = PASSPORTS.map((p) => {
+setHtml('dash-admin', PASSPORTS.map((p) => {
   if (!Array.isArray(p.admin_practice)) {
     return `<div class="card"><div class="card__title">${esc(p.name)}</div><p style="margin:0;color:var(--muted)">${fmt(p.admin_practice?.total || 0)} за период</p></div>`;
   }
@@ -175,9 +175,9 @@ document.getElementById('dash-admin').innerHTML = PASSPORTS.map((p) => {
     <div class="card__title">${esc(p.name)} · ${fmt(adminTotal(p))} всего</div>
     ${simpleBars(rest.map((r) => ({ label: r.indicator.replace(/^ст\./, 'ст.'), value: r.count })))}
   </div>`;
-}).join('');
+}).join(''));
 
-document.getElementById('dash-socio').innerHTML = PASSPORTS.map((p) => {
+setHtml('dash-socio', PASSPORTS.map((p) => {
   const rows = passportSocioRows(p);
   if (!rows.length) {
     return `<div class="card"><div class="card__title">${esc(p.name)}</div><p style="margin:0;color:var(--muted)">Данные уточняются в паспорте.</p></div>`;
@@ -190,9 +190,9 @@ document.getElementById('dash-socio').innerHTML = PASSPORTS.map((p) => {
         <span class="stat-row__value">${esc(r.value)}</span>
       </div>`).join('')}
   </div>`;
-}).join('');
+}).join(''));
 
-document.getElementById('dash-narrative').innerHTML = PASSPORTS.map((p) => {
+setHtml('dash-narrative', PASSPORTS.map((p) => {
   const text = passportNarrative(p);
   const extra = (p.narrative_blocks || []).slice(1, 3).map((b) => `
     <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)">
@@ -205,19 +205,19 @@ document.getElementById('dash-narrative').innerHTML = PASSPORTS.map((p) => {
     ${extra}
     <p style="margin:14px 0 0"><a class="tag" href="passport.html?id=${p.id}" style="padding:8px 14px;text-decoration:none;font-size:13px">Все разделы →</a></p>
   </div>`;
-}).join('');
+}).join(''));
 
-document.getElementById('compare').innerHTML = `
+setHtml('compare', `
   <thead><tr><th>Показатель</th>${PASSPORTS.map((p) => `<th class="num">${esc(p.name)}</th>`).join('')}</tr></thead>
   <tbody>${COMPARE_ROWS.map(([label, render]) => `
     <tr>
       <td>${esc(label)}</td>
       ${PASSPORTS.map((p) => `<td class="num">${render(p)}</td>`).join('')}
     </tr>`).join('')}
-  </tbody>`;
+  </tbody>`);
 
 /* Точки концентрации по каждому паспорту */
-document.getElementById('hotspots').innerHTML = PASSPORTS.map((p) => {
+setHtml('hotspots', PASSPORTS.map((p) => {
   const spots = passportHotspots(p);
   return `
   <div class="card">
@@ -232,7 +232,7 @@ document.getElementById('hotspots').innerHTML = PASSPORTS.map((p) => {
         <div class="hotspot__count">${hotspotCountHtml(s.count)}</div>
       </div>`).join('')}
   </div>`;
-}).join('');
+}).join(''));
 }
 
 applyPublicView();

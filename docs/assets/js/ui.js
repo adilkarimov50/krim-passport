@@ -79,11 +79,16 @@ function publicDataLink(link) {
 
 function applyPublicView() {
   if (isStaffView()) return;
-  document.documentElement.classList.add('public-view');
+  document.documentElement?.classList?.add('public-view');
   document.querySelectorAll('.staff-only').forEach((el) => el.remove());
   document.querySelectorAll('a[href]').forEach((a) => {
     if (isInternalHref(a.getAttribute('href'))) a.remove();
   });
+}
+
+function setHtml(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
 }
 
 const CATEGORY_COLORS = {
