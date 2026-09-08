@@ -14,11 +14,48 @@ function kpiCard(value, label, note = '', badge = '') {
 }
 
 function statRows(rows, keyField, valueField) {
-  return rows.map((row) => `
+  const list = Array.isArray(rows) ? rows : [];
+  return list.map((row) => `
     <div class="stat-row">
       <span class="stat-row__label">${esc(row[keyField])}</span>
       <span class="stat-row__value">${esc(row[valueField]) || '—'}</span>
-    </div>`).join('');
+    </div>`).join('') || '<p style="margin:0;color:var(--muted);font-size:14.5px">Данные не заполнены.</p>';
+}
+
+function passportCharacteristicText(p) {
+  if (p.characteristic) return p.characteristic;
+  const block = (p.narrative_blocks || []).find((b) => /криминолог/i.test(b.title || ''));
+  if (block?.text) return block.text;
+  const first = (p.narrative_blocks || [])[0];
+  return first?.text || p.summary?.description || '—';
+}
+
+function narrativeBlockHtml(p, titleRe) {
+  const block = (p.narrative_blocks || []).find((b) => titleRe.test(b.title || ''));
+  if (!block?.text) return '';
+  return `<div class="callout"><p>${esc(block.text)}</p></div>`;
+}
+
+function socioBlock(p) {
+  if (Array.isArray(p.socio) && p.socio.length) {
+    return `<div class="card">${statRows(p.socio, 'indicator', 'value')}</div>`;
+  }
+  if (!Array.isArray(p.socio_extended) || !p.socio_extended.length) {
+    return '<div class="callout"><p>Данные акимата и центра занятости не заполнены в паспорте.</p></div>';
+  }
+  return p.socio_extended.map((block) => {
+    const rows = (block.rows || []).map((r) => ({
+      indicator: r.indicator,
+      value: r.comment ? `${r.value} · ${r.comment}` : r.value,
+    }));
+    const title = block.table === 'employment' ? 'Занятость и предпринимательство'
+      : block.table === 'education' ? 'Образование'
+        : block.table || 'Показатели';
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="card__title">${esc(title)}</div>
+      ${statRows(rows, 'indicator', 'value')}
+    </div>`;
+  }).join('');
 }
 
 function dynamicsCards(rows) {
@@ -271,12 +308,12 @@ function buildSections(p) {
     {
       title: 'Социально-экономические показатели',
       lead: 'Сведения акимата, центра занятости населения и отдела образования, используемые для оценки криминогенного фона.',
-      html: `<div class="card">${statRows(p.socio, 'indicator', 'value')}</div>`,
+      html: socioBlock(p),
     },
     {
       title: 'Криминологическая характеристика',
       lead: 'Обобщённая оценка криминогенной обстановки на территории.',
-      html: `<div class="callout"><p>${esc(p.characteristic)}</p></div>`,
+      html: `<div class="callout"><p>${esc(passportCharacteristicText(p))}</p></div>`,
     },
     {
       title: 'Структура преступности',
@@ -286,24 +323,33 @@ function buildSections(p) {
     {
       title: 'Портрет лица, совершившего преступление',
       lead: 'Характеристика установленных лиц, определяющая адресность профилактической работы.',
-      html: `<div class="card">${statRows(p.offender_profile, 'indicator', 'value')}</div>`,
+      html: p.offender_profile?.length
+        ? `<div class="card">${statRows(p.offender_profile, 'indicator', 'value')}</div>`
+        : narrativeBlockHtml(p, /совершившего преступление/i)
+          || '<div class="callout"><p>Характеристика правонарушителя приведена в криминологической характеристике.</p></div>',
     },
     {
       title: 'Портрет потерпевшего',
       lead: 'Категории граждан, наиболее подверженные риску стать потерпевшими.',
-      html: `<div class="grid grid--3">
-        ${p.victim_profile.map((r) => kpiCard(esc(r.value), r.indicator)).join('')}
-      </div>`,
+      html: p.victim_profile?.length
+        ? `<div class="grid grid--3">${p.victim_profile.map((r) => kpiCard(esc(r.value), r.indicator)).join('')}</div>`
+        : narrativeBlockHtml(p, /потерпевш/i)
+          || '<div class="callout"><p>Характеристика потерпевших приведена в криминологической характеристике.</p></div>',
     },
     {
       title: 'Время и место совершения',
-      lead: `Распределение по времени суток и объекты концентрации преступности. На вечернее и ночное время приходится ${pct((nightShare / (timeTotal || 1)) * 100)} фактов, распределённых по времени суток.`,
+      lead: p.time_of_day?.length
+        ? `Распределение по времени суток и объекты концентрации преступности. На вечернее и ночное время приходится ${pct((nightShare / (timeTotal || 1)) * 100)} фактов, распределённых по времени суток.`
+        : 'Объекты концентрации преступности и сведения о времени совершения.',
       html: `
         <div class="grid grid--2">
-          <div class="card">
+          ${p.time_of_day?.length ? `<div class="card">
             <div class="card__title">Время суток</div>
             ${donutChart(p.time_of_day.map((r) => ({ label: r.period, value: r.count })))}
-          </div>
+          </div>` : `<div class="card">
+            <div class="card__title">Время суток</div>
+            ${narrativeBlockHtml(p, /время и место/i) || '<p style="margin:0;color:var(--muted)">Данные по времени суток уточняются в паспорте.</p>'}
+          </div>`}
           <div class="card">
             <div class="card__title">Точки концентрации преступности</div>
             ${passportHotspots(p).map((h, i, arr) => `
@@ -337,26 +383,35 @@ function buildSections(p) {
     {
       title: 'Основные криминогенные факторы',
       lead: 'Факторы с количественным подтверждением по данным паспорта; строки без установленных фактов сохранены для последующего мониторинга.',
-      html: `<div class="grid grid--2">${p.factors.map((f) => `
+      html: p.factors?.length
+        ? `<div class="grid grid--2">${p.factors.map((f) => `
         <div class="card">
           <div class="card__title">${esc(f.factor)}</div>
           <p style="margin:0;color:var(--muted);font-size:14.5px">${esc(f.details) || '—'}</p>
-        </div>`).join('')}</div>`,
+        </div>`).join('')}</div>`
+        : `<div class="card">${statRows(p.criminogenic_objects, 'object', 'details')}</div>`,
     },
     {
       title: 'Причины и условия',
       lead: 'Группировка причин и условий, способствующих совершению правонарушений.',
-      html: `<div class="grid grid--3">${p.causes.map((c) => `
+      html: p.causes?.length
+        ? `<div class="grid grid--3">${p.causes.map((c) => `
         <div class="card">
           <div class="card__title">${esc(c.type)}</div>
           <p style="margin:0 0 12px;font-size:14.5px">${esc(c.details)}</p>
           ${c.examples ? `<div class="measure__why" style="margin:0">${esc(c.examples)}</div>` : ''}
-        </div>`).join('')}</div>`,
+        </div>`).join('')}</div>`
+        : narrativeBlockHtml(p, /семейно-бытов/i)
+          || '<div class="callout"><p>Причины и условия отражены в криминогенных объектах и характеристике.</p></div>',
     },
     {
       title: 'Лица профилактического учёта',
-      lead: `Всего на профилактическом учёте состоит ${fmt(registryTotal)} лиц — это адресная база индивидуальной профилактики.`,
-      html: `<div class="grid grid--4">${p.registry.map((r) => kpiCard(fmt(r.count), r.category)).join('')}</div>`,
+      lead: registryTotal
+        ? `Всего на профилактическом учёте состоит ${fmt(registryTotal)} лиц — это адресная база индивидуальной профилактики.`
+        : 'Сведения о профилактическом учёте уточняются в актуальной редакции паспорта.',
+      html: p.registry?.length
+        ? `<div class="grid grid--4">${p.registry.map((r) => kpiCard(fmt(r.count), r.category)).join('')}</div>`
+        : '<div class="callout"><p>Детализация профучёта будет дополнена в следующем обновлении паспорта.</p></div>',
     },
     {
       title: 'Криминогенные объекты',

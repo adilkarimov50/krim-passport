@@ -63,7 +63,18 @@ const CRIME_INDICATOR_ALIASES = {
   'Против половой неприкосновенности': ['Половые преступления'],
   'Кражи': ['Кражи (ст.188)', 'Кражи и мелкие хищения (ст.188)'],
   'Мошенничества': ['Мошенничества (ст.190)'],
+  'Средней тяжести': ['Средней тяжести'],
+  'Телесные повреждения': ['Телесные повреждения'],
+  'Убийства (ст.99)': ['Убийства (ст.99)'],
 };
+
+function kpiCard(value, label, note = '', badge = '') {
+  return `<div class="card kpi" style="padding:14px 16px;margin:0;box-shadow:none">
+    <b style="font-size:22px">${value} ${badge}</b>
+    <span style="font-size:12px;color:var(--muted)">${esc(label)}</span>
+    ${note ? `<div class="note" style="font-size:11px;margin-top:4px;color:var(--muted)">${esc(note)}</div>` : ''}
+  </div>`;
+}
 
 function findCrimeRow(p, name) {
   const names = [name, ...(CRIME_INDICATOR_ALIASES[name] || [])];
@@ -91,12 +102,110 @@ function crimeValue(p, name) {
 const COMPARE_ROWS = [
   ['Численность населения', (p) => fmt(p.summary.population), false],
   ['Уровень преступности на 10 тыс. населения', (p) => String(p.summary.rate_per_10k).replace('.', ','), false],
-  ...['Всего зарегистрировано', 'Особо тяжкие', 'Тяжкие', 'Кражи', 'Мошенничества',
-    'Семейно-бытовые преступления', 'Против половой неприкосновенности',
-    'В состоянии алкогольного опьянения'].map((name) => [name, (p) => crimeValue(p, name), true]),
+  ...['Всего зарегистрировано', 'Особо тяжкие', 'Тяжкие', 'Средней тяжести', 'Кражи', 'Мошенничества',
+    'Телесные повреждения', 'Семейно-бытовые преступления', 'Против половой неприкосновенности',
+    'В состоянии алкогольного опьянения', 'Убийства (ст.99)'].map((name) => [name, (p) => crimeValue(p, name), true]),
   ['Всего административных правонарушений', (p) => fmt(adminTotal(p)), false],
+  ['ст.440 КоАП — распитие и появление в пьяном виде', (p) => {
+    const row = Array.isArray(p.admin_practice)
+      ? p.admin_practice.find((r) => /440/.test(r.indicator))
+      : null;
+    return row ? fmt(row.count) : '—';
+  }, false],
+  ['ст.442 КоАП — несовершеннолетние ночью', (p) => {
+    const row = Array.isArray(p.admin_practice)
+      ? p.admin_practice.find((r) => /442/.test(r.indicator))
+      : null;
+    return row ? fmt(row.count) : '—';
+  }, false],
+  ['ст.73 КоАП — семейно-бытовая сфера', (p) => {
+    const row = Array.isArray(p.admin_practice)
+      ? p.admin_practice.find((r) => /73/.test(r.indicator))
+      : null;
+    return row ? fmt(row.count) : '—';
+  }, false],
   ['Лиц на профилактическом учёте', registryTotal, false],
 ];
+
+function passportSocioRows(p) {
+  if (Array.isArray(p.socio) && p.socio.length) return p.socio;
+  if (!Array.isArray(p.socio_extended)) return [];
+  return p.socio_extended.flatMap((block) => (block.rows || []).map((r) => ({
+    indicator: r.indicator,
+    value: r.comment ? `${r.value} · ${r.comment}` : r.value,
+  })));
+}
+
+function passportNarrative(p) {
+  if (p.characteristic) return p.characteristic;
+  const block = (p.narrative_blocks || []).find((b) => /криминолог/i.test(b.title || ''));
+  return block?.text || (p.narrative_blocks || [])[0]?.text || p.summary?.description || '';
+}
+
+document.getElementById('dash-kpi').innerHTML = PASSPORTS.map((p) => {
+  const c = p.summary.crimes;
+  const adm = adminTotal(p);
+  return `<div class="card">
+    <div class="card__title">${esc(p.name)}</div>
+    <div class="grid grid--2" style="gap:10px">
+      ${kpiCard(fmt(p.summary.population), 'Население')}
+      ${kpiCard(fmt(c.current), 'Уголовных', `АППГ ${fmt(c.previous)}`, deltaBadge(c.delta_pct ?? null))}
+      ${kpiCard(String(p.summary.rate_per_10k).replace('.', ','), 'На 10 тыс.')}
+      ${kpiCard(fmt(adm), 'Адм. правонарушений')}
+    </div>
+    <p style="margin:14px 0 0"><a class="tag" href="passport.html?id=${p.id}" style="padding:8px 14px;text-decoration:none;font-size:13px">Открыть паспорт →</a></p>
+  </div>`;
+}).join('');
+
+document.getElementById('dash-crime').innerHTML = PASSPORTS.map((p) => {
+  const rows = (p.crime_structure || []).filter((r) => r.current != null && !/^всего/i.test(r.indicator));
+  if (!rows.length) return `<div class="card"><div class="card__title">${esc(p.name)}</div><p style="margin:0;color:var(--muted)">Нет данных</p></div>`;
+  return `<div class="card card--flush" style="padding:16px 18px">
+    <div class="card__title">${esc(p.name)}</div>
+    ${barsChart(rows)}
+  </div>`;
+}).join('');
+
+document.getElementById('dash-admin').innerHTML = PASSPORTS.map((p) => {
+  if (!Array.isArray(p.admin_practice)) {
+    return `<div class="card"><div class="card__title">${esc(p.name)}</div><p style="margin:0;color:var(--muted)">${fmt(p.admin_practice?.total || 0)} за период</p></div>`;
+  }
+  const rest = p.admin_practice.filter((r) => !r.indicator.startsWith('Всего'));
+  return `<div class="card card--flush" style="padding:16px 18px">
+    <div class="card__title">${esc(p.name)} · ${fmt(adminTotal(p))} всего</div>
+    ${simpleBars(rest.map((r) => ({ label: r.indicator.replace(/^ст\./, 'ст.'), value: r.count })))}
+  </div>`;
+}).join('');
+
+document.getElementById('dash-socio').innerHTML = PASSPORTS.map((p) => {
+  const rows = passportSocioRows(p);
+  if (!rows.length) {
+    return `<div class="card"><div class="card__title">${esc(p.name)}</div><p style="margin:0;color:var(--muted)">Данные уточняются в паспорте.</p></div>`;
+  }
+  return `<div class="card card--flush" style="padding:16px 18px">
+    <div class="card__title">${esc(p.name)}</div>
+    ${rows.slice(0, 8).map((r) => `
+      <div class="stat-row">
+        <span class="stat-row__label">${esc(r.indicator)}</span>
+        <span class="stat-row__value">${esc(r.value)}</span>
+      </div>`).join('')}
+  </div>`;
+}).join('');
+
+document.getElementById('dash-narrative').innerHTML = PASSPORTS.map((p) => {
+  const text = passportNarrative(p);
+  const extra = (p.narrative_blocks || []).slice(1, 3).map((b) => `
+    <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)">
+      <b style="font-size:13px;display:block;margin-bottom:4px">${esc(b.title)}</b>
+      <p style="margin:0;font-size:14px;color:var(--muted);line-height:1.45">${esc(String(b.text).slice(0, 280))}${b.text.length > 280 ? '…' : ''}</p>
+    </div>`).join('');
+  return `<div class="card">
+    <div class="card__title">${esc(p.name)}</div>
+    <p style="margin:0;font-size:14.5px;line-height:1.5;color:var(--muted)">${esc(String(text).slice(0, 420))}${text.length > 420 ? '…' : ''}</p>
+    ${extra}
+    <p style="margin:14px 0 0"><a class="tag" href="passport.html?id=${p.id}" style="padding:8px 14px;text-decoration:none;font-size:13px">Все разделы →</a></p>
+  </div>`;
+}).join('');
 
 document.getElementById('compare').innerHTML = `
   <thead><tr><th>Показатель</th>${PASSPORTS.map((p) => `<th class="num">${esc(p.name)}</th>`).join('')}</tr></thead>
