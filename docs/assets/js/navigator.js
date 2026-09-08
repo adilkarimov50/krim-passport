@@ -3,7 +3,7 @@
 document.getElementById('chrome-top').innerHTML = renderTopbar('navigator');
 document.getElementById('chrome-bottom').innerHTML = renderFooter();
 
-const DATA = window.NAVIGATOR_DATA || [];
+const ORGS = window.NAVIGATOR_DATA || [];
 const KEY = 'profilaktika-checks-v1';
 const TAG_LABELS = {
   силовой: 'Правоохранительные',
@@ -35,7 +35,7 @@ function orgProgress(d) {
 
 function filteredItems() {
   const q = query.trim().toLowerCase();
-  return DATA.filter((d) => {
+  return ORGS.filter((d) => {
     if (activeTag !== 'all' && d.tag !== activeTag) return false;
     if (!q) return true;
     const hay = [d.org, d.center, d.acts, d.norm, d.task, d.signals, d.react, d.gap]
@@ -52,11 +52,11 @@ let activeTag = 'all';
 let query = '';
 
 function renderKpi() {
-  const totalChecks = DATA.reduce((a, d) => a + d.checks.length, 0);
+  const totalChecks = ORGS.reduce((a, d) => a + d.checks.length, 0);
   const totalDone = Object.keys(state).filter((k) => state[k]).length;
   const pct = totalChecks ? Math.round((totalDone / totalChecks) * 100) : 0;
   kpiEl.innerHTML = `
-    <div class="nav-kpi__cell"><b>${DATA.length}</b><span>Субъектов</span></div>
+    <div class="nav-kpi__cell"><b>${ORGS.length}</b><span>Субъектов</span></div>
     <div class="nav-kpi__cell"><b>${totalChecks}</b><span>Пунктов проверки</span></div>
     <div class="nav-kpi__cell"><b>${totalDone}</b><span>Отмечено</span></div>
     <div class="nav-kpi__cell"><b>${pct}%</b><span>Прогресс</span></div>`;
@@ -78,7 +78,7 @@ function renderSidebar(items) {
 
 function renderStatus(items, totals) {
   statusEl.innerHTML = `
-    <span>Показано <b>${items.length}</b> из ${DATA.length} органов · отмечено <b>${totals.totalDone}</b> из ${totals.totalChecks}</span>
+    <span>Показано <b>${items.length}</b> из ${ORGS.length} органов · отмечено <b>${totals.totalDone}</b> из ${totals.totalChecks}</span>
     <div class="nav-status__bar" title="Общий прогресс проверки">
       <i style="width:${totals.pct}%"></i>
     </div>`;
@@ -137,7 +137,7 @@ function renderGrid(items) {
 }
 
 function renderNavigator() {
-  if (!DATA.length) {
+  if (!ORGS.length) {
     grid.innerHTML = '<div class="nav-empty">Данные навигатора не загружены.</div>';
     return;
   }
@@ -212,7 +212,7 @@ document.getElementById('nav-reset').addEventListener('click', () => {
 });
 document.getElementById('nav-export').addEventListener('click', () => {
   const rows = [['Орган', 'Головное ведомство', 'Норма', 'Предмет проверки', 'Основание', 'Отметка']];
-  DATA.forEach((d) => d.checks.forEach((c, i) => {
+  ORGS.forEach((d) => d.checks.forEach((c, i) => {
     rows.push([d.org, d.center, d.norm, c[0], c[1], state[`${d.id}:${i}`] ? 'проверено' : '']);
   }));
   const csv = `\uFEFF${rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n')}`;
