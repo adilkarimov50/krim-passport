@@ -174,6 +174,14 @@
     if (!blocksEl || !(QUARTER.blocks || []).length) return;
 
     if (leadEl) leadEl.textContent = QUARTER.lead || '';
+
+    const ordersEl = document.getElementById('nav-quarterly-orders');
+    if (ordersEl && QUARTER.orders_index?.length) {
+      ordersEl.innerHTML = `<h3 class="nav-quarterly__orders-title">Подзаконные акты (для ссылок в актах надзора)</h3><ul class="nav-orders-index">${
+        QUARTER.orders_index.map((o) => `<li><strong>${navEsc(o.label)}</strong> — ${navEsc(o.about)}</li>`).join('')
+      }</ul>`;
+    }
+
     if (timingEl && QUARTER.timing?.length) {
       timingEl.innerHTML = QUARTER.timing.map(([q, period, note]) => `
         <div class="nav-qtime"><b>${navEsc(q)}</b><span>${navEsc(period)}</span><small>${navEsc(note)}</small></div>`).join('');
@@ -206,13 +214,14 @@
             <div class="nav-qfield"><h5>Зачем прокурору</h5><p>${linkifyLaw(act.purpose)}</p></div>
             <div class="nav-qfield"><h5>Что запросить / проверить</h5><p>${linkifyLaw(act.request)}</p></div>
             <div class="nav-qfield"><h5>Как верифицировать</h5><p>${linkifyLaw(act.verify)}</p></div>
+            ${(act.orders || []).length ? `<div class="nav-qfield nav-qfield--orders"><h5>Приказы / подзаконные акты</h5><ul>${act.orders.map((o) => `<li>${linkifyLaw(o)}</li>`).join('')}</ul></div>` : ''}
             <div class="nav-callout nav-callout--sig"><strong>Признак нарушения:</strong> ${linkifyLaw(act.signal)}</div>
             <div class="nav-callout nav-callout--react"><strong>На комиссию / реагирование:</strong> ${linkifyLaw(act.react)}</div>
           </div>
         </details>`;
       }).join('');
 
-      return `<details class="nav-qblock" id="qblock-${block.id}"${openIds.has(block.id) ? ' open' : ''}>
+      return `<details class="nav-qblock" id="qblock-${block.id}"${openIds.has(block.id) || (!openIds.size && block.id === QUARTER.blocks[0]?.id) ? ' open' : ''}>
         <summary>
           <h3>${navEsc(block.title)} <span class="nav-tag nav-tag--${block.tag}">${navEsc(tagLabel)}</span></h3>
           <p class="nav-qblock__organs">${navEsc(block.organs)}</p>
@@ -307,10 +316,11 @@
     updateQuarterProgress();
   });
   document.getElementById('nav-q-export')?.addEventListener('click', () => {
-    const rows = [['Блок', 'Органы', 'Акт надзора', 'Норма', 'Зачем', 'На комиссию', 'Отметка']];
+    const rows = [['Блок', 'Органы', 'Акт надзора', 'Норма', 'Приказы', 'Зачем', 'На комиссию', 'Отметка']];
     (QUARTER.blocks || []).forEach((block) => block.acts.forEach((act, i) => {
       rows.push([
-        block.title, block.organs, act.title, act.norm, act.purpose, act.react,
+        block.title, block.organs, act.title, act.norm,
+        (act.orders || []).join('; '), act.purpose, act.react,
         stateQ[`${block.id}:${i}`] ? 'готово' : '',
       ]);
     }));
@@ -392,4 +402,17 @@
   });
 
   renderNavigator();
+
+  document.querySelectorAll('.nav-page-jump__link').forEach((link) => {
+    link.addEventListener('click', () => {
+      document.querySelectorAll('.nav-page-jump__link').forEach((l) => l.classList.remove('is-active'));
+      link.classList.add('is-active');
+    });
+  });
+
+  if (location.hash === '#nav-quarterly-section' || location.hash === '#nav-quarterly') {
+    setTimeout(() => {
+      document.getElementById('nav-quarterly-section')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
 }());

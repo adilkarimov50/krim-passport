@@ -15,8 +15,10 @@
   <div class="wrap">
     <div class="hero__eyebrow">Закон № 245-VIII · профилактика правонарушений</div>
     <h1>Прокурору для работы — механизмы профилактики</h1>
-    <p>12 субъектов профилактики по Закону № 245-VIII — плюс ежеквартальный перечень актов надзора для межведомственной комиссии (СУСН/ТЖС, ОВД, МИО).
-       Чек-листы с пояснением «зачем прокурору». Статьи закона — ссылки на ИПС «Әділет». Отметки сохраняются в браузере.</p>
+    <p>12 субъектов профилактики по Закону № 245-VIII — плюс <strong>ежеквартальный перечень актов надзора</strong> для межведомственной комиссии (4 блока: СУСН/ТЖС, ОВД, МИО, КДН).</p>
+    <p class="nav-hero__jump">
+      <a class="nav-hero__cta" href="#nav-quarterly-section">↓ Ежеквартальные акты для МВК — начать здесь</a>
+    </p>
     <div class="nav-kpi" id="nav-kpi"></div>
   </div>
 </section>
@@ -28,6 +30,31 @@
 
     <main class="nav-main">
 
+      <nav class="nav-page-jump" aria-label="Разделы страницы">
+        <a class="nav-page-jump__link is-active" href="#nav-quarterly-section">① Ежеквартально · МВК</a>
+        <a class="nav-page-jump__link" href="#nav-orgs-section">② 12 субъектов ЗРК</a>
+      </nav>
+
+      <section class="nav-quarterly" id="nav-quarterly-section" aria-labelledby="nav-quarterly-title">
+        <div class="nav-quarterly__head">
+          <div class="nav-quarterly__badge">Начните отсюда</div>
+          <h2 id="nav-quarterly-title">Ежеквартальные акты надзора для МВК</h2>
+          <p class="nav-quarterly__lead" id="nav-quarterly-lead"></p>
+        </div>
+        <div class="nav-quarterly__orders" id="nav-quarterly-orders"></div>
+        <div class="nav-quarterly__timing" id="nav-quarterly-timing"></div>
+        <div class="nav-quarterly__status" id="nav-quarterly-status"></div>
+        <div class="nav-quarterly__blocks" id="nav-quarterly-blocks"></div>
+        <div class="nav-quarterly__tools">
+          <button class="nav-btn" type="button" id="nav-q-open-all">Раскрыть все блоки</button>
+          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-close-all">Свернуть</button>
+          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-reset">Сбросить отметки</button>
+          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-export">CSV квартал</button>
+        </div>
+      </section>
+
+      <section id="nav-orgs-section" class="nav-orgs-wrap">
+
       <section class="nav-flow">
         <h2>Как устроена конструкция</h2>
         <p class="lead">Одна цепочка повторяется в каждом ведомстве. Разрыв ищется на конкретном звене, а не «в системе профилактики» вообще.</p>
@@ -37,22 +64,6 @@
           <div class="nav-chain__step"><div class="n">Звено 3</div><div class="t">Территориальный орган</div><p class="d">Департамент, отдел района</p></div>
           <div class="nav-chain__step"><div class="n">Звено 4</div><div class="t">Комиссия</div><p class="d">МВК или КДН, ст. 38–39</p></div>
           <div class="nav-chain__step nav-chain__step--acc"><div class="n">Звено 5</div><div class="t">Прокурор</div><p class="d">Надзор, координация, ст. 12</p></div>
-        </div>
-      </section>
-
-      <section class="nav-quarterly" id="nav-quarterly-section" aria-labelledby="nav-quarterly-title">
-        <div class="nav-quarterly__head">
-          <h2 id="nav-quarterly-title">Ежеквартальные акты надзора для МВК</h2>
-          <p class="nav-quarterly__lead" id="nav-quarterly-lead"></p>
-        </div>
-        <div class="nav-quarterly__timing" id="nav-quarterly-timing"></div>
-        <div class="nav-quarterly__status" id="nav-quarterly-status"></div>
-        <div class="nav-quarterly__blocks" id="nav-quarterly-blocks"></div>
-        <div class="nav-quarterly__tools">
-          <button class="nav-btn" type="button" id="nav-q-open-all">Раскрыть все блоки</button>
-          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-close-all">Свернуть</button>
-          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-reset">Сбросить отметки</button>
-          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-export">CSV квартал</button>
         </div>
       </section>
 
@@ -86,6 +97,8 @@
         Отметки сохраняются локально в браузере. Перед применением сверяйте редакции в ИПС «Әділет»
         (ст. 7, 8, 9, 14, 38 — с учётом Законов № 311-VIII и № 330-VIII).
       </p>
+
+      </section><!-- /nav-orgs-section -->
 
     </main>
   </div>

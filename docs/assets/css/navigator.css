@@ -451,14 +451,99 @@
   border-top: 2px solid var(--line);
 }
 
-.nav-quarterly {
-  margin-bottom: 28px;
-  padding: 22px 22px 18px;
+.nav-hero__jump { margin: 14px 0 4px; }
+.nav-hero__cta {
+  display: inline-block;
+  padding: 12px 20px;
+  background: var(--navy-700);
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 14.5px;
+  text-decoration: none;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.nav-hero__cta:hover { background: var(--navy-800); }
+
+.nav-page-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 10px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  position: sticky;
+  top: 68px;
+  z-index: 45;
 }
+.nav-page-jump__link {
+  flex: 1 1 200px;
+  padding: 10px 14px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+.nav-page-jump__link.is-active,
+.nav-page-jump__link:hover {
+  color: var(--navy-800);
+  background: rgba(27, 49, 87, .08);
+  border-color: rgba(27, 49, 87, .15);
+}
+
+.nav-quarterly {
+  margin-bottom: 28px;
+  padding: 22px 22px 18px;
+  background: linear-gradient(180deg, rgba(27, 49, 87, .07), var(--card));
+  border: 2px solid rgba(27, 49, 87, .22);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+.nav-quarterly__badge {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 10px;
+  background: var(--navy-700);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+.nav-quarterly__orders {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 13.5px;
+}
+.nav-quarterly__orders-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+}
+.nav-orders-index {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.55;
+}
+.nav-orders-index li { margin-bottom: 6px; }
+.nav-qfield--orders ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
 .nav-quarterly__head h2 {
   font-size: 20px;
   margin: 0 0 8px;
