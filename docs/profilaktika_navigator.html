@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Механизм профилактики — навигатор прокурора · Закон № 245-VIII</title>
+<title>Механизмы профилактики — навигатор прокурора · Закон № 245-VIII</title>
 <meta name="description" content="Навигатор для прокуроров по Закону РК «О профилактике правонарушений» № 245-VIII: обязанности субъектов, предмет проверки, признаки нарушений и формы реагирования.">
 <link rel="stylesheet" href="assets/css/app.css">
 <link rel="stylesheet" href="assets/css/navigator.css">
@@ -11,59 +11,65 @@
 <body>
 <div id="chrome-top"></div>
 
-<section class="hero" style="padding-bottom:32px">
+<section class="hero nav-hero">
   <div class="wrap">
     <div class="hero__eyebrow">Закон № 245-VIII · профилактика правонарушений</div>
-    <h1>Навигатор прокурора по механизму профилактики</h1>
-    <p>Где у каждого субъекта профилактики находится головное ведомство, что оно обязано делать
-       и что проверять на месте. Отметки о проверке сохраняются в браузере.</p>
-    <div class="hero__meta">
-      <span class="chip chip--gold">12 субъектов</span>
-      <span class="chip">ЗРК от 30.12.2025 № 245-VIII</span>
-      <a class="chip" href="index.html" style="text-decoration:none">← К паспортам</a>
-    </div>
+    <h1>Механизмы профилактики — навигатор прокурора</h1>
+    <p>12 субъектов профилактики: головное ведомство, обязанности, чек-лист проверки на месте,
+       признаки нарушения и форма реагирования. Отметки сохраняются в браузере.</p>
+    <div class="nav-kpi" id="nav-kpi"></div>
   </div>
 </section>
 
 <div class="navigator-page">
-  <div class="nav-wrap">
+  <div class="wrap nav-layout">
 
-    <section class="flow">
-      <h2>Как устроена конструкция</h2>
-      <p class="lead">Одна и та же цепочка повторяется в каждом ведомстве. Разрыв ищется на конкретном звене, а не «в системе профилактики» вообще.</p>
-      <div class="chain">
-        <div class="link"><div class="n">Звено 1</div><div class="t">Норма закона</div><div class="d">Обязанность субъекта, глава 2 ЗРК</div></div>
-        <div class="link"><div class="n">Звено 2</div><div class="t">Головное ведомство</div><div class="d">Комитет или управление, своё положение</div></div>
-        <div class="link"><div class="n">Звено 3</div><div class="t">Территориальный орган</div><div class="d">Департамент, управление, отдел района</div></div>
-        <div class="link"><div class="n">Звено 4</div><div class="t">Комиссия</div><div class="d">МВК или КДН, ст. 38, 39, 79</div></div>
-        <div class="link acc"><div class="n">Звено 5</div><div class="t">Прокурор</div><div class="d">Надзор, координация, статистика, ст. 12</div></div>
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Быстрый переход к органам"></aside>
+
+    <main class="nav-main">
+
+      <section class="nav-flow">
+        <h2>Как устроена конструкция</h2>
+        <p class="lead">Одна цепочка повторяется в каждом ведомстве. Разрыв ищется на конкретном звене, а не «в системе профилактики» вообще.</p>
+        <div class="nav-chain">
+          <div class="nav-chain__step"><div class="n">Звено 1</div><div class="t">Норма закона</div><p class="d">Обязанность субъекта, глава 2 ЗРК</p></div>
+          <div class="nav-chain__step"><div class="n">Звено 2</div><div class="t">Головное ведомство</div><p class="d">Комитет или управление</p></div>
+          <div class="nav-chain__step"><div class="n">Звено 3</div><div class="t">Территориальный орган</div><p class="d">Департамент, отдел района</p></div>
+          <div class="nav-chain__step"><div class="n">Звено 4</div><div class="t">Комиссия</div><p class="d">МВК или КДН, ст. 38–39</p></div>
+          <div class="nav-chain__step nav-chain__step--acc"><div class="n">Звено 5</div><div class="t">Прокурор</div><p class="d">Надзор, координация, ст. 12</p></div>
+        </div>
+      </section>
+
+      <div class="nav-sticky">
+        <div class="nav-sticky__row" id="nav-filters">
+          <div class="nav-sticky__search">
+            <input type="search" id="nav-q" placeholder="Орган, статья закона, предмет проверки…" aria-label="Поиск">
+          </div>
+          <button class="nav-filter" type="button" data-tag="all" aria-pressed="true">Все</button>
+          <button class="nav-filter" type="button" data-tag="силовой" aria-pressed="false">Правоохранительные</button>
+          <button class="nav-filter" type="button" data-tag="социальный" aria-pressed="false">Социальный блок</button>
+          <button class="nav-filter" type="button" data-tag="местный" aria-pressed="false">Местный уровень</button>
+        </div>
       </div>
-    </section>
 
-    <div class="bar" id="nav-filters">
-      <div class="grow"><input type="search" id="nav-q" placeholder="Поиск по органу, статье закона или предмету проверки" aria-label="Поиск"></div>
-      <button class="f" data-tag="all" aria-pressed="true">Все</button>
-      <button class="f" data-tag="силовой" aria-pressed="false">Правоохранительные</button>
-      <button class="f" data-tag="социальный" aria-pressed="false">Социальный блок</button>
-      <button class="f" data-tag="местный" aria-pressed="false">Местный уровень</button>
-    </div>
+      <div class="nav-status" id="nav-status"></div>
 
-    <p class="counter" id="nav-counter"></p>
+      <div class="nav-grid" id="nav-grid"></div>
 
-    <div class="grid" id="nav-grid"></div>
+      <div class="nav-tools">
+        <button class="nav-btn" type="button" id="nav-open-all">Раскрыть все</button>
+        <button class="nav-btn nav-btn--ghost" type="button" id="nav-close-all">Свернуть все</button>
+        <button class="nav-btn nav-btn--ghost" type="button" id="nav-reset">Сбросить отметки</button>
+        <button class="nav-btn nav-btn--ghost" type="button" id="nav-export">CSV</button>
+        <button class="nav-btn nav-btn--ghost" type="button" id="nav-print">Печать</button>
+      </div>
 
-    <div class="tools">
-      <button class="act" id="nav-open-all" type="button">Раскрыть все карточки</button>
-      <button class="act ghost" id="nav-close-all" type="button">Свернуть все</button>
-      <button class="act ghost" id="nav-reset" type="button">Сбросить отметки</button>
-      <button class="act ghost" id="nav-export" type="button">Выгрузить отметки в CSV</button>
-      <button class="act ghost" id="nav-print" type="button">Печать</button>
-    </div>
+      <p class="nav-note">
+        Отметки сохраняются локально в браузере. Перед применением сверяйте редакции в ИПС «Әділет»
+        (ст. 7, 8, 9, 14, 38 — с учётом Законов № 311-VIII и № 330-VIII).
+      </p>
 
-    <footer class="note">
-      Отметки о проверке сохраняются в этом браузере и не передаются никуда. Ссылки на подзаконные акты приведены по состоянию на дату подготовки файла — перед применением сверяйте действующую редакцию в ИПС «Әділет». Редакции статей 7, 8, 9, 14, 38 — с учётом Законов № 311-VIII и № 330-VIII.
-    </footer>
-
+    </main>
   </div>
 </div>
 
