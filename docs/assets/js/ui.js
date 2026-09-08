@@ -1,8 +1,8 @@
 /* Общие компоненты паспорта: шапка, подвал, диаграммы, форматирование. */
 
-const DATA = window.KRIM_DATA || {};
-const PASSPORTS = DATA.passports || [];
-const GEO = DATA.geo || {};
+const KRIM = window.KRIM_DATA || {};
+const PASSPORTS = KRIM.passports || [];
+const GEO = KRIM.geo || {};
 
 const SITE = {
   repo: 'https://github.com/adilkarimov50/krim-passport',
@@ -160,7 +160,7 @@ function renderTopbar(page, activeId) {
     ['index.html', 'Обзор', 'index'],
     ['passport.html', 'Паспорт', 'passport'],
     ['map.html', 'Карта объектов', 'map'],
-    ['profilaktika_navigator.html', 'Прокурора в работе', 'navigator'],
+    ['profilaktika_navigator.html', 'Прокурору для работы', 'navigator'],
   ];
   return `
   <header class="topbar">
