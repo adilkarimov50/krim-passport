@@ -49,6 +49,40 @@
   font-size: 12px;
 }
 
+.lib-collections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.lib-collection {
+  text-align: left;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+.lib-collection.is-active {
+  border-color: var(--navy-700);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(180deg, rgba(27, 49, 87, .06), var(--card));
+}
+.lib-collection__label {
+  display: block;
+  font: 700 14.5px inherit;
+  color: var(--navy-800);
+  margin-bottom: 4px;
+}
+.lib-collection__meta {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 .lib-sticky {
   position: sticky;
   top: 68px;

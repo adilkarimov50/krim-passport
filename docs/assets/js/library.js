@@ -16,10 +16,12 @@
   }
 
   let activeType = 'all';
+  let activeCollection = 'all';
   let query = '';
   const openCards = new Set();
 
   const grid = document.getElementById('lib-grid');
+  const collectionsEl = document.getElementById('lib-collections');
   const apps = document.getElementById('lib-apps');
   const statusEl = document.getElementById('lib-status');
 
@@ -40,9 +42,30 @@
     const q = query.trim().toLowerCase();
     return (DATA.items || []).filter((item) => {
       if (activeType !== 'all' && item.type !== activeType) return false;
+      if (activeCollection !== 'all' && !(item.collections || []).includes(activeCollection)) return false;
       if (!q) return true;
       return itemHaystack(item).includes(q);
     });
+  }
+
+  function renderCollections() {
+    if (!collectionsEl) return;
+    const cols = DATA.collections || [];
+    if (!cols.length) {
+      collectionsEl.innerHTML = '';
+      return;
+    }
+    collectionsEl.innerHTML = `
+      <button class="lib-collection${activeCollection === 'all' ? ' is-active' : ''}" type="button" data-collection="all" aria-pressed="${activeCollection === 'all'}">
+        <span class="lib-collection__label">Все темы</span>
+      </button>
+      ${cols.map((c) => {
+        const count = (DATA.items || []).filter((i) => (i.collections || []).includes(c.id)).length;
+        return `<button class="lib-collection${activeCollection === c.id ? ' is-active' : ''}" type="button" data-collection="${c.id}" aria-pressed="${activeCollection === c.id}">
+          <span class="lib-collection__label">${esc(c.label)}</span>
+          <span class="lib-collection__meta">${count} · ${esc(c.lead)}</span>
+        </button>`;
+      }).join('')}`;
   }
 
   function renderLinks(item) {
@@ -137,10 +160,26 @@
 
   function renderAll() {
     const items = filteredItems();
+    renderCollections();
     renderStatus(items);
     renderGrid(items);
     renderApplications();
     renderFormula();
+  }
+
+  if (collectionsEl) {
+    collectionsEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-collection]');
+      if (!btn) return;
+      activeCollection = btn.dataset.collection;
+      if (activeCollection !== 'all') {
+        activeType = 'article';
+        document.querySelectorAll('#lib-filters .lib-filter').forEach((b) => {
+          b.setAttribute('aria-pressed', b.dataset.type === activeType ? 'true' : 'false');
+        });
+      }
+      renderAll();
+    });
   }
 
   grid.addEventListener('click', (e) => {
