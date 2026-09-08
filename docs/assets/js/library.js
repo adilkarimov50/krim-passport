@@ -6,19 +6,18 @@
   document.getElementById('chrome-bottom').innerHTML = renderFooter();
 
   const DATA = window.LIBRARY_DATA || { items: [], applications: [], formula: [] };
-  const TYPE_LABELS = {
-    video: 'Ролик',
-    book: 'Книга',
-    quote: 'Цитата',
-  };
-  const TYPE_ICONS = {
-    video: '▶',
-    book: '📘',
-    quote: '❝',
-  };
+  const TYPE_LABELS = { video: 'Ролик', book: 'Книга', article: 'Статья', quote: 'Цитата' };
+  const TYPE_ICONS = { video: '▶', book: '📘', article: '📄', quote: '❝' };
+  const SCIHUB_BASE = 'https://sci-hub.ru/';
+
+  function sciHubUrl(doi) {
+    const clean = String(doi || '').replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').trim();
+    return clean ? `${SCIHUB_BASE}${clean}` : '';
+  }
 
   let activeType = 'all';
   let query = '';
+  const openCards = new Set();
 
   const grid = document.getElementById('lib-grid');
   const apps = document.getElementById('lib-apps');
@@ -30,19 +29,38 @@
     ));
   }
 
+  function itemHaystack(item) {
+    return [
+      item.title, item.author, item.preview, item.practice, item.doi,
+      ...(item.body || []), ...(item.key_points || []), ...(item.tags || []),
+    ].join(' ').toLowerCase();
+  }
+
   function filteredItems() {
     const q = query.trim().toLowerCase();
     return (DATA.items || []).filter((item) => {
       if (activeType !== 'all' && item.type !== activeType) return false;
       if (!q) return true;
-      const hay = [item.title, item.author, item.summary, item.influence, ...(item.tags || [])]
-        .join(' ').toLowerCase();
-      return hay.includes(q);
+      return itemHaystack(item).includes(q);
     });
   }
 
-  function renderStatus(items) {
-    statusEl.innerHTML = `Материалов: <b>${items.length}</b> из ${(DATA.items || []).length}`;
+  function renderLinks(item) {
+    const links = [...(item.links || [])];
+    if (item.doi) {
+      const sh = sciHubUrl(item.doi);
+      if (sh && !links.some((l) => l.url.includes('sci-hub'))) {
+        links.unshift({ label: 'Sci-Hub · PDF', url: sh });
+      }
+      if (!links.some((l) => l.url.includes('doi.org'))) {
+        links.push({ label: 'DOI', url: `https://doi.org/${item.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')}` });
+      }
+    }
+    if (!links.length && item.url) {
+      links.push({ label: 'Открыть источник', url: item.url });
+    }
+    return links.map((l) => `
+      <a class="lib-card__link${l.label.startsWith('Sci-Hub') ? ' lib-card__link--scihub' : ''}" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)} →</a>`).join('');
   }
 
   function renderGrid(items) {
@@ -50,30 +68,49 @@
       grid.innerHTML = '<div class="lib-empty">Ничего не найдено. Измените поиск или фильтр.</div>';
       return;
     }
+
     grid.innerHTML = items.map((item) => {
       const typeLabel = TYPE_LABELS[item.type] || item.type;
       const icon = TYPE_ICONS[item.type] || '•';
       const meta = [item.author, item.year, item.duration].filter(Boolean).join(' · ');
-      const link = item.url
-        ? `<a class="lib-card__link" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Открыть источник →</a>`
+      const tags = (item.tags || []).map((t) => `<span class="lib-tag">${esc(t)}</span>`).join('');
+      const isOpen = openCards.has(item.id);
+
+      const bodyParas = (item.body || []).map((p) => `<p>${esc(p)}</p>`).join('');
+      const keyPoints = (item.key_points || []).length
+        ? `<h4 class="lib-card__h">Ключевые идеи</h4><ul class="lib-card__list">${item.key_points.map((k) => `<li>${esc(k)}</li>`).join('')}</ul>`
         : '';
+
       const dataLink = item.data_link
         ? `<a class="lib-card__data" href="${esc(item.data_link.href)}">${esc(item.data_link.label)} →</a>`
         : '';
-      const tags = (item.tags || []).map((t) => `<span class="lib-tag">${esc(t)}</span>`).join('');
-      return `<article class="lib-card lib-card--${item.type}">
-        <div class="lib-card__type"><span>${icon}</span> ${esc(typeLabel)}</div>
-        <h3>${esc(item.title)}</h3>
-        <p class="lib-card__meta">${esc(meta)}</p>
-        <div class="lib-card__tags">${tags}</div>
-        <p class="lib-card__summary">${esc(item.summary)}</p>
-        <div class="lib-card__influence">
-          <strong>Как влияет на нашу работу</strong>
-          <p>${esc(item.influence)}</p>
+
+      return `<article class="lib-card lib-card--${item.type}${isOpen ? ' is-open' : ''}" id="lib-${item.id}" data-id="${item.id}">
+        <div class="lib-card__head">
+          <div class="lib-card__type"><span>${icon}</span> ${esc(typeLabel)}</div>
+          <h3>${esc(item.title)}</h3>
+          <p class="lib-card__meta">${esc(meta)}</p>
+          <div class="lib-card__tags">${tags}</div>
         </div>
-        <div class="lib-card__foot">${link}${dataLink}</div>
+        <p class="lib-card__preview">${esc(item.preview || item.summary || '')}</p>
+        <div class="lib-card__expand"${isOpen ? '' : ' hidden'}>
+          <div class="lib-card__body">${bodyParas}</div>
+          ${keyPoints}
+          <div class="lib-card__influence">
+            <strong>Применение в нашей работе</strong>
+            <p>${esc(item.practice || item.influence || '')}</p>
+          </div>
+          <div class="lib-card__foot">${renderLinks(item)}${dataLink}</div>
+        </div>
+        <button class="lib-card__more" type="button" data-toggle="${item.id}" aria-expanded="${isOpen}">
+          ${isOpen ? 'Свернуть ↑' : 'Читать дальше ↓'}
+        </button>
       </article>`;
     }).join('');
+  }
+
+  function renderStatus(items) {
+    statusEl.innerHTML = `Материалов: <b>${items.length}</b> из ${(DATA.items || []).length}`;
   }
 
   function renderApplications() {
@@ -105,6 +142,27 @@
     renderApplications();
     renderFormula();
   }
+
+  grid.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-toggle]');
+    if (!btn) return;
+    const id = btn.dataset.toggle;
+    const card = document.getElementById(`lib-${id}`);
+    const expand = card?.querySelector('.lib-card__expand');
+    if (!card || !expand) return;
+
+    const willOpen = expand.hidden;
+    expand.hidden = !willOpen;
+    card.classList.toggle('is-open', willOpen);
+    btn.setAttribute('aria-expanded', willOpen);
+    btn.textContent = willOpen ? 'Свернуть ↑' : 'Читать дальше ↓';
+    if (willOpen) {
+      openCards.add(id);
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      openCards.delete(id);
+    }
+  });
 
   document.getElementById('lib-q').addEventListener('input', (e) => {
     query = e.target.value;

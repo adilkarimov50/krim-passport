@@ -108,10 +108,16 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 18px 20px;
+  padding: 18px 20px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  transition: box-shadow .2s, border-color .2s;
+}
+.lib-card.is-open {
+  grid-column: 1 / -1;
+  border-color: rgba(27, 49, 87, .22);
+  box-shadow: var(--shadow-lg);
 }
 .lib-card--video { border-top: 4px solid #c0392b; }
 .lib-card--book { border-top: 4px solid var(--navy-700); }
@@ -143,12 +149,52 @@
   color: var(--navy-700);
   font-weight: 600;
 }
-.lib-card__summary {
+.lib-card__preview {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 14.5px;
+  line-height: 1.55;
   color: var(--ink);
 }
+.lib-card__expand[hidden] { display: none; }
+.lib-card__body p {
+  margin: 0 0 12px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.lib-card__h {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  margin: 4px 0 8px;
+}
+.lib-card__list {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.lib-card__list li { margin-bottom: 6px; }
+.lib-card__more {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 10px 18px;
+  border: 1px solid var(--navy-700);
+  background: var(--navy-700);
+  color: #fff;
+  font: 600 13.5px inherit;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.lib-card__more:hover { background: var(--navy-800); }
+.lib-card.is-open .lib-card__more {
+  background: var(--card);
+  color: var(--navy-700);
+}
+.lib-card.is-open .lib-card__more:hover { background: var(--navy-100); }
 .lib-card__influence {
   margin-top: 4px;
   padding: 12px 14px;
@@ -183,6 +229,12 @@
 }
 .lib-card__link:hover,
 .lib-card__data:hover { text-decoration: underline; }
+.lib-card__link--scihub {
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(27, 49, 87, .08);
+  border: 1px solid rgba(27, 49, 87, .2);
+}
 
 .lib-section-title {
   font-size: 20px;
