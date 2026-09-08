@@ -14,8 +14,8 @@
 .kpi-card .v{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums}
 .kpi-card .l{font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.75;margin-top:4px}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin:28px 0 20px;border-bottom:1px solid var(--line,#ddd);padding-bottom:0}
-.tab{padding:10px 18px;border:none;background:transparent;cursor:pointer;font:inherit;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
-.tab.on{color:var(--ink);border-bottom-color:var(--up);font-weight:600}
+.panel-tab{padding:10px 18px;border:none;background:transparent;cursor:pointer;font:inherit;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.panel-tab.on{color:var(--ink);border-bottom-color:var(--up);font-weight:600}
 .panel{display:none}.panel.on{display:block}
 .gap-row{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);align-items:center;font-size:14px}
 .gap-row.head{font-weight:600;background:var(--paper2);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
@@ -32,7 +32,7 @@
 @media(max-width:768px){.gap-row{grid-template-columns:1fr;gap:4px}}
 </style>
 </head>
-<body>
+<body data-site-page="index">
 <div id="chrome-top"></div>
 
 <section class="analysis-hero">
@@ -53,11 +53,11 @@
 
 <main class="wrap" style="padding-bottom:60px">
   <div class="tabs" id="tabs">
-    <button class="tab on" data-tab="gaps">Расхождения</button>
-    <button class="tab" data-tab="funnel">Профучёт</button>
-    <button class="tab" data-tab="commission">Комиссия</button>
-    <button class="tab" data-tab="legal">Правовая оценка</button>
-    <button class="tab" data-tab="conclusions">Выводы</button>
+    <button class="panel-tab on" data-tab="gaps">Расхождения</button>
+    <button class="panel-tab" data-tab="funnel">Профучёт</button>
+    <button class="panel-tab" data-tab="commission">Комиссия</button>
+    <button class="panel-tab" data-tab="legal">Правовая оценка</button>
+    <button class="panel-tab" data-tab="conclusions">Выводы</button>
   </div>
 
   <div class="panel on" id="panel-gaps">
@@ -114,8 +114,8 @@
 
   // Tabs
   document.getElementById('tabs').addEventListener('click', e => {
-    const t = e.target.closest('.tab'); if (!t) return;
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+    const t = e.target.closest('.panel-tab'); if (!t) return;
+    document.querySelectorAll('.panel-tab').forEach(x => x.classList.remove('on'));
     document.querySelectorAll('.panel').forEach(x => x.classList.remove('on'));
     t.classList.add('on');
     document.getElementById('panel-' + t.dataset.tab).classList.add('on');

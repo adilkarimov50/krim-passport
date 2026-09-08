@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Детальная карта с. Чунджа (Шонжы) — маршруты патрулирования, 2026</title>
+<link rel="stylesheet" href="assets/css/app.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -15,6 +16,9 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);font-size:13.5px;line-height:1.45}
+body{display:flex;flex-direction:column}
+#chrome-top{flex:0 0 auto}
+.map-page{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;overflow:hidden}
 h1,h2,h3,.disp{font-family:'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif;letter-spacing:.01em}
 .mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
 
@@ -36,7 +40,7 @@ header .back:hover{color:var(--paper)}
 .kpi.ok .v{color:#5fc49f}
 
 /* ОСНОВА */
-main{display:flex;height:calc(100vh - var(--hh,94px));overflow:hidden}
+main{display:flex;flex:1 1 auto;min-height:0;overflow:hidden}
 #map{flex:1;height:100%;background:var(--paper2)}
 aside{width:320px;flex-shrink:0;background:var(--paper2);border-right:1px solid var(--linelt);display:flex;flex-direction:column;overflow:hidden}
 .panel{flex:1;overflow-y:auto;min-height:0}
@@ -134,7 +138,10 @@ aside{width:320px;flex-shrink:0;background:var(--paper2);border-right:1px solid 
 }
 </style>
 </head>
-<body>
+<body data-site-page="map" data-site-id="chundzha">
+
+<div id="chrome-top"></div>
+<div class="map-page">
 
 <header>
   <div>
@@ -891,5 +898,8 @@ ADMIN.forEach(a=>allPts.push(a.ll));
 ROUTES.forEach(r=>r.coords.forEach(c=>allPts.push(c)));
 if(allPts.length) map.fitBounds(L.latLngBounds(allPts).pad(0.12));
 </script>
+</div>
+<div id="chrome-bottom"></div>
+<script src="assets/js/ui.js"></script>
 </body>
 </html>

@@ -4,12 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Карта патрулирования — г. Каскелен · 2026</title>
+<link rel="stylesheet" href="assets/css/app.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#0C1116;--slate:#18222B;--slate2:#22303B;--paper:#E8EBED;--paper2:#F4F6F7;--line:#33434F;--linelt:#C9D1D6;--muted:#7E909C;--red:#B33F26;--amber:#C08A1E;--teal:#1F6B70;--navy:#1b3157;--purple:#5B4B8A;--brown:#8C5A2B;--pale:#9FB0BB}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);font-size:13.5px;line-height:1.45}
+body{display:flex;flex-direction:column}
+#chrome-top{flex:0 0 auto}
+.map-page{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;overflow:hidden}
 h1,h2,h3,.disp{font-family:'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif}
 .mono{font-family:'IBM Plex Mono',monospace}
 header{background:var(--slate);color:var(--paper);padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:3px solid var(--red);flex:0 0 auto}
@@ -21,7 +25,7 @@ header .back{margin-left:auto;color:var(--pale);text-decoration:none;font-size:1
 .kpi{padding:7px 13px;border-right:1px solid var(--line)}.kpi:last-child{border-right:none}
 .kpi .v{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600;line-height:1.1}.kpi .l{font-size:10px;color:var(--pale);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
 .kpi.warn .v{color:#E8785C}.kpi.ok .v{color:#5fc49f}
-main{display:flex;height:calc(100vh - 92px);overflow:hidden}
+main{display:flex;flex:1 1 auto;min-height:0;overflow:hidden}
 #map{flex:1;height:100%;background:var(--paper2)}
 aside{width:320px;flex-shrink:0;background:var(--paper2);border-right:1px solid var(--linelt);display:flex;flex-direction:column;overflow:hidden}
 .panel{flex:1;overflow-y:auto;min-height:0}
@@ -79,7 +83,9 @@ aside{width:320px;flex-shrink:0;background:var(--paper2);border-right:1px solid 
 .int-link{display:inline-block;margin-top:6px;font-size:11px;color:var(--teal);text-decoration:none;border-bottom:1px dotted var(--teal)}
 </style>
 </head>
-<body>
+<body data-site-page="map" data-site-id="kaskelen">
+<div id="chrome-top"></div>
+<div class="map-page">
 <header>
   <div><h1>Карта патрулирования и криминогенных объектов</h1>
   <div class="sub">г. Каскелен · Карасайский район · Алматинская область · 2026</div></div>
@@ -373,5 +379,8 @@ renderList();
 const allPts=[];CRIMES.filter(c=>c.ll).forEach(c=>allPts.push(c.ll));ADMIN.forEach(a=>allPts.push(a.ll));ROUTES.forEach(r=>r.coords.forEach(c=>allPts.push(c)));
 if(allPts.length)map.fitBounds(L.latLngBounds(allPts).pad(0.1));
 </script>
+</div>
+<div id="chrome-bottom"></div>
+<script src="assets/js/ui.js"></script>
 </body>
 </html>

@@ -155,28 +155,41 @@ function donutChart(rows) {
 
 /* ---------- Шапка и подвал ---------- */
 
+/** Префикс ../ для страниц во вложенных папках (spravka_sverka_profueta/ и т.д.). */
+function sitePrefix() {
+  const parts = location.pathname.replace(/\\/g, '/').split('/').filter(Boolean);
+  const fileIdx = parts.findIndex((p) => p.endsWith('.html'));
+  const depth = fileIdx >= 0 ? fileIdx : parts.length;
+  const rootIdx = parts.indexOf('krim-passport');
+  const docsIdx = parts.indexOf('docs');
+  const base = rootIdx >= 0 ? rootIdx + 1 : docsIdx >= 0 ? docsIdx + 1 : 0;
+  const rel = depth - base;
+  return rel > 0 ? '../'.repeat(rel) : '';
+}
+
 function renderTopbar(page, activeId) {
+  const p = sitePrefix();
   const tabs = [
-    ['index.html', 'Обзор', 'index'],
-    ['passport.html', 'Паспорт', 'passport'],
-    ['map.html', 'Карта объектов', 'map'],
-    ['profilaktika_navigator.html', 'Прокурору для работы', 'navigator'],
-    ['nauka_profilaktika.html', 'Наука и практика', 'library'],
+    ['index.html', 'Обзор', 'Обзор разделов', 'index'],
+    ['passport.html', 'Паспорт', 'Криминологический паспорт', 'passport'],
+    ['map.html', 'Карта', 'Карта объектов и правонарушений', 'map'],
+    ['profilaktika_navigator.html', 'Прокурору', 'Прокурору для работы · Закон № 245', 'navigator'],
+    ['nauka_profilaktika.html', 'Наука', 'Наука и практика профилактики', 'library'],
   ];
   return `
   <header class="topbar">
     <div class="wrap topbar__inner">
-      <a class="brand" href="index.html">
+      <a class="brand" href="${p}index.html">
         <span class="brand__mark">КП</span>
         <span class="brand__text">Криминологический паспорт
           <small>Алматинская область · Карасайский и Уйгурский районы · 2026</small>
         </span>
       </a>
-      <nav class="topbar__nav">
-        ${tabs.map(([href, label, key]) => {
+      <nav class="topbar__nav" aria-label="Разделы сайта">
+        ${tabs.map(([href, label, title, key]) => {
           const qs = activeId && (key === 'passport' || key === 'map') ? `?id=${activeId}` : '';
           return `
-          <a class="tab" href="${href}${qs}"
+          <a class="tab" href="${p}${href}${qs}" title="${title}"
              ${key === page ? 'aria-current="page"' : ''}>${label}</a>`;
         }).join('')}
       </nav>
@@ -185,6 +198,7 @@ function renderTopbar(page, activeId) {
 }
 
 function renderFooter() {
+  const p = sitePrefix();
   return `
   <footer class="footer">
     <div class="wrap">
@@ -198,7 +212,7 @@ function renderFooter() {
           <p>Адрес издания: <a href="${SITE.pages}">${SITE.pages.replace('https://', '')}</a></p>
         </div>
         <div class="footer__qr">
-          <img src="assets/img/qr.svg" alt="QR-код для перехода к цифровому паспорту" width="148" height="148">
+          <img src="${p}assets/img/qr.svg" alt="QR-код для перехода к цифровому паспорту" width="148" height="148">
           <span>Наведите камеру</span>
         </div>
       </div>
@@ -210,6 +224,49 @@ function renderFooter() {
     </div>
   </footer>`;
 }
+
+/** Единая шапка и подвал — вызывается на каждой странице. */
+function mountSiteChrome(page, activeId) {
+  const top = document.getElementById('chrome-top');
+  if (top) top.innerHTML = renderTopbar(page, activeId);
+  const bottom = document.getElementById('chrome-bottom');
+  if (bottom) bottom.innerHTML = renderFooter();
+}
+
+function resolveSitePage() {
+  const fromBody = document.body?.dataset?.sitePage;
+  if (fromBody) return fromBody;
+  const file = location.pathname.split('/').pop() || 'index.html';
+  const map = {
+    'index.html': 'index',
+    'passport.html': 'passport',
+    'map.html': 'map',
+    'profilaktika_navigator.html': 'navigator',
+    'nauka_profilaktika.html': 'library',
+    'karasai_analysis.html': 'index',
+    'karasai_spravka.html': 'index',
+    'registry_crossmatch.html': 'index',
+    'kaskelen_map.html': 'map',
+    'irgeli_map.html': 'map',
+    'chundzha_map.html': 'map',
+  };
+  return map[file] || 'index';
+}
+
+function resolveActiveId(page) {
+  const fromBody = document.body?.dataset?.siteId;
+  if (fromBody) return fromBody;
+  if (page === 'passport' || page === 'map') {
+    try { return currentId(); } catch (e) { return ''; }
+  }
+  return undefined;
+}
+
+(function bootSiteChrome() {
+  if (!document.getElementById('chrome-top')) return;
+  const page = resolveSitePage();
+  mountSiteChrome(page, resolveActiveId(page));
+})();
 
 /** Переключатель населённого пункта; при выборе меняет ?id= в адресе. */
 function renderSwitch(activeId, onChange) {
