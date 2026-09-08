@@ -161,6 +161,7 @@ function renderTopbar(page, activeId) {
     ['passport.html', 'Паспорт', 'passport'],
     ['map.html', 'Карта объектов', 'map'],
     ['profilaktika_navigator.html', 'Прокурору для работы', 'navigator'],
+    ['nauka_profilaktika.html', 'Наука и практика', 'library'],
   ];
   return `
   <header class="topbar">

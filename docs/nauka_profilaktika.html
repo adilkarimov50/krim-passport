@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Наука и практика профилактики · криминологический паспорт</title>
+<meta name="description" content="Познавательный сборник: ролики, книги и цитаты по социологии девиантного поведения и профилактике правонарушений — с привязкой к данным Карасайского района.">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/library.css">
+</head>
+<body>
+<div id="chrome-top"></div>
+
+<section class="hero lib-hero">
+  <div class="wrap">
+    <div class="hero__eyebrow">Социология · криминология · Закон № 245-VIII</div>
+    <h1>Наука и практика профилактики</h1>
+    <p>Ролики, книги и цитаты — и объяснение, как теория помогает читать ваши паспорта, карты, сверку профучёта и навигатор для прокурора.</p>
+  </div>
+</section>
+
+<div class="lib-page">
+  <div class="wrap">
+
+    <p class="lib-intro" id="lib-intro"></p>
+
+    <h2 class="lib-section-title">Формула прокурорского анализа</h2>
+    <p class="lib-section-lead">Из аналитической справки по лекции ТЕЛОС — перенос от «единичного факта» к механизму нарушения.</p>
+    <div class="lib-formula" id="lib-formula"></div>
+
+    <div class="lib-sticky">
+      <div class="lib-sticky__row" id="lib-filters">
+        <div class="lib-sticky__search">
+          <input type="search" id="lib-q" placeholder="Теория, автор, тег…" aria-label="Поиск">
+        </div>
+        <button class="lib-filter" type="button" data-type="all" aria-pressed="true">Все</button>
+        <button class="lib-filter" type="button" data-type="video" aria-pressed="false">Ролики</button>
+        <button class="lib-filter" type="button" data-type="book" aria-pressed="false">Книги</button>
+        <button class="lib-filter" type="button" data-type="quote" aria-pressed="false">Цитаты</button>
+      </div>
+    </div>
+
+    <p class="lib-status" id="lib-status"></p>
+    <div class="lib-grid" id="lib-grid"></div>
+
+    <h2 class="lib-section-title">Теория → наши данные</h2>
+    <p class="lib-section-lead">Семь связок «социологическая рамка — сигнал из Каскелена/Иргели/области — что проверять на месте».</p>
+    <div class="lib-apps" id="lib-apps"></div>
+
+  </div>
+</div>
+
+<div id="chrome-bottom"></div>
+
+<script src="assets/js/library_data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+document.getElementById('lib-intro').textContent = window.LIBRARY_DATA?.intro || '';
+</script>
+<script src="assets/js/library.js"></script>
+</body>
+</html>
