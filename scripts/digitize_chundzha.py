@@ -190,6 +190,57 @@ def main() -> None:
                 "rationale": "Раздел 21 криминологического паспорта",
             })
 
+    # Сравнение с АППГ (§4.1) + ключевые виды для таблицы на главной.
+    def _parse_num(v):
+        if v is None:
+            return None
+        if isinstance(v, (int, float)):
+            return int(v) if float(v).is_integer() else float(v)
+        m = re.search(r"-?\d+", str(v).replace(" ", ""))
+        return int(m.group()) if m else None
+
+    def _parse_delta_pct(delta_str, prev, cur):
+        if delta_str:
+            m = re.search(r"([−\-+]?[\d,]+(?:\.[\d]+)?)", str(delta_str))
+            if m:
+                return float(m.group(1).replace(",", ".").replace("−", "-"))
+        if prev not in (None, 0) and cur is not None:
+            return round((cur - prev) / prev * 100, 1)
+        return None
+
+    compare_rows = []
+    for row in passport.get("crime_severity", []):
+        prev = _parse_num(row.get("previous"))
+        cur = _parse_num(row.get("current"))
+        delta = _parse_delta_pct(row.get("delta"), prev, cur)
+        direction = "up" if delta and delta > 0 else "down" if delta and delta < 0 else None
+        entry = {
+            "indicator": row["category"],
+            "raw": f"{cur} / {prev}" if prev is not None and cur is not None else str(cur or ""),
+            "current": cur,
+            "previous": prev,
+            "delta_pct": delta,
+            "comment": row.get("delta", ""),
+        }
+        if direction:
+            entry["direction"] = direction
+        compare_rows.append(entry)
+
+    by_type = {r["indicator"]: r for r in passport.get("crime_structure", []) if r.get("indicator") != "ВСЕГО"}
+    for ind, val, note in (
+        ("Кражи", by_type.get("Кражи", {}).get("value"), ""),
+        ("Мошенничества", by_type.get("Мошенничества", {}).get("value"), ""),
+        ("Против половой неприкосновенности", by_type.get("Половые преступления", {}).get("value"), ""),
+        ("Семейно-бытовые преступления", "4", "в составе побоев (§14)"),
+        ("В состоянии алкогольного опьянения", "5", "5 из 27 установленных эпизодов"),
+    ):
+        n = _parse_num(val)
+        compare_rows.append({"indicator": ind, "raw": str(val), "current": n, "comment": note})
+
+    skip = {"Кражи", "Мошенничества", "Половые преступления", "ВСЕГО"}
+    rest = [r for r in passport.get("crime_structure", []) if r.get("indicator") not in skip]
+    passport["crime_structure"] = compare_rows + rest
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(passport, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"{OUT} — hotspots: {len(passport['hotspots'])}, measures: {len(passport['measures'])}")

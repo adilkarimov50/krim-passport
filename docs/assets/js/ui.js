@@ -160,21 +160,24 @@ function renderTopbar(page, activeId) {
     ['index.html', 'Обзор', 'index'],
     ['passport.html', 'Паспорт', 'passport'],
     ['map.html', 'Карта объектов', 'map'],
+    ['profilaktika_navigator.html', 'Закон 245', 'navigator'],
   ];
-  const suffix = activeId ? `?id=${activeId}` : '';
   return `
   <header class="topbar">
     <div class="wrap topbar__inner">
-      <a class="brand" href="index.html${suffix}">
+      <a class="brand" href="index.html">
         <span class="brand__mark">КП</span>
         <span class="brand__text">Криминологический паспорт
           <small>Алматинская область · Карасайский и Уйгурский районы · 2026</small>
         </span>
       </a>
       <nav class="topbar__nav">
-        ${tabs.map(([href, label, key]) => `
-          <a class="tab" href="${href}${key === 'index' ? '' : suffix}"
-             ${key === page ? 'aria-current="page"' : ''}>${label}</a>`).join('')}
+        ${tabs.map(([href, label, key]) => {
+          const qs = activeId && (key === 'passport' || key === 'map') ? `?id=${activeId}` : '';
+          return `
+          <a class="tab" href="${href}${qs}"
+             ${key === page ? 'aria-current="page"' : ''}>${label}</a>`;
+        }).join('')}
       </nav>
     </div>
   </header>`;

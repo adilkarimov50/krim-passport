@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Механизм профилактики — навигатор прокурора · Закон № 245-VIII</title>
+<meta name="description" content="Навигатор для прокуроров по Закону РК «О профилактике правонарушений» № 245-VIII: обязанности субъектов, предмет проверки, признаки нарушений и формы реагирования.">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/navigator.css">
+</head>
+<body>
+<div id="chrome-top"></div>
+
+<section class="hero" style="padding-bottom:32px">
+  <div class="wrap">
+    <div class="hero__eyebrow">Закон № 245-VIII · профилактика правонарушений</div>
+    <h1>Навигатор прокурора по механизму профилактики</h1>
+    <p>Где у каждого субъекта профилактики находится головное ведомство, что оно обязано делать
+       и что проверять на месте. Отметки о проверке сохраняются в браузере.</p>
+    <div class="hero__meta">
+      <span class="chip chip--gold">12 субъектов</span>
+      <span class="chip">ЗРК от 30.12.2025 № 245-VIII</span>
+      <a class="chip" href="index.html" style="text-decoration:none">← К паспортам</a>
+    </div>
+  </div>
+</section>
+
+<div class="navigator-page">
+  <div class="nav-wrap">
+
+    <section class="flow">
+      <h2>Как устроена конструкция</h2>
+      <p class="lead">Одна и та же цепочка повторяется в каждом ведомстве. Разрыв ищется на конкретном звене, а не «в системе профилактики» вообще.</p>
+      <div class="chain">
+        <div class="link"><div class="n">Звено 1</div><div class="t">Норма закона</div><div class="d">Обязанность субъекта, глава 2 ЗРК</div></div>
+        <div class="link"><div class="n">Звено 2</div><div class="t">Головное ведомство</div><div class="d">Комитет или управление, своё положение</div></div>
+        <div class="link"><div class="n">Звено 3</div><div class="t">Территориальный орган</div><div class="d">Департамент, управление, отдел района</div></div>
+        <div class="link"><div class="n">Звено 4</div><div class="t">Комиссия</div><div class="d">МВК или КДН, ст. 38, 39, 79</div></div>
+        <div class="link acc"><div class="n">Звено 5</div><div class="t">Прокурор</div><div class="d">Надзор, координация, статистика, ст. 12</div></div>
+      </div>
+    </section>
+
+    <div class="bar" id="nav-filters">
+      <div class="grow"><input type="search" id="nav-q" placeholder="Поиск по органу, статье закона или предмету проверки" aria-label="Поиск"></div>
+      <button class="f" data-tag="all" aria-pressed="true">Все</button>
+      <button class="f" data-tag="силовой" aria-pressed="false">Правоохранительные</button>
+      <button class="f" data-tag="социальный" aria-pressed="false">Социальный блок</button>
+      <button class="f" data-tag="местный" aria-pressed="false">Местный уровень</button>
+    </div>
+
+    <p class="counter" id="nav-counter"></p>
+
+    <div class="grid" id="nav-grid"></div>
+
+    <div class="tools">
+      <button class="act" id="nav-open-all" type="button">Раскрыть все карточки</button>
+      <button class="act ghost" id="nav-close-all" type="button">Свернуть все</button>
+      <button class="act ghost" id="nav-reset" type="button">Сбросить отметки</button>
+      <button class="act ghost" id="nav-export" type="button">Выгрузить отметки в CSV</button>
+      <button class="act ghost" id="nav-print" type="button">Печать</button>
+    </div>
+
+    <footer class="note">
+      Отметки о проверке сохраняются в этом браузере и не передаются никуда. Ссылки на подзаконные акты приведены по состоянию на дату подготовки файла — перед применением сверяйте действующую редакцию в ИПС «Әділет». Редакции статей 7, 8, 9, 14, 38 — с учётом Законов № 311-VIII и № 330-VIII.
+    </footer>
+
+  </div>
+</div>
+
+<div id="chrome-bottom"></div>
+
+<script src="assets/js/navigator_data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/navigator.js"></script>
+</body>
+</html>

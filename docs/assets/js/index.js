@@ -57,12 +57,32 @@ function registryTotal(p) {
   return fmt(p.registry.reduce((sum, r) => sum + (r.count || 0), 0));
 }
 
+const CRIME_INDICATOR_ALIASES = {
+  'Против половой неприкосновенности': ['Половые преступления'],
+  'Кражи': ['Кражи (ст.188)', 'Кражи и мелкие хищения (ст.188)'],
+  'Мошенничества': ['Мошенничества (ст.190)'],
+};
+
+function findCrimeRow(p, name) {
+  const names = [name, ...(CRIME_INDICATOR_ALIASES[name] || [])];
+  const fromStructure = p.crime_structure?.find((r) => names.includes(r.indicator));
+  if (fromStructure) return fromStructure;
+  return p.crime_severity?.find((r) => r.category === name) || null;
+}
+
 function crimeValue(p, name) {
-  const row = p.crime_structure.find((r) => r.indicator === name);
+  const row = findCrimeRow(p, name);
   if (!row) return '—';
-  if (row.current !== undefined) {
-    return `${fmt(row.current)} <span style="color:var(--muted)">/ ${fmt(row.previous)}</span> ${deltaBadge(deltaFromPair(row))}`;
+  const cur = row.current ?? row.value;
+  const prev = row.previous;
+  if (cur !== undefined && cur !== null && prev !== undefined && prev !== null) {
+    const pair = { current: Number(cur), previous: Number(prev), delta_pct: row.delta_pct };
+    const delta = deltaFromPair(pair) ?? (typeof row.delta === 'string'
+      ? Number(String(row.delta).replace(/[^\d,.-−]/g, '').replace(',', '.').replace('−', '-'))
+      : null);
+    return `${fmt(Number(cur))} <span style="color:var(--muted)">/ ${fmt(Number(prev))}</span> ${deltaBadge(delta)}`;
   }
+  if (cur !== undefined && cur !== null) return fmt(Number(String(cur).replace(/\s/g, '')) || String(cur);
   return fmt(row.value);
 }
 
