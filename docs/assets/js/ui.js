@@ -242,6 +242,7 @@ function resolveSitePage() {
     'passport.html': 'passport',
     'map.html': 'map',
     'profilaktika_navigator.html': 'navigator',
+    'mvk_kvartal.html': 'navigator',
     'nauka_profilaktika.html': 'library',
     'karasai_analysis.html': 'index',
     'karasai_spravka.html': 'index',
