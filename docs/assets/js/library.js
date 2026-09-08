@@ -153,11 +153,17 @@
   function renderFormula() {
     const el = document.getElementById('lib-formula');
     if (!el) return;
-    el.innerHTML = (DATA.formula || []).map((step, i) => `
-      <div class="lib-formula__step">
-        <span class="lib-formula__n">${i + 1}</span>
-        <span>${esc(step)}</span>
-      </div>`).join('');
+    el.innerHTML = (DATA.formula || []).map((step, i) => {
+      const title = typeof step === 'string' ? step : step.title;
+      const hint = typeof step === 'string' ? '' : (step.hint || '');
+      return `<div class="lib-formula__step">
+        <div class="lib-formula__head">
+          <span class="lib-formula__n">${i + 1}</span>
+          <span class="lib-formula__t">${esc(title)}</span>
+        </div>
+        ${hint ? `<p class="lib-formula__hint">${esc(hint)}</p>` : ''}
+      </div>`;
+    }).join('');
   }
 
   function renderAll() {
