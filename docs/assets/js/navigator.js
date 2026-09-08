@@ -6,7 +6,9 @@
   document.getElementById('chrome-bottom').innerHTML = renderFooter();
 
   const ORGS = window.NAVIGATOR_DATA || [];
+  const QUARTER = window.QUARTERLY_NADZOR || { blocks: [] };
   const KEY = 'profilaktika-checks-v1';
+  const KEY_Q = 'profilaktika-quarterly-v1';
   const LAW245 = 'https://adilet.zan.kz/rus/docs/Z2500000245';
   const TAG_LABELS = {
     силовой: 'Правоохранительные',
@@ -15,7 +17,9 @@
   };
 
   let state = {};
+  let stateQ = {};
   try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { state = {}; }
+  try { stateQ = JSON.parse(localStorage.getItem(KEY_Q) || '{}'); } catch (e) { stateQ = {}; }
 
   const grid = document.getElementById('nav-grid');
   const sidebar = document.getElementById('nav-sidebar');
@@ -26,6 +30,10 @@
 
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+  }
+
+  function saveQ() {
+    try { localStorage.setItem(KEY_Q, JSON.stringify(stateQ)); } catch (e) { /* ignore */ }
   }
 
   function navEsc(s) {
@@ -76,7 +84,13 @@
   }
 
   function renderSidebar(items) {
-    sidebar.innerHTML = `<div class="nav-sidebar__title">Быстрый переход</div>`
+    const qTotal = (QUARTER.blocks || []).reduce((a, b) => a + b.acts.length, 0);
+    const qDone = Object.keys(stateQ).filter((k) => stateQ[k]).length;
+    sidebar.innerHTML = `<a class="nav-sidebar__link nav-sidebar__link--quarter" href="#nav-quarterly-section">
+        <span class="nav-sidebar__mini"><i style="width:${qTotal ? Math.round((qDone / qTotal) * 100) : 0}%"></i></span>
+        <span>Ежеквартально<br><small style="font-weight:500;color:var(--muted)">${qDone}/${qTotal}</small></span>
+      </a>`
+      + `<div class="nav-sidebar__title">Субъекты ЗРК</div>`
       + items.map((d) => {
         const { done, total, pct } = orgProgress(d);
         const short = d.org.replace(/^Органы?\s+/i, '').replace(/^УТК\s+/i, '');
@@ -147,6 +161,88 @@
     }).join('');
   }
 
+  function quarterProgress(block) {
+    const done = block.acts.filter((_, i) => stateQ[`${block.id}:${i}`]).length;
+    return { done, total: block.acts.length, pct: block.acts.length ? Math.round((done / block.acts.length) * 100) : 0 };
+  }
+
+  function renderQuarterly() {
+    const leadEl = document.getElementById('nav-quarterly-lead');
+    const timingEl = document.getElementById('nav-quarterly-timing');
+    const statusElQ = document.getElementById('nav-quarterly-status');
+    const blocksEl = document.getElementById('nav-quarterly-blocks');
+    if (!blocksEl || !(QUARTER.blocks || []).length) return;
+
+    if (leadEl) leadEl.textContent = QUARTER.lead || '';
+    if (timingEl && QUARTER.timing?.length) {
+      timingEl.innerHTML = QUARTER.timing.map(([q, period, note]) => `
+        <div class="nav-qtime"><b>${navEsc(q)}</b><span>${navEsc(period)}</span><small>${navEsc(note)}</small></div>`).join('');
+    }
+
+    const openIds = new Set(
+      [...blocksEl.querySelectorAll('details.nav-qblock[open]')].map((el) => el.id.replace('qblock-', '')),
+    );
+
+    const totalActs = QUARTER.blocks.reduce((a, b) => a + b.acts.length, 0);
+    const doneActs = Object.keys(stateQ).filter((k) => stateQ[k]).length;
+    if (statusElQ) {
+      statusElQ.innerHTML = `<span>Ежеквартальный пакет: <b>${doneActs}</b> из ${totalActs} пунктов подготовлено</span>
+        <div class="nav-status__bar"><i style="width:${totalActs ? Math.round((doneActs / totalActs) * 100) : 0}%"></i></div>`;
+    }
+
+    blocksEl.innerHTML = QUARTER.blocks.map((block) => {
+      const { done, total, pct } = quarterProgress(block);
+      const tagLabel = TAG_LABELS[block.tag] || block.tag;
+      const actsHtml = block.acts.map((act, i) => {
+        const k = `${block.id}:${i}`;
+        const on = !!stateQ[k];
+        return `<details class="nav-qact${on ? ' is-done' : ''}" id="qact-${k}">
+          <summary>
+            <input type="checkbox" class="nav-qact__chk" data-qk="${k}"${on ? ' checked' : ''} aria-label="Выполнено" onclick="event.stopPropagation()">
+            <span class="nav-qact__title">${navEsc(act.title)}</span>
+            <span class="nav-qact__norm">${linkifyLaw(act.norm)}</span>
+          </summary>
+          <div class="nav-qact__body">
+            <div class="nav-qfield"><h5>Зачем прокурору</h5><p>${linkifyLaw(act.purpose)}</p></div>
+            <div class="nav-qfield"><h5>Что запросить / проверить</h5><p>${linkifyLaw(act.request)}</p></div>
+            <div class="nav-qfield"><h5>Как верифицировать</h5><p>${linkifyLaw(act.verify)}</p></div>
+            <div class="nav-callout nav-callout--sig"><strong>Признак нарушения:</strong> ${linkifyLaw(act.signal)}</div>
+            <div class="nav-callout nav-callout--react"><strong>На комиссию / реагирование:</strong> ${linkifyLaw(act.react)}</div>
+          </div>
+        </details>`;
+      }).join('');
+
+      return `<details class="nav-qblock" id="qblock-${block.id}"${openIds.has(block.id) ? ' open' : ''}>
+        <summary>
+          <h3>${navEsc(block.title)} <span class="nav-tag nav-tag--${block.tag}">${navEsc(tagLabel)}</span></h3>
+          <p class="nav-qblock__organs">${navEsc(block.organs)}</p>
+          <div class="nav-org__progress">Подготовлено ${done} из ${total}
+            <div class="nav-org__track"><i style="width:${pct}%"></i></div>
+          </div>
+        </summary>
+        <div class="nav-qblock__body">
+          <div class="nav-qfield nav-qfield--why"><h4>Зачем этот блок на МВК</h4><p>${linkifyLaw(block.why)}</p></div>
+          <div class="nav-callout nav-callout--gap"><strong>Формулировка для повестки:</strong> ${linkifyLaw(block.commission)}</div>
+          <h4>Акты надзора (ежеквартально)</h4>
+          <div class="nav-qacts">${actsHtml}</div>
+        </div>
+      </details>`;
+    }).join('');
+  }
+
+  function updateQuarterProgress() {
+    renderQuarterly();
+    const qTotal = (QUARTER.blocks || []).reduce((a, b) => a + b.acts.length, 0);
+    const qDone = Object.keys(stateQ).filter((k) => stateQ[k]).length;
+    const link = sidebar.querySelector('.nav-sidebar__link--quarter');
+    if (link) {
+      const mini = link.querySelector('.nav-sidebar__mini i');
+      if (mini) mini.style.width = `${qTotal ? Math.round((qDone / qTotal) * 100) : 0}%`;
+      const sm = link.querySelector('small');
+      if (sm) sm.textContent = `${qDone}/${qTotal}`;
+    }
+  }
+
   function renderNavigator() {
     if (!ORGS.length) {
       grid.innerHTML = '<div class="nav-empty">Данные навигатора не загружены. Проверьте подключение файла navigator_data.js.</div>';
@@ -161,6 +257,7 @@
     const totals = renderKpi(totalChecks, totalDone);
     renderSidebar(items);
     renderStatus(items, totals);
+    renderQuarterly();
     renderGrid(items);
   }
 
@@ -187,6 +284,44 @@
     renderKpi(totalChecks, totalDone);
     renderStatus(filteredItems(), totals);
   }
+
+  document.getElementById('nav-quarterly-blocks')?.addEventListener('change', (e) => {
+    const cb = e.target.closest('.nav-qact__chk');
+    if (!cb) return;
+    stateQ[cb.dataset.qk] = cb.checked;
+    cb.closest('.nav-qact')?.classList.toggle('is-done', cb.checked);
+    saveQ();
+    updateQuarterProgress();
+  });
+
+  document.getElementById('nav-q-open-all')?.addEventListener('click', () => {
+    document.querySelectorAll('details.nav-qblock, details.nav-qact').forEach((d) => { d.open = true; });
+  });
+  document.getElementById('nav-q-close-all')?.addEventListener('click', () => {
+    document.querySelectorAll('details.nav-qblock, details.nav-qact').forEach((d) => { d.open = false; });
+  });
+  document.getElementById('nav-q-reset')?.addEventListener('click', () => {
+    if (!confirm('Снять отметки ежеквартального пакета?')) return;
+    stateQ = {};
+    saveQ();
+    updateQuarterProgress();
+  });
+  document.getElementById('nav-q-export')?.addEventListener('click', () => {
+    const rows = [['Блок', 'Органы', 'Акт надзора', 'Норма', 'Зачем', 'На комиссию', 'Отметка']];
+    (QUARTER.blocks || []).forEach((block) => block.acts.forEach((act, i) => {
+      rows.push([
+        block.title, block.organs, act.title, act.norm, act.purpose, act.react,
+        stateQ[`${block.id}:${i}`] ? 'готово' : '',
+      ]);
+    }));
+    const csv = `\uFEFF${rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n')}`;
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'akt_nadzora_mvk_kvartal.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
 
   grid.addEventListener('change', (e) => {
     const cb = e.target.closest('input[type=checkbox]');

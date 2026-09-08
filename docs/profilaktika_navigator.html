@@ -15,8 +15,8 @@
   <div class="wrap">
     <div class="hero__eyebrow">Закон № 245-VIII · профилактика правонарушений</div>
     <h1>Прокурору для работы — механизмы профилактики</h1>
-    <p>12 субъектов профилактики по Закону № 245-VIII: головное ведомство, обязанности, чек-лист проверки,
-       признаки нарушения и форма реагирования. Статьи закона — ссылки на ИПС «Әділет». Отметки сохраняются в браузере.</p>
+    <p>12 субъектов профилактики по Закону № 245-VIII — плюс ежеквартальный перечень актов надзора для межведомственной комиссии (СУСН/ТЖС, ОВД, МИО).
+       Чек-листы с пояснением «зачем прокурору». Статьи закона — ссылки на ИПС «Әділет». Отметки сохраняются в браузере.</p>
     <div class="nav-kpi" id="nav-kpi"></div>
   </div>
 </section>
@@ -39,6 +39,24 @@
           <div class="nav-chain__step nav-chain__step--acc"><div class="n">Звено 5</div><div class="t">Прокурор</div><p class="d">Надзор, координация, ст. 12</p></div>
         </div>
       </section>
+
+      <section class="nav-quarterly" id="nav-quarterly-section" aria-labelledby="nav-quarterly-title">
+        <div class="nav-quarterly__head">
+          <h2 id="nav-quarterly-title">Ежеквартальные акты надзора для МВК</h2>
+          <p class="nav-quarterly__lead" id="nav-quarterly-lead"></p>
+        </div>
+        <div class="nav-quarterly__timing" id="nav-quarterly-timing"></div>
+        <div class="nav-quarterly__status" id="nav-quarterly-status"></div>
+        <div class="nav-quarterly__blocks" id="nav-quarterly-blocks"></div>
+        <div class="nav-quarterly__tools">
+          <button class="nav-btn" type="button" id="nav-q-open-all">Раскрыть все блоки</button>
+          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-close-all">Свернуть</button>
+          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-reset">Сбросить отметки</button>
+          <button class="nav-btn nav-btn--ghost" type="button" id="nav-q-export">CSV квартал</button>
+        </div>
+      </section>
+
+      <h2 class="nav-section-divider">12 субъектов профилактики по главе 2 ЗРК</h2>
 
       <div class="nav-sticky">
         <div class="nav-sticky__row" id="nav-filters">
@@ -76,6 +94,7 @@
 <div id="chrome-bottom"></div>
 
 <script src="assets/js/navigator_data.js"></script>
+<script src="assets/js/navigator_quarterly_data.js"></script>
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/navigator.js"></script>
 </body>
