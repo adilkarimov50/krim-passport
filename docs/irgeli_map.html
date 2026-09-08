@@ -64,6 +64,15 @@ aside{width:320px;flex-shrink:0;background:var(--paper2);border-right:1px solid 
 .leaflet-popup-content .pop-addr{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#555;margin-bottom:6px}
 .leaflet-popup-content .pop-row{padding:3px 0;border-bottom:1px solid #eee;font-size:12px;display:flex;justify-content:space-between;gap:8px}.leaflet-popup-content .pop-row:last-of-type{border:none}
 .leaflet-popup-content .pop-m{margin-top:7px;font-size:11.5px;background:#f7f3e8;padding:7px 9px;border-left:3px solid #C08A1E}
+.int-panel{background:#fff;border:1px solid var(--linelt);margin:0 10px 8px;padding:10px 11px;font-size:12px}
+.int-panel h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px}
+.int-panel p{margin:0 0 8px;line-height:1.45;color:var(--ink)}
+.int-kpis{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0}
+.int-kpi{background:var(--paper2);padding:5px 7px;border-left:3px solid var(--teal)}
+.int-kpi.warn{border-left-color:var(--red)}.int-kpi .v{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600}.int-kpi .l{font-size:10px;color:var(--muted)}
+.int-problems{margin:6px 0 0;padding-left:16px;color:var(--muted);font-size:11.5px}
+.int-problems li{margin:3px 0}
+.int-link{display:inline-block;margin-top:6px;font-size:11px;color:var(--teal);text-decoration:none;border-bottom:1px dotted var(--teal)}
 </style>
 </head>
 <body>
@@ -86,6 +95,7 @@ aside{width:320px;flex-shrink:0;background:var(--paper2);border-right:1px solid 
 <main>
 <aside>
   <div class="panel">
+  <div class="blk" id="int-panel-wrap"></div>
   <div class="blk"><h2>Маршруты патрулирования</h2><div id="rt-toggles"></div></div>
   <div class="blk"><h2>Вид преступления</h2><div class="chips" id="fcat"></div></div>
   <div class="blk"><h2>Слои</h2><div class="chips" id="flayers"></div></div>
@@ -96,8 +106,28 @@ aside{width:320px;flex-shrink:0;background:var(--paper2);border-right:1px solid 
 </aside>
 <div id="map"></div>
 </main>
+<script src="assets/js/integrated_maps.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+const LOC_ID='irgeli';
+const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=v=>v==null?'—':new Intl.NumberFormat('ru-RU').format(v);
+function renderIntegratedPanel(){
+  const d=window.INTEGRATED_MAPS&&window.INTEGRATED_MAPS[LOC_ID];
+  const wrap=document.getElementById('int-panel-wrap');
+  if(!d||!wrap)return;
+  const kpis=(d.map_kpis||[]).map(k=>`<div class="int-kpi${k.warn?' warn':''}"><div class="v">${esc(k.value)}</div><div class="l">${esc(k.label)}</div></div>`).join('');
+  const probs=(d.problems||[]).slice(0,3).map(p=>`<li>${esc(p)}</li>`).join('');
+  wrap.innerHTML=`<div class="int-panel"><h3>Сверка профучёта · ${esc(d.generated)}</h3><p>${esc(d.summary)}</p><div class="int-kpis">${kpis}</div><ul class="int-problems">${probs}</ul><a class="int-link" href="../../Карасайский%20район/Справка_интегрированная_Каскелен_Иргели.html" target="_blank">Полная интегрированная справка →</a></div>`;
+  const strip=document.querySelector('.strip');
+  (d.map_kpis||[]).forEach(k=>{
+    const el=document.createElement('div');el.className='kpi'+(k.warn?' warn':'');
+    el.innerHTML=`<div class="v">${esc(k.value)}</div><div class="l">${esc(k.label)}</div>`;
+    strip.appendChild(el);
+  });
+}
+renderIntegratedPanel();
+
 const CAT={
   theft:{n:'Кражи',                 c:'#8C5A2B'},
   beat :{n:'Побои и вред здоровью', c:'#C08A1E'},
@@ -182,18 +212,22 @@ const ROUTES=[
   ]},
 ];
 
+const COVERAGE_GAPS=[
+ {id:'gap1',n:'Квартал-4',addr:'с. Иргели — вне вечернего маршрута',ll:[43.2360,76.7630],radius:300,note:'Проблемная зона. Координата ориентировочная. Нет постоянного ночного патруля.'},
+ {id:'gap2',n:'Слепая зона рынка (сект. Б)',addr:'УТК «Алтын Орда», сектор Б',ll:[43.2325,76.7685],radius:450,note:'88 фактов в паспорте vs 17 в ЕРДР — часть территории 21,5 га без видео и патруля.'},
+ {id:'gap3',n:'107 ул. без освещения',addr:'Иргелинский с/о',ll:[43.2450,76.7550],radius:500,note:'51,7% краж не раскрыто. 37 камер vs 226 в Каскелене.'},
+];
+
 const CENTER=[43.2400,76.7640];
 const map=L.map('map',{zoomControl:true}).setView(CENTER,13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
 
-const gCrimes=L.layerGroup().addTo(map),gEstab=L.layerGroup().addTo(map),gAdmin=L.layerGroup(),gZones=L.layerGroup().addTo(map),gRes=L.layerGroup().addTo(map);
+const gCrimes=L.layerGroup().addTo(map),gEstab=L.layerGroup().addTo(map),gAdmin=L.layerGroup(),gZones=L.layerGroup().addTo(map),gRes=L.layerGroup().addTo(map),gCoverage=L.layerGroup().addTo(map);
 const routeLayers={};
 const offCrime=new Set(),offLayers=new Set(['admin']);
 let curId=null;
 const crimeMarkers={},zoneCircles={},estabMarkers={},adminMarkers={};
 
-const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const fmt=v=>v==null?'—':new Intl.NumberFormat('ru-RU').format(v);
 const ESTAB_C={market:'#8C5A2B',mall:'#8C5A2B',complex:'#5B4B8A',settlement:'#1F6B70',street:'#C08A1E',security:'#1b3157','alcohol-m':'#B33F26',dacha:'#5d6b80',cameras:'#333'};
 
 CRIMES.filter(c=>c.ll).forEach(cr=>{
@@ -218,6 +252,11 @@ ADMIN.forEach(a=>{
    .bindPopup(`<h4>${esc(a.stat)} — ${esc(a.n)}</h4><div class="pop-addr">📍 ${esc(a.addr)}</div><div class="pop-row"><span>Фактов</span><b>${fmt(a.cnt)}</b></div><div class="pop-m">${esc(a.note)}</div>`)
    .on('click',()=>selAdmin(a.id));
   gAdmin.addLayer(m);adminMarkers[a.id]=m;
+});
+
+COVERAGE_GAPS.forEach(g=>{
+  gCoverage.addLayer(L.circle(g.ll,{radius:g.radius,color:'#B33F26',weight:2,dashArray:'8 6',fillColor:'#B33F26',fillOpacity:.12})
+   .bindPopup(`<h4>⚠ Вне охвата патруля</h4><div class="pop-addr">${esc(g.addr)}</div><div class="pop-m">${esc(g.note)}</div>`));
 });
 
 function buildRouteLayer(r){
@@ -258,7 +297,7 @@ Object.entries(CAT).forEach(([k,v])=>{
   fcatWrap.appendChild(b);
 });
 
-const layersDef=[{k:'zones',n:'Зоны концентрации',g:gZones,c:'#8C5A2B'},{k:'estab',n:'Заведения и объекты',g:gEstab,c:'#C08A1E'},{k:'resources',n:'Населённые пункты',g:gRes,c:'#1F6B70'},{k:'admin',n:'Адм. правонарушения',g:gAdmin,c:'#C08A1E'}];
+const layersDef=[{k:'zones',n:'Зоны концентрации',g:gZones,c:'#8C5A2B'},{k:'coverage',n:'Вне охвата патруля',g:gCoverage,c:'#B33F26'},{k:'estab',n:'Заведения и объекты',g:gEstab,c:'#C08A1E'},{k:'resources',n:'Населённые пункты',g:gRes,c:'#1F6B70'},{k:'admin',n:'Адм. правонарушения',g:gAdmin,c:'#C08A1E'}];
 const flWrap=document.getElementById('flayers');
 layersDef.forEach(l=>{
   const on=!offLayers.has(l.k);if(on)map.addLayer(l.g);else map.removeLayer(l.g);

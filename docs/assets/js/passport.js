@@ -35,6 +35,58 @@ function dynamicsCards(rows) {
   }).join('');
 }
 
+function integratedBlock(intg, passportId) {
+  if (!intg) return '';
+  const connRows = (intg.connections || []).map((c) => `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card__title">${esc(c.title)}</div>
+      <p style="margin:0 0 8px;font-size:14.5px;color:var(--muted)">${esc(c.conclusion)}</p>
+    </div>`).join('');
+  const shareRows = (intg.locality_compare || []).map((r) => `
+    <div class="stat-row">
+      <span class="stat-row__label">${esc(r.source)}</span>
+      <span class="stat-row__value">${fmt(r.count)} · ${esc(r.share)}</span>
+    </div>`).join('');
+  const funnel = (intg.funnel || []).map((s) => kpiCard(fmt(s.count), s.stage)).join('');
+  const cs = intg.crossmatch_summary || {};
+  return `
+    <div class="callout" style="margin-bottom:16px"><p>${esc(intg.summary)}</p></div>
+    <div class="grid grid--2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card__title">Доли от районного числа</div>
+        ${shareRows || '<p style="margin:0;color:var(--muted)">—</p>'}
+      </div>
+      <div class="card">
+        <div class="card__title">Воронка профилактики</div>
+        <div class="grid grid--2">${funnel}</div>
+      </div>
+    </div>
+    <div class="grid grid--4" style="margin-bottom:16px">
+      ${kpiCard(fmt(cs.unique_persons), 'Лиц в сверке')}
+      ${kpiCard(fmt(cs.match_all_three), 'ОВД+мед+УД', 'полное пересечение')}
+      ${kpiCard(fmt(cs.gap_med_no_police), 'Мед без ОВД')}
+      ${kpiCard(fmt(cs.gap_crime_no_police), 'УД без ОВД')}
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card__title">Скрытые логические связи</div>
+      ${connRows}
+    </div>
+    <div class="grid grid--2">
+      <div class="card">
+        <div class="card__title">Выявленные проблемы</div>
+        <ul class="list-check">${(intg.problems || []).map((t) => `<li><span>${esc(t)}</span></li>`).join('')}</ul>
+      </div>
+      <div class="card">
+        <div class="card__title">Рекомендации</div>
+        <ul class="list-check">${(intg.recommendations || []).map((t) => `<li><span>${esc(t)}</span></li>`).join('')}</ul>
+      </div>
+    </div>
+    <p style="margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap">
+      <a class="tag" href="${passportId === 'kaskelen' ? 'kaskelen_map.html' : 'irgeli_map.html'}" style="padding:9px 15px;text-decoration:none;font-size:13.5px;background:var(--up);color:#fff">
+        Карта + сверка профучёта →</a>
+    </p>`;
+}
+
 function measuresBlock(measures) {
   const fields = [
     ['object', 'Объект'],
@@ -339,6 +391,11 @@ function buildSections(p) {
       lead: 'Каждое мероприятие раскрывается объектом профилактики, исполнителями, сроком и критерием оценки. Нажмите на мероприятие, чтобы развернуть карточку.',
       html: measuresBlock(p.measures),
     },
+    ...(p.integrated ? [{
+      title: 'Сверка профучёта и интегрированный анализ',
+      lead: `Person-level сверка реестров ОВД, медучёта и ЕРДР · ${p.integrated.generated || '2026'}. Новые выводы, проблемы и рекомендации на основе 3 236 лиц.`,
+      html: integratedBlock(p.integrated, p.id),
+    }] : []),
     {
       title: 'Ожидаемые результаты',
       lead: 'Результаты, ожидаемые от реализации приоритетных мероприятий.',
