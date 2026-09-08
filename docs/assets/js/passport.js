@@ -42,9 +42,9 @@ function integratedBlock(intg, passportId) {
       <div class="card__title">${esc(c.title)}</div>
       <p style="margin:0 0 8px;font-size:14.5px;color:var(--muted)">${esc(c.conclusion)}</p>
     </div>`).join('');
-  const shareRows = (intg.locality_compare || []).map((r) => `
+  const shareRows = (intg.locality_compare || []).map((r, i) => `
     <div class="stat-row">
-      <span class="stat-row__label">${esc(r.source)}</span>
+      <span class="stat-row__label">${esc(isStaffView() ? r.source : `Реестр ${i + 1}`)}</span>
       <span class="stat-row__value">${fmt(r.count)} · ${esc(r.share)}</span>
     </div>`).join('');
   const funnel = (intg.funnel || []).map((s) => kpiCard(fmt(s.count), s.stage)).join('');
@@ -82,8 +82,9 @@ function integratedBlock(intg, passportId) {
       </div>
     </div>
     <p style="margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap">
-      <a class="tag" href="${passportId === 'kaskelen' ? 'kaskelen_map.html' : 'irgeli_map.html'}" style="padding:9px 15px;text-decoration:none;font-size:13.5px;background:var(--up);color:#fff">
-        Карта + сверка профучёта →</a>
+      ${isStaffView() ? `<a class="tag" href="${passportId === 'kaskelen' ? 'kaskelen_map.html' : 'irgeli_map.html'}" style="padding:9px 15px;text-decoration:none;font-size:13.5px;background:var(--up);color:#fff">
+        Карта + сверка профучёта →</a>` : `<a class="tag" href="${passportId === 'kaskelen' ? 'kaskelen_map.html' : 'irgeli_map.html'}" style="padding:9px 15px;text-decoration:none;font-size:13.5px;background:var(--up);color:#fff">
+        Карта объектов →</a>`}
     </p>`;
 }
 
@@ -391,7 +392,7 @@ function buildSections(p) {
       lead: 'Каждое мероприятие раскрывается объектом профилактики, исполнителями, сроком и критерием оценки. Нажмите на мероприятие, чтобы развернуть карточку.',
       html: measuresBlock(p.measures),
     },
-    ...(p.integrated ? [{
+    ...(p.integrated && isStaffView() ? [{
       title: 'Сверка профучёта и интегрированный анализ',
       lead: `Person-level сверка реестров ОВД, медучёта и ЕРДР · ${p.integrated.generated || '2026'}. Новые выводы, проблемы и рекомендации на основе 3 236 лиц.`,
       html: integratedBlock(p.integrated, p.id),

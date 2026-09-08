@@ -104,8 +104,9 @@
         ? `<h4 class="lib-card__h">Ключевые идеи</h4><ul class="lib-card__list">${item.key_points.map((k) => `<li>${esc(k)}</li>`).join('')}</ul>`
         : '';
 
-      const dataLink = item.data_link
-        ? `<a class="lib-card__data" href="${esc(item.data_link.href)}">${esc(item.data_link.label)} →</a>`
+      const dl = publicDataLink(item.data_link);
+      const dataLink = dl
+        ? `<a class="lib-card__data" href="${esc(dl.href)}">${esc(dl.label)} →</a>`
         : '';
 
       return `<article class="lib-card lib-card--${item.type}${isOpen ? ' is-open' : ''}" id="lib-${item.id}" data-id="${item.id}">
@@ -137,7 +138,8 @@
   }
 
   function renderApplications() {
-    apps.innerHTML = (DATA.applications || []).map((row) => `
+    const rows = (DATA.applications || []).filter((row) => isStaffView() || !isInternalHref(row.href));
+    apps.innerHTML = rows.map((row) => `
       <article class="lib-app">
         <div class="lib-app__theory">${esc(row.theory)}</div>
         <h4>${esc(row.signal)}</h4>

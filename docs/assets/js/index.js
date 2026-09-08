@@ -1,8 +1,10 @@
 /* Титульная страница: выбор паспорта и сопоставление населённых пунктов. */
 
-document.getElementById('chrome-top').innerHTML = renderTopbar('index');
-document.getElementById('chrome-bottom').innerHTML = renderFooter();
+mountSiteChrome('index');
 
+if (!PASSPORTS.length) {
+  document.getElementById('picker').innerHTML = '<div class="card" style="padding:20px"><p style="margin:0">Данные паспортов не загрузились. Обновите страницу.</p></div>';
+} else {
 const totalPop = PASSPORTS.reduce((sum, p) => sum + (p.summary.population || 0), 0);
 const totalCrimes = PASSPORTS.reduce((sum, p) => sum + (p.summary.crimes.current || 0), 0);
 
@@ -82,7 +84,7 @@ function crimeValue(p, name) {
       : null);
     return `${fmt(Number(cur))} <span style="color:var(--muted)">/ ${fmt(Number(prev))}</span> ${deltaBadge(delta)}`;
   }
-  if (cur !== undefined && cur !== null) return fmt(Number(String(cur).replace(/\s/g, '')) || String(cur);
+  if (cur !== undefined && cur !== null) return fmt(Number(String(cur).replace(/\s/g, '')) || String(cur));
   return fmt(row.value);
 }
 
@@ -122,3 +124,6 @@ document.getElementById('hotspots').innerHTML = PASSPORTS.map((p) => {
       </div>`).join('')}
   </div>`;
 }).join('');
+}
+
+applyPublicView();

@@ -32,7 +32,7 @@
   }
 
   function linkifyLaw(text) {
-    const safe = navEsc(text);
+    const safe = navEsc(sanitizePublicText(text));
     return safe.replace(
       /(ст\.\s*\d+(?:\s*[-–]\s*\d+)?(?:\s*п\.?\s*\d+)?(?:\s*пп\.?\s*\d+)?(?:\s*ЗРК)?)/gi,
       (match) => {

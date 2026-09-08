@@ -9,6 +9,83 @@ const SITE = {
   pages: 'https://adilkarimov50.github.io/krim-passport/',
 };
 
+const STAFF_KEY = 'krim-staff';
+
+const INTERNAL_PAGE_NAMES = new Set([
+  'karasai_analysis.html',
+  'karasai_spravka.html',
+  'registry_crossmatch.html',
+]);
+
+/** Режим сотрудника: ?staff=1 сохраняется в localStorage; ?staff=0 сбрасывает. */
+function isStaffView() {
+  try {
+    const q = new URLSearchParams(location.search);
+    if (q.get('staff') === '1') {
+      localStorage.setItem(STAFF_KEY, '1');
+      return true;
+    }
+    if (q.get('staff') === '0') {
+      localStorage.removeItem(STAFF_KEY);
+      return false;
+    }
+    return localStorage.getItem(STAFF_KEY) === '1';
+  } catch (e) {
+    return new URLSearchParams(location.search).get('staff') === '1';
+  }
+}
+
+function isInternalHref(href) {
+  if (!href) return false;
+  const raw = String(href).split('#')[0].split('?')[0];
+  const name = raw.replace(/^(\.\.\/)+/, '').split('/').pop();
+  if (INTERNAL_PAGE_NAMES.has(name)) return true;
+  return /spravka_sverka|karasai_(analysis|spravka)|registry_crossmatch/i.test(raw);
+}
+
+function isInternalPageFile() {
+  const path = location.pathname.replace(/\\/g, '/');
+  const file = path.split('/').pop() || '';
+  if (INTERNAL_PAGE_NAMES.has(file)) return true;
+  return path.includes('/spravka_sverka_profueta/');
+}
+
+/** Сторонним посетителям закрываем служебные HTML-страницы. */
+function guardInternalPage() {
+  if (isStaffView() || !isInternalPageFile()) return;
+  location.replace(`${sitePrefix()}index.html`);
+}
+
+/** Убираем из текста ссылки на справки, репозиторий и внутренние файлы. */
+function sanitizePublicText(text) {
+  if (text === null || text === undefined || isStaffView()) return text;
+  return String(text)
+    .replace(/справк[аи][^«»]*«Сверка профучёта[^»]*»/gi, 'материалы сверки реестров')
+    .replace(/см\.\s*справку[^.;]*/gi, 'сверить реестры ОВД и медучёта')
+    .replace(/\(passports\/maps\)/gi, 'на сайте')
+    .replace(/\bdigitize\.py\b/gi, 'система оцифровки')
+    .replace(/github\.com[^\s)«»]*/gi, '')
+    .replace(/spravka_sverka[^\s)«»]*/gi, '')
+    .replace(/karasai_[^\s)«»]*/gi, '')
+    .replace(/registry_crossmatch[^\s)«»]*/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function publicDataLink(link) {
+  if (!link || isStaffView() || isInternalHref(link.href)) return null;
+  return link;
+}
+
+function applyPublicView() {
+  if (isStaffView()) return;
+  document.documentElement.classList.add('public-view');
+  document.querySelectorAll('.staff-only').forEach((el) => el.remove());
+  document.querySelectorAll('a[href]').forEach((a) => {
+    if (isInternalHref(a.getAttribute('href'))) a.remove();
+  });
+}
+
 const CATEGORY_COLORS = {
   hotspot: '#cf3f3f',
   street: '#d98324',
@@ -167,6 +244,13 @@ function sitePrefix() {
   return rel > 0 ? '../'.repeat(rel) : '';
 }
 
+function renderTopbarTab(p, href, label, title, key, page, activeId) {
+  const qs = activeId && (key === 'passport' || key === 'map') ? `?id=${activeId}` : '';
+  const primary = key === 'index' || key === 'passport' ? ' tab--primary' : '';
+  return `<a class="tab${primary}" href="${p}${href}${qs}" title="${title}"
+     ${key === page ? 'aria-current="page"' : ''}>${label}</a>`;
+}
+
 function renderTopbar(page, activeId) {
   const p = sitePrefix();
   const tabs = [
@@ -176,6 +260,8 @@ function renderTopbar(page, activeId) {
     ['profilaktika_navigator.html', 'Прокурору', 'Прокурору для работы · Закон № 245', 'navigator'],
     ['nauka_profilaktika.html', 'Наука', 'Наука и практика профилактики', 'library'],
   ];
+  const primary = tabs.slice(0, 2);
+  const secondary = tabs.slice(2);
   return `
   <header class="topbar">
     <div class="wrap topbar__inner">
@@ -186,12 +272,12 @@ function renderTopbar(page, activeId) {
         </span>
       </a>
       <nav class="topbar__nav" aria-label="Разделы сайта">
-        ${tabs.map(([href, label, title, key]) => {
-          const qs = activeId && (key === 'passport' || key === 'map') ? `?id=${activeId}` : '';
-          return `
-          <a class="tab" href="${p}${href}${qs}" title="${title}"
-             ${key === page ? 'aria-current="page"' : ''}>${label}</a>`;
-        }).join('')}
+        <div class="topbar__primary">
+          ${primary.map(([href, label, title, key]) => renderTopbarTab(p, href, label, title, key, page, activeId)).join('')}
+        </div>
+        <div class="topbar__secondary">
+          ${secondary.map(([href, label, title, key]) => renderTopbarTab(p, href, label, title, key, page, activeId)).join('')}
+        </div>
       </nav>
     </div>
   </header>`;
@@ -199,16 +285,17 @@ function renderTopbar(page, activeId) {
 
 function renderFooter() {
   const p = sitePrefix();
+  const staff = isStaffView();
   return `
   <footer class="footer">
     <div class="wrap">
       <div class="footer__grid">
         <div>
           <h3>Цифровой криминологический паспорт</h3>
-          <p>Паспорта населённых пунктов оцифрованы из документов формата .docx и опубликованы
-             в виде интерактивного издания. Исходные данные, скрипт оцифровки и исходный код
-             страницы открыты в репозитории.</p>
-          <p>Репозиторий: <a href="${SITE.repo}">${SITE.repo.replace('https://', '')}</a></p>
+          <p>${staff
+    ? 'Паспорта населённых пунктов оцифрованы из документов формата .docx и опубликованы в виде интерактивного издания. Исходные данные, скрипт оцифровки и исходный код страницы открыты в репозитории.'
+    : 'Интерактивное издание криминологических паспортов населённых пунктов за 2026 год: сравнение показателей, карта объектов и материалы для профилактической работы.'}</p>
+          ${staff ? `<p>Репозиторий: <a href="${SITE.repo}">${SITE.repo.replace('https://', '')}</a></p>` : ''}
           <p>Адрес издания: <a href="${SITE.pages}">${SITE.pages.replace('https://', '')}</a></p>
         </div>
         <div class="footer__qr">
@@ -217,9 +304,8 @@ function renderFooter() {
         </div>
       </div>
       <div class="footer__legal">
-        Источник сведений — криминологические паспорта за 2026 год (формы 1-М, 1-АД, данные акимата,
-        центра занятости населения и отдела образования). Координаты объектов на карте получены
-        геокодированием по OpenStreetMap и носят ориентировочный характер.
+        Сведения основаны на криминологических паспортах за 2026 год. Координаты объектов на карте
+        получены геокодированием по OpenStreetMap и носят ориентировочный характер.
       </div>
     </div>
   </footer>`;
@@ -264,9 +350,15 @@ function resolveActiveId(page) {
 }
 
 (function bootSiteChrome() {
+  guardInternalPage();
   if (!document.getElementById('chrome-top')) return;
   const page = resolveSitePage();
   mountSiteChrome(page, resolveActiveId(page));
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyPublicView);
+  } else {
+    applyPublicView();
+  }
 })();
 
 /** Переключатель населённого пункта; при выборе меняет ?id= в адресе. */
