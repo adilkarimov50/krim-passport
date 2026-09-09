@@ -18,12 +18,18 @@ KARASAI_REPORT_RU = DATA / "karasai" / "report_ru.json"
 KARASAI_REPORT_JS = ROOT / "docs" / "assets" / "js" / "karasai_report_ru.js"
 
 # Порядок населённых пунктов в интерфейсе.
-ORDER = ["kaskelen", "irgeli", "chundzha"]
+ORDER = [
+    "alatau", "konaev", "kaskelen", "talgar",
+    "otegen_batyr", "irgeli", "uzynagash", "chundzha", "issyk",
+]
+
+SKIP_JSON = {"geo", "districts"}
 
 
 def load_passports() -> list[dict]:
     files = {path.stem: path for path in DATA.glob("*.json") if not path.stem.startswith("_")}
-    files.pop("geo", None)
+    for skip in SKIP_JSON:
+        files.pop(skip, None)
     ordered = [name for name in ORDER if name in files]
     ordered += sorted(name for name in files if name not in ORDER)
     return [json.loads(files[name].read_text(encoding="utf-8")) for name in ordered]
@@ -82,9 +88,12 @@ def _build_karasai_js() -> None:
 
 
 def main() -> None:
+    districts_path = DATA / "districts.json"
+    districts = json.loads(districts_path.read_text(encoding="utf-8")) if districts_path.exists() else {}
     payload = {
         "passports": load_passports(),
         "geo": json.loads((DATA / "geo.json").read_text(encoding="utf-8")),
+        "districts": districts,
     }
     body = json.dumps(payload, ensure_ascii=False, indent=1)
     TARGET.parent.mkdir(parents=True, exist_ok=True)

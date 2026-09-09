@@ -6,24 +6,29 @@ if (!PASSPORTS.length) {
   document.getElementById('picker').innerHTML = '<div class="card" style="padding:20px"><p style="margin:0">Данные паспортов не загрузились. Обновите страницу.</p></div>';
 } else {
 const totalPop = PASSPORTS.reduce((sum, p) => sum + (p.summary.population || 0), 0);
-const totalCrimes = PASSPORTS.reduce((sum, p) => sum + (p.summary.crimes.current || 0), 0);
+const FULL_PASSPORTS = PASSPORTS.filter((p) => !isProfileOnly(p));
+const totalCrimes = FULL_PASSPORTS.reduce((sum, p) => sum + (p.summary.crimes?.current || 0), 0);
 
 document.getElementById('hero-count').textContent = `${PASSPORTS.length} ${PASSPORTS.length === 1 ? 'населённый пункт' : PASSPORTS.length < 5 ? 'населённых пункта' : 'населённых пунктов'}`;
 document.getElementById('hero-pop').textContent = `${fmt(totalPop)} жителей`;
-document.getElementById('hero-crimes').textContent = `${fmt(totalCrimes)} уголовных правонарушений`;
+document.getElementById('hero-crimes').textContent = FULL_PASSPORTS.length
+  ? `${fmt(totalCrimes)} уголовных (3 полных паспорта)`
+  : 'кримпаспорта уточняются';
 
 /* Карточки выбора паспорта */
 const MAP_LINKS = { kaskelen: 'kaskelen_map.html', irgeli: 'irgeli_map.html', chundzha: 'chundzha_map.html' };
 document.getElementById('picker').innerHTML = PASSPORTS.map((p) => {
-  const c = p.summary.crimes;
+  const c = p.summary.crimes || {};
   const mapLink = MAP_LINKS[p.id];
+  const lp = p.locality_profile || {};
+  const economy = (lp.economy?.primary_activity || []).slice(0, 2).join(', ') || '—';
   return `
   <div class="pcard" style="display:flex;flex-direction:column">
     <a href="passport.html?id=${p.id}" style="flex:1;display:block;text-decoration:none;color:inherit">
     <div class="pcard__top">
-      <div class="pcard__kicker">${esc(p.summary.district)}</div>
+      <div class="pcard__kicker">${esc(p.summary.district || p.district)} ${passportStatusBadge(p)}</div>
       <h3>${esc(p.name)}</h3>
-      <p>${esc(p.summary.description)}</p>
+      <p>${esc((lp.highlights || [])[0] || p.summary.description)}</p>
     </div>
     <div class="pcard__grid">
       <div class="pcard__cell">
@@ -31,20 +36,61 @@ document.getElementById('picker').innerHTML = PASSPORTS.map((p) => {
         <span>населения</span>
       </div>
       <div class="pcard__cell">
-        <b>${fmt(c.current)}</b>
-        <span>правонарушений ${deltaBadge(c.delta_pct ?? null)}</span>
+        <b>${isProfileOnly(p) ? economy : fmt(c.current)}</b>
+        <span>${isProfileOnly(p) ? 'основная занятость' : `правонарушений ${deltaBadge(c.delta_pct ?? null)}`}</span>
       </div>
       <div class="pcard__cell">
-        <b>${String(p.summary.rate_per_10k).replace('.', ',')}</b>
-        <span>на 10 тыс. нас.</span>
+        <b>${isProfileOnly(p) ? (lp.settlement_type === 'city' ? 'город' : 'село') : String(p.summary.rate_per_10k ?? '—').replace('.', ',')}</b>
+        <span>${isProfileOnly(p) ? 'тип НП' : 'на 10 тыс. нас.'}</span>
       </div>
     </div>
-    <div class="pcard__foot"><span>Открыть паспорт</span><span class="arrow">→</span></div>
+    <div class="pcard__foot"><span>${isProfileOnly(p) ? 'Открыть профиль' : 'Открыть паспорт'}</span><span class="arrow">→</span></div>
     </a>
     ${mapLink ? `<a href="${mapLink}" style="display:block;margin:0;padding:10px 16px;background:var(--up);color:#fff;text-decoration:none;font-size:13px;font-weight:600;text-align:center">
       Карта + маршруты патрулирования →</a>` : ''}
   </div>`;
 }).join('');
+
+function renderLocalityCards(filter) {
+  const list = PASSPORTS.filter((p) => {
+    if (filter === 'city') return p.locality_profile?.settlement_type === 'city';
+    if (filter === 'village') return p.locality_profile?.settlement_type === 'village';
+    return true;
+  });
+  const groups = (DISTRICTS.districts || []).length ? DISTRICTS.districts : [{ id: 'all', title: 'Все', localities: list.map((p) => p.id) }];
+  return groups.map((g) => {
+    const items = list.filter((p) => !g.localities || g.localities.includes(p.id));
+    if (!items.length) return '';
+    return `<div class="locality-group"><h3 class="locality-group__title">${esc(g.title)}</h3>
+      <div class="grid grid--3">${items.map((p) => {
+        const lp = p.locality_profile || {};
+        const ethnic = (lp.ethnic_composition || []).slice(0, 3).map((e) => `${e.group} ${e.share_pct}%`).join(', ');
+        return `<div class="card locality-card">
+          <div class="locality-card__head">${passportStatusBadge(p)} <strong>${esc(p.name)}</strong></div>
+          <p style="margin:8px 0;font-size:14px;color:var(--muted)">${esc((lp.highlights || [])[0] || p.summary.description)}</p>
+          <div class="stat-row"><span class="stat-row__label">Население</span><span class="stat-row__value">${fmt(lp.population?.total || p.summary.population)}</span></div>
+          <div class="stat-row"><span class="stat-row__label">Этнос (топ-3)</span><span class="stat-row__value">${esc(ethnic || '—')}</span></div>
+          <div class="stat-row"><span class="stat-row__label">Миграция</span><span class="stat-row__value">${esc(lp.population?.internal_migrants_note || '—')}</span></div>
+          <div class="stat-row"><span class="stat-row__label">Экономика</span><span class="stat-row__value">${esc((lp.economy?.primary_activity || []).join(', ') || '—')}</span></div>
+          <p style="margin:12px 0 0"><a class="tag" href="passport.html?id=${p.id}" style="padding:8px 14px;text-decoration:none;font-size:13px">Подробнее →</a></p>
+        </div>`;
+      }).join('')}</div></div>`;
+  }).join('');
+}
+
+const localityEl = document.getElementById('locality-profiles');
+if (localityEl) {
+  let locFilter = 'all';
+  const draw = () => { localityEl.innerHTML = renderLocalityCards(locFilter); };
+  draw();
+  document.querySelectorAll('[data-loc-filter]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      locFilter = btn.dataset.locFilter;
+      document.querySelectorAll('[data-loc-filter]').forEach((b) => b.classList.toggle('active', b === btn));
+      draw();
+    });
+  });
+}
 
 /* Сравнительная таблица */
 function adminTotal(p) {
@@ -143,10 +189,17 @@ function passportNarrative(p) {
 }
 
 setHtml('dash-kpi', PASSPORTS.map((p) => {
+  if (isProfileOnly(p)) {
+    return `<div class="card" style="opacity:.92">
+      <div class="card__title">${esc(p.name)} ${passportStatusBadge(p)}</div>
+      <p style="margin:0;color:var(--muted);font-size:14px">Полный кримпаспорт готовится. Доступен обзорный профиль.</p>
+      <p style="margin:14px 0 0"><a class="tag" href="passport.html?id=${p.id}" style="padding:8px 14px;text-decoration:none;font-size:13px">Открыть профиль →</a></p>
+    </div>`;
+  }
   const c = p.summary.crimes;
   const adm = adminTotal(p);
   return `<div class="card">
-    <div class="card__title">${esc(p.name)}</div>
+    <div class="card__title">${esc(p.name)} ${passportStatusBadge(p)}</div>
     <div class="grid grid--2" style="gap:10px">
       ${kpiCard(fmt(p.summary.population), 'Население')}
       ${kpiCard(fmt(c.current), 'Уголовных', `АППГ ${fmt(c.previous)}`, deltaBadge(c.delta_pct ?? null))}
@@ -157,7 +210,7 @@ setHtml('dash-kpi', PASSPORTS.map((p) => {
   </div>`;
 }).join(''));
 
-setHtml('dash-crime', PASSPORTS.map((p) => {
+setHtml('dash-crime', FULL_PASSPORTS.map((p) => {
   const rows = (p.crime_structure || []).filter((r) => r.current != null && !/^всего/i.test(r.indicator));
   if (!rows.length) return `<div class="card"><div class="card__title">${esc(p.name)}</div><p style="margin:0;color:var(--muted)">Нет данных</p></div>`;
   return `<div class="card card--flush" style="padding:16px 18px">
@@ -209,10 +262,10 @@ setHtml('dash-narrative', PASSPORTS.map((p) => {
 
 setHtml('compare', `
   <thead><tr><th>Показатель</th>${PASSPORTS.map((p) => `<th class="num">${esc(p.name)}</th>`).join('')}</tr></thead>
-  <tbody>${COMPARE_ROWS.map(([label, render]) => `
+  <tbody>${COMPARE_ROWS.map(([label, render, crimeRow]) => `
     <tr>
       <td>${esc(label)}</td>
-      ${PASSPORTS.map((p) => `<td class="num">${render(p)}</td>`).join('')}
+      ${PASSPORTS.map((p) => `<td class="num">${isProfileOnly(p) && crimeRow ? '<span style="color:var(--muted)">—</span>' : render(p)}</td>`).join('')}
     </tr>`).join('')}
   </tbody>`);
 

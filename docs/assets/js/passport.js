@@ -464,32 +464,69 @@ function buildSections(p) {
   ];
 }
 
+/* ---------- Профиль-only режим ---------- */
+
+function buildProfileOnlySections(p) {
+  return [
+    {
+      title: 'Социально-экономический профиль',
+      lead: 'Характеристика населённого пункта по данным БНС и официальных источников — основа для профилактики правонарушений.',
+      html: localityProfileHtml(p),
+    },
+    {
+      title: 'Криминологический паспорт',
+      lead: 'Полный паспорт из 18 разделов готовится к публикации.',
+      html: `<div class="callout card-warn" style="border-left:4px solid var(--gold)">
+        <p style="margin:0 0 12px">Для <strong>${esc(p.name)}</strong> пока доступен обзорный профиль. Структура преступности, административная практика и мероприятия будут добавлены после оцифровки официального документа.</p>
+        <p style="margin:0;font-size:14px;color:var(--muted)">Источники: ${(p.locality_profile?.sources || []).map((s) => esc(s.title)).join(', ') || 'БНС РК'}</p>
+      </div>`,
+    },
+  ];
+}
+
 /* ---------- Отрисовка страницы ---------- */
 
 function render(id) {
   active = id;
   const p = getPassport(id);
   const s = p.summary;
+  const profileOnly = isProfileOnly(p);
 
   history.replaceState(null, '', `?id=${id}`);
-  document.title = `Криминологический паспорт · ${p.name} · 2026`;
+  document.title = `${profileOnly ? 'Профиль' : 'Криминологический паспорт'} · ${p.name} · 2026`;
   document.getElementById('chrome-top').innerHTML = renderTopbar('passport', id);
   document.getElementById('chrome-bottom').innerHTML = renderFooter();
 
-  document.getElementById('p-name').textContent = `Криминологический паспорт — ${p.name}`;
+  document.getElementById('p-name').textContent = `${profileOnly ? 'Социально-экономический профиль' : 'Криминологический паспорт'} — ${p.name}`;
   document.getElementById('p-desc').textContent = s.description;
-  document.getElementById('p-chips').innerHTML = [
-    ['chip--gold', `${fmt(s.crimes.current)} уголовных правонарушений`],
-    ['', `${fmt(s.population)} жителей`],
-    ['', `${String(s.rate_per_10k).replace('.', ',')} на 10 тыс. населения`],
-    ['', esc(p.district)],
-  ].map(([mod, text]) => `<span class="chip ${mod}">${text}</span>`).join('');
+  const chips = profileOnly
+    ? [
+      ['chip--gold', `${fmt(s.population)} жителей`],
+      ['', esc(p.district || s.district || '')],
+      ['', passportStatusBadge(p).replace(/<[^>]+>/g, '')],
+    ]
+    : [
+      ['chip--gold', `${fmt(s.crimes.current)} уголовных правонарушений`],
+      ['', `${fmt(s.population)} жителей`],
+      ['', s.rate_per_10k != null ? `${String(s.rate_per_10k).replace('.', ',')} на 10 тыс. населения` : ''],
+      ['', esc(p.district)],
+    ];
+  document.getElementById('p-chips').innerHTML = chips
+    .filter(([, t]) => t)
+    .map(([mod, text]) => `<span class="chip ${mod}">${text}</span>`).join('');
 
   document.getElementById('p-switch').innerHTML = renderSwitch(id, render);
 
   let sections;
   try {
-    sections = buildSections(p);
+    sections = profileOnly ? buildProfileOnlySections(p) : buildSections(p);
+    if (!profileOnly && p.locality_profile) {
+      sections.unshift({
+        title: 'Социально-экономический профиль',
+        lead: 'Население, этнический состав, экономика и факторы, влияющие на профилактику правонарушений.',
+        html: localityProfileHtml(p),
+      });
+    }
   } catch (err) {
     console.error(err);
     document.getElementById('sections').innerHTML = '<div class="card" style="padding:24px"><p style="margin:0">Не удалось загрузить разделы паспорта. Обновите страницу: <b>Cmd+Shift+R</b> (Mac) или <b>Ctrl+Shift+R</b> (Windows).</p></div>';

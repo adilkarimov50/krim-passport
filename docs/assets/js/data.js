@@ -2,6 +2,202 @@
 window.KRIM_DATA = {
  "passports": [
   {
+   "id": "alatau",
+   "name": "г. Алатау",
+   "title": "Криминологический профиль — г. Алатау",
+   "district": "г. Алматы, район «Алатау»",
+   "year": 2026,
+   "passport_status": "profile_only",
+   "summary": {
+    "settlement": "г. Алатау",
+    "district": "г. Алматы, район «Алатау»",
+    "population": 312000,
+    "description": "Новый административный район Алматы с высокой плотностью застройки",
+    "crimes": {
+     "current": null,
+     "previous": null,
+     "delta_pct": null
+    },
+    "rate_per_10k": null
+   },
+   "locality_profile": {
+    "settlement_type": "city",
+    "admin_unit": "г. Алматы, район «Алатау»",
+    "region": "г. Алматы",
+    "population": {
+     "total": 312000,
+     "year": 2025,
+     "local_permanent": 180960,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Значительная доля приезжих и внутренних мигрантов; спутник Алматы"
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 62.5
+     },
+     {
+      "group": "русские",
+      "share_pct": 24.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 13.5
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "торговля",
+      "услуги",
+      "строительство"
+     ],
+     "sme_registered": 28500,
+     "agriculture": {
+      "livestock": false,
+      "crops": []
+     },
+     "industry_services_note": "торговля; услуги; строительство"
+    },
+    "social_features": [
+     "спутник Алматы",
+     "транзит",
+     "плотная застройка"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Высокая мобильность и концентрация торговых объектов",
+      "risk": "high",
+      "implication": "Требуется адресная профилактика в ТПУ и торговых центрах"
+     }
+    ],
+    "highlights": [
+     "Новый административный район Алматы с высокой плотностью застройки",
+     "Ежедневный pendular-поток в центр Алматы"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "profile",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + БНС"
+   },
+   "crime_structure": [],
+   "admin_practice": [],
+   "registry": [],
+   "measures": [],
+   "expected_results": []
+  },
+  {
+   "id": "konaev",
+   "name": "г. Конаев",
+   "title": "Криминологический профиль — г. Конаев",
+   "district": "Капшагайский район",
+   "year": 2026,
+   "passport_status": "profile_only",
+   "summary": {
+    "settlement": "г. Конаев",
+    "district": "Капшагайский район",
+    "population": 52000,
+    "description": "Город у Капшагайского моря — курорт и промышленная зона",
+    "crimes": {
+     "current": null,
+     "previous": null,
+     "delta_pct": null
+    },
+    "rate_per_10k": null
+   },
+   "locality_profile": {
+    "settlement_type": "city",
+    "admin_unit": "Капшагайский район",
+    "region": "Алматинская область",
+    "population": {
+     "total": 52000,
+     "year": 2025,
+     "local_permanent": 37440,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Сезонный приток на водохранилище и промзону"
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 68.0
+     },
+     {
+      "group": "русские",
+      "share_pct": 22.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 10.0
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "промышленность",
+      "услуги",
+      "торговля"
+     ],
+     "sme_registered": 4200,
+     "agriculture": {
+      "livestock": false,
+      "crops": []
+     },
+     "industry_services_note": "промышленность; услуги; торговля"
+    },
+    "social_features": [
+     "Капшагайское водохранилище",
+     "сезонность",
+     "промзона"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Сезонная безработица и алкоголизация отдыха",
+      "risk": "medium",
+      "implication": "Усилить профилактику в летний период и у объектов отдыха"
+     }
+    ],
+    "highlights": [
+     "Город у Капшагайского моря — курорт и промышленная зона",
+     "Сезонная занятость и миграция летом"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "profile",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + БНС"
+   },
+   "crime_structure": [],
+   "admin_practice": [],
+   "registry": [],
+   "measures": [],
+   "expected_results": []
+  },
+  {
    "id": "kaskelen",
    "name": "г. Каскелен",
    "title": "г. Каскелен",
@@ -137,7 +333,16 @@ window.KRIM_DATA = {
    ],
    "offender_profile": [],
    "victim_profile": [],
-   "time_of_day": [],
+   "time_of_day": [
+    {
+     "period": "Вечернее и ночное (18:00–04:00)",
+     "count": 413
+    },
+    {
+     "period": "Дневное",
+     "count": 141
+    }
+   ],
    "hotspots": [
     {
      "object": "ул. Абылай хана, 1 — магазин и баня",
@@ -456,7 +661,23 @@ window.KRIM_DATA = {
    ],
    "factors": [],
    "causes": [],
-   "registry": [],
+   "registry": [
+    {
+     "category": "Алкозлоупотребляющие (ОВД)",
+     "count": 16,
+     "raw": "из интегрированного анализа"
+    },
+    {
+     "category": "ст.442 КоАП — несовершеннолетние ночью",
+     "count": 93,
+     "raw": "адм. практика"
+    },
+    {
+     "category": "Семьи риска (семейно-бытовая)",
+     "count": 4,
+     "raw": "учёт"
+    }
+   ],
    "criminogenic_objects": [
     {
      "object": "Объекты реализации алкоголя",
@@ -545,7 +766,53 @@ window.KRIM_DATA = {
      "comment": "фамилия сотрудника за каждым объектом и микрозоной"
     }
    ],
-   "measures": [],
+   "measures": [
+    {
+     "number": 1,
+     "title": "Освещение и видеонаблюдение",
+     "object": "ул. Абылай хана — 3 микрозоны",
+     "executors": "Акимат, ОВД",
+     "term": "2026",
+     "criterion": "Снижение краж на 20%",
+     "rationale": ""
+    },
+    {
+     "number": 2,
+     "title": "Долевое строительство",
+     "object": "ЖК в стадии строительства",
+     "executors": "Прокуратура, акимат",
+     "term": "2026",
+     "criterion": "Реестр обманутых дольщиков",
+     "rationale": ""
+    },
+    {
+     "number": 3,
+     "title": "Патрулирование",
+     "object": "Вечерние маршруты",
+     "executors": "ОВД",
+     "term": "постоянно",
+     "criterion": "Покрытие 74,7% ночных преступлений",
+     "rationale": ""
+    },
+    {
+     "number": 4,
+     "title": "Сверка ЦЗН и профучёта",
+     "object": "Незанятые правонарушители",
+     "executors": "ЦЗН, ОВД",
+     "term": "2026",
+     "criterion": "Сокращение разрыва 8:1",
+     "rationale": ""
+    },
+    {
+     "number": 5,
+     "title": "Семьи риска",
+     "object": "Семейно-бытовая сфера",
+     "executors": "КДН, ОВД",
+     "term": "2026",
+     "criterion": "Учёт повторных обращений 102",
+     "rationale": ""
+    }
+   ],
    "expected_results": [
     "Раздел введён по результатам сопоставления данных паспорта с открытыми источниками за 2023–2026 годы. Включены только проблемы, которые не устраняются длительное время и при этом напрямую влияют на криминогенную обстановку. По каждой указано, чем факт подтверждается, кто отвечает за устранение и что именно меняется в профилактике при её решении.",
     "1. Освещение и видеонаблюдение",
@@ -754,7 +1021,276 @@ window.KRIM_DATA = {
       "warn": true
      }
     ]
+   },
+   "passport_status": "full",
+   "locality_profile": {
+    "settlement_type": "city",
+    "admin_unit": "Карасайский район",
+    "region": "Алматинская область",
+    "population": {
+     "total": 87023,
+     "year": 2025,
+     "local_permanent": 47862,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Высокая доля приезжих; дневной поток 80–90 тыс."
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 45.0
+     },
+     {
+      "group": "русские",
+      "share_pct": 28.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 27.0
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "торговля",
+      "услуги",
+      "рынки"
+     ],
+     "sme_registered": 8900,
+     "agriculture": {
+      "livestock": false,
+      "crops": []
+     },
+     "industry_services_note": "торговля; услуги; рынки"
+    },
+    "social_features": [
+     "агломерация Алматы",
+     "рынки",
+     "маятниковая миграция"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Незанятость и концентрация торговли",
+      "risk": "high",
+      "implication": "Средовые меры: освещение камеры патрули в микрозонах"
+     }
+    ],
+    "highlights": [
+     "Крупнейший город области у Алматы — рынки и миграция",
+     "74,7% преступлений — вечернее и ночное время"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "full",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + паспорт"
    }
+  },
+  {
+   "id": "talgar",
+   "name": "г. Талгар",
+   "title": "Криминологический профиль — г. Талгар",
+   "district": "Талгарский район",
+   "year": 2026,
+   "passport_status": "profile_only",
+   "summary": {
+    "settlement": "г. Талгар",
+    "district": "Талгарский район",
+    "population": 45000,
+    "description": "Пригород с дачным и туристическим потоком",
+    "crimes": {
+     "current": null,
+     "previous": null,
+     "delta_pct": null
+    },
+    "rate_per_10k": null
+   },
+   "locality_profile": {
+    "settlement_type": "city",
+    "admin_unit": "Талгарский район",
+    "region": "Алматинская область",
+    "population": {
+     "total": 45000,
+     "year": 2025,
+     "local_permanent": 29250,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Дачные кооперативы и пригородное население"
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 70.0
+     },
+     {
+      "group": "русские",
+      "share_pct": 18.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 12.0
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "торговля",
+      "услуги",
+      "туризм"
+     ],
+     "sme_registered": 5100,
+     "agriculture": {
+      "livestock": false,
+      "crops": []
+     },
+     "industry_services_note": "торговля; услуги; туризм"
+    },
+    "social_features": [
+     "дачные кооперативы",
+     "трасса Алматы–Чунджа"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Алкоголь и ДТП на трассе",
+      "risk": "medium",
+      "implication": "Патрулирование трассы и профилактика у дачных зон"
+     }
+    ],
+    "highlights": [
+     "Пригород с дачным и туристическим потоком",
+     "Транзитная магистраль и сезонные дачники"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "profile",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + БНС"
+   },
+   "crime_structure": [],
+   "admin_practice": [],
+   "registry": [],
+   "measures": [],
+   "expected_results": []
+  },
+  {
+   "id": "otegen_batyr",
+   "name": "с. Отеген батыр",
+   "title": "Криминологический профиль — с. Отеген батыр",
+   "district": "Карасайский район",
+   "year": 2026,
+   "passport_status": "profile_only",
+   "summary": {
+    "settlement": "с. Отеген батыр",
+    "district": "Карасайский район",
+    "population": 32000,
+    "description": "Пригородный населённый пункт Карасайского района",
+    "crimes": {
+     "current": null,
+     "previous": null,
+     "delta_pct": null
+    },
+    "rate_per_10k": null
+   },
+   "locality_profile": {
+    "settlement_type": "village",
+    "admin_unit": "Карасайский район",
+    "region": "Алматинская область",
+    "population": {
+     "total": 32000,
+     "year": 2025,
+     "local_permanent": 24960,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Пригород Каскелена — часть жителей работает в Алматы"
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 72.0
+     },
+     {
+      "group": "русские",
+      "share_pct": 15.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 13.0
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "сельхоз",
+      "услуги",
+      "торговля"
+     ],
+     "sme_registered": 2800,
+     "agriculture": {
+      "livestock": true,
+      "crops": []
+     },
+     "industry_services_note": "сельхоз; услуги; торговля"
+    },
+    "social_features": [
+     "пригород",
+     "сельхоз",
+     "маятниковая миграция"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Молодёжь без занятости вне сезона",
+      "risk": "medium",
+      "implication": "Профилактика NEET и ночных нарушений ст.442"
+     }
+    ],
+    "highlights": [
+     "Пригородный населённый пункт Карасайского района",
+     "Сельхоз и услуги для прилегающих сёл"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "profile",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + БНС"
+   },
+   "crime_structure": [],
+   "admin_practice": [],
+   "registry": [],
+   "measures": [],
+   "expected_results": []
   },
   {
    "id": "irgeli",
@@ -934,7 +1470,16 @@ window.KRIM_DATA = {
    ],
    "offender_profile": [],
    "victim_profile": [],
-   "time_of_day": [],
+   "time_of_day": [
+    {
+     "period": "Вечернее и ночное",
+     "count": 155
+    },
+    {
+     "period": "Дневное",
+     "count": 65
+    }
+   ],
    "hotspots": [
     {
      "object": "Алтын Орда — бутики ювелирных изделий",
@@ -1218,7 +1763,18 @@ window.KRIM_DATA = {
    ],
    "factors": [],
    "causes": [],
-   "registry": [],
+   "registry": [
+    {
+     "category": "Наркологический учёт ОВД",
+     "count": 6,
+     "raw": "август 2026"
+    },
+    {
+     "category": "Профучёт (сводно)",
+     "count": 0,
+     "raw": "уточняется"
+    }
+   ],
    "criminogenic_objects": [
     {
      "object": "УТК «Алтын Орда»",
@@ -1311,7 +1867,26 @@ window.KRIM_DATA = {
      "comment": "фамилия сотрудника за каждым объектом и микрозоной"
     }
    ],
-   "measures": [],
+   "measures": [
+    {
+     "number": 1,
+     "title": "Патрулирование сельского округа",
+     "object": "с. Иргели, с. Казмаис",
+     "executors": "ОВД",
+     "term": "2026",
+     "criterion": "Покрытие вечерних маршрутов",
+     "rationale": ""
+    },
+    {
+     "number": 2,
+     "title": "Сверка медучёта и ОВД",
+     "object": "Сельский округ",
+     "executors": "ОВД, МЗ",
+     "term": "2026",
+     "criterion": "Сокращение разрыва 99,7%",
+     "rationale": ""
+    }
+   ],
    "expected_results": [
     "Раздел введён по результатам сопоставления данных паспорта с открытыми источниками за 2023–2026 годы. Включены только проблемы, которые не устраняются длительное время и при этом напрямую влияют на криминогенную обстановку. По каждой указано, чем факт подтверждается, кто отвечает за устранение и что именно меняется в профилактике при её решении.",
     "1. Отсутствие школы в ЖК «Асыл Арман»",
@@ -1520,7 +2095,179 @@ window.KRIM_DATA = {
       "warn": true
      }
     ]
+   },
+   "passport_status": "full",
+   "locality_profile": {
+    "settlement_type": "village",
+    "admin_unit": "Карасайский район, Иргелинский с.о.",
+    "region": "Алматинская область",
+    "population": {
+     "total": 63152,
+     "year": 2025,
+     "local_permanent": 51784,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Сельский округ — несколько сёл; разбросанность"
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 78.0
+     },
+     {
+      "group": "русские",
+      "share_pct": 12.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 10.0
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "сельхоз",
+      "животноводство",
+      "услуги"
+     ],
+     "sme_registered": 1900,
+     "agriculture": {
+      "livestock": true,
+      "crops": []
+     },
+     "industry_services_note": "сельхоз; животноводство; услуги"
+    },
+    "social_features": [
+     "сельский округ",
+     "разбросанность",
+     "сельхоз"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Разрыв медучёта и профучёта ОВД",
+      "risk": "high",
+      "implication": "Сверка реестров ОВД и медучёта по ИИН"
+     }
+    ],
+    "highlights": [
+     "Крупный сельский округ Карасайского района",
+     "Животноводство и сезонная занятость"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "full",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + паспорт"
    }
+  },
+  {
+   "id": "uzynagash",
+   "name": "с. Узынагаш",
+   "title": "Криминологический профиль — с. Узынагаш",
+   "district": "Карасайский район",
+   "year": 2026,
+   "passport_status": "profile_only",
+   "summary": {
+    "settlement": "с. Узынагаш",
+    "district": "Карасайский район",
+    "population": 24000,
+    "description": "Транзитный узел на трассе в сторону Чунджи",
+    "crimes": {
+     "current": null,
+     "previous": null,
+     "delta_pct": null
+    },
+    "rate_per_10k": null
+   },
+   "locality_profile": {
+    "settlement_type": "village",
+    "admin_unit": "Карасайский район",
+    "region": "Алматинская область",
+    "population": {
+     "total": 24000,
+     "year": 2025,
+     "local_permanent": 19200,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Транзитная магистраль Алматы–Бишкек"
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 75.0
+     },
+     {
+      "group": "русские",
+      "share_pct": 14.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 11.0
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "торговля",
+      "транзит",
+      "услуги"
+     ],
+     "sme_registered": 2100,
+     "agriculture": {
+      "livestock": false,
+      "crops": []
+     },
+     "industry_services_note": "торговля; транзит; услуги"
+    },
+    "social_features": [
+     "транзит",
+     "магистраль",
+     "торговля"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Кражи и мошенничества у транзитных объектов",
+      "risk": "medium",
+      "implication": "Контроль торговых точек и камер на трассе"
+     }
+    ],
+    "highlights": [
+     "Транзитный узел на трассе в сторону Чунджи",
+     "Торговля и сервис для транзитного потока"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "profile",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + БНС"
+   },
+   "crime_structure": [],
+   "admin_practice": [],
+   "registry": [],
+   "measures": [],
+   "expected_results": []
   },
   {
    "id": "chundzha",
@@ -2751,7 +3498,179 @@ window.KRIM_DATA = {
      ],
      "table_count": 1
     }
-   ]
+   ],
+   "passport_status": "full",
+   "locality_profile": {
+    "settlement_type": "village",
+    "admin_unit": "Уйгурский район",
+    "region": "Алматинская область",
+    "population": {
+     "total": 22000,
+     "year": 2025,
+     "local_permanent": 15400,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Приграничье; этническое разнообразие; торговля"
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 55.0
+     },
+     {
+      "group": "русские",
+      "share_pct": 8.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 37.0
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "торговля",
+      "сельхоз",
+      "услуги"
+     ],
+     "sme_registered": 1800,
+     "agriculture": {
+      "livestock": true,
+      "crops": []
+     },
+     "industry_services_note": "торговля; сельхоз; услуги"
+    },
+    "social_features": [
+     "приграничье",
+     "этническое разнообразие",
+     "торговля"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Безработица 8,4% и 74% безработных среди правонарушителей",
+      "risk": "high",
+      "implication": "Адресная занятость и профилактика мошенничества"
+     }
+    ],
+    "highlights": [
+     "Административный центр Уйгурского района",
+     "Приграничная торговля и миграция"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "full",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + паспорт"
+   }
+  },
+  {
+   "id": "issyk",
+   "name": "г. Иссык",
+   "title": "Криминологический профиль — г. Иссык",
+   "district": "Енбекшиказахский район",
+   "year": 2026,
+   "passport_status": "profile_only",
+   "summary": {
+    "settlement": "г. Иссык",
+    "district": "Енбекшиказахский район",
+    "population": 21000,
+    "description": "Курортный город у озера Иссык",
+    "crimes": {
+     "current": null,
+     "previous": null,
+     "delta_pct": null
+    },
+    "rate_per_10k": null
+   },
+   "locality_profile": {
+    "settlement_type": "city",
+    "admin_unit": "Енбекшиказахский район",
+    "region": "Алматинская область",
+    "population": {
+     "total": 21000,
+     "year": 2025,
+     "local_permanent": 14280,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Туризм у озера Иссык — сезонный приток"
+    },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 73.0
+     },
+     {
+      "group": "русские",
+      "share_pct": 16.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 11.0
+     }
+    ],
+    "economy": {
+     "primary_activity": [
+      "туризм",
+      "услуги",
+      "торговля"
+     ],
+     "sme_registered": 2400,
+     "agriculture": {
+      "livestock": false,
+      "crops": []
+     },
+     "industry_services_note": "туризм; услуги; торговля"
+    },
+    "social_features": [
+     "озеро Иссык",
+     "туризм",
+     "сезонность"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Мошенничества и кражи в сезон",
+      "risk": "medium",
+      "implication": "Усиление профилактики в туристический сезон"
+     }
+    ],
+    "highlights": [
+     "Курортный город у озера Иссык",
+     "Сезонная занятость и туристический поток"
+    ],
+    "sources": [
+     {
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
+      "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
+     }
+    ]
+   },
+   "data_quality": {
+    "completeness": "profile",
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + БНС"
+   },
+   "crime_structure": [],
+   "admin_practice": [],
+   "registry": [],
+   "measures": [],
+   "expected_results": []
   }
  ],
  "geo": {
@@ -3667,6 +4586,126 @@ window.KRIM_DATA = {
      "detail": "Перечень адресов в паспорте не раскрыт; подлежит запросу в ОВД."
     }
    ]
+  },
+  "alatau": {
+   "center": [
+    43.238,
+    76.852
+   ],
+   "zoom": 12,
+   "points": []
+  },
+  "konaev": {
+   "center": [
+    43.883,
+    77.075
+   ],
+   "zoom": 12,
+   "points": []
+  },
+  "talgar": {
+   "center": [
+    43.303,
+    77.237
+   ],
+   "zoom": 12,
+   "points": []
+  },
+  "otegen_batyr": {
+   "center": [
+    43.419,
+    76.628
+   ],
+   "zoom": 13,
+   "points": []
+  },
+  "uzynagash": {
+   "center": [
+    43.248,
+    76.718
+   ],
+   "zoom": 13,
+   "points": []
+  },
+  "issyk": {
+   "center": [
+    43.182,
+    77.448
+   ],
+   "zoom": 12,
+   "points": []
   }
+ },
+ "districts": {
+  "groups": [
+   {
+    "id": "almaty_city",
+    "title": "г. Алматы",
+    "localities": [
+     "alatau"
+    ]
+   },
+   {
+    "id": "almaty_region",
+    "title": "Алматинская область",
+    "localities": [
+     "konaev",
+     "kaskelen",
+     "talgar",
+     "otegen_batyr",
+     "irgeli",
+     "uzynagash",
+     "chundzha",
+     "issyk"
+    ]
+   }
+  ],
+  "districts": [
+   {
+    "id": "karasai",
+    "title": "Карасайский район",
+    "localities": [
+     "kaskelen",
+     "otegen_batyr",
+     "irgeli",
+     "uzynagash"
+    ]
+   },
+   {
+    "id": "talgar",
+    "title": "Талгарский район",
+    "localities": [
+     "talgar"
+    ]
+   },
+   {
+    "id": "uygur",
+    "title": "Уйгурский район",
+    "localities": [
+     "chundzha"
+    ]
+   },
+   {
+    "id": "enbekshi",
+    "title": "Енбекшиказахский район",
+    "localities": [
+     "issyk"
+    ]
+   },
+   {
+    "id": "kapshagai",
+    "title": "Капшагайский район",
+    "localities": [
+     "konaev"
+    ]
+   },
+   {
+    "id": "alatau",
+    "title": "район «Алатау», г. Алматы",
+    "localities": [
+     "alatau"
+    ]
+   }
+  ]
  }
 };

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Карта патрулирования — Иргелинский с/о · 2026</title>
-<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/app.css?v=20260909a">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -112,7 +112,7 @@ aside{width:320px;flex-shrink:0;background:var(--paper2);border-right:1px solid 
 </aside>
 <div id="map"></div>
 </main>
-<script src="assets/js/integrated_maps.js"></script>
+<script src="assets/js/integrated_maps.js?v=20260909a"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const LOC_ID='irgeli';
@@ -124,7 +124,7 @@ function renderIntegratedPanel(){
   if(!d||!wrap)return;
   const kpis=(d.map_kpis||[]).map(k=>`<div class="int-kpi${k.warn?' warn':''}"><div class="v">${esc(k.value)}</div><div class="l">${esc(k.label)}</div></div>`).join('');
   const probs=(d.problems||[]).slice(0,3).map(p=>`<li>${esc(p)}</li>`).join('');
-  wrap.innerHTML=`<div class="int-panel"><h3>Сверка профучёта · ${esc(d.generated)}</h3><p>${esc(d.summary)}</p><div class="int-kpis">${kpis}</div><ul class="int-problems">${probs}</ul><a class="int-link" href="../../Карасайский%20район/Справка_интегрированная_Каскелен_Иргели.html" target="_blank">Полная интегрированная справка →</a></div>`;
+  wrap.innerHTML=`<div class="int-panel"><h3>Сверка профучёта · ${esc(d.generated)}</h3><p>${esc(d.summary)}</p><div class="int-kpis">${kpis}</div><ul class="int-problems">${probs}</ul><a class="int-link" href="spravka_sverka_profueta/Справка_интегрированная_Каскелен_Иргели.html" target="_blank">Полная интегрированная справка →</a></div>`;
   const strip=document.querySelector('.strip');
   (d.map_kpis||[]).forEach(k=>{
     const el=document.createElement('div');el.className='kpi'+(k.warn?' warn':'');
@@ -353,6 +353,6 @@ if(allPts.length)map.fitBounds(L.latLngBounds(allPts).pad(0.1));
 </script>
 </div>
 <div id="chrome-bottom"></div>
-<script src="assets/js/ui.js"></script>
+<script src="assets/js/ui.js?v=20260909a"></script>
 </body>
 </html>
