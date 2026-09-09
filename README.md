@@ -50,6 +50,19 @@ build/         локальные результаты сборки, в репо
 
 Новый паспорт появится в переключателе на всех страницах автоматически.
 
+## Нормативная библиотека (вкладка «Прокурorу»)
+
+На сайте: **Прокурору → Работа с законами** — [`docs/prokuror_zakon.html`](docs/prokuror_zakon.html).
+
+23 кодекса, закона и приказа: чтение TXT, скачивание и ссылки на [adilet.zan.kz](https://adilet.zan.kz).
+Тексты лежат в `docs/assets/legal/`, каталог — `docs/assets/js/legal_data.js`.
+
+Обновление из monorepo `prof` (после `backend/scripts/download_legal_docs.py`):
+
+```bash
+python scripts/build_legal.py   # требует backend/app/legal в соседнем репозитории
+```
+
 ## Сборка остальных артефактов
 
 ```bash

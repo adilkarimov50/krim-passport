@@ -76,7 +76,8 @@
   }
 
   function renderSidebar(items) {
-    sidebar.innerHTML = `<div class="nav-sidebar__title">Субъекты ЗРК</div>`
+    sidebar.innerHTML = `<a class="nav-sidebar__link nav-sidebar__link--back" href="prokuror_zakon.html">⚖ Работа с законами</a>
+      <div class="nav-sidebar__title">Субъекты ЗРК</div>`
       + items.map((d) => {
         const { done, total, pct } = orgProgress(d);
         const short = d.org.replace(/^Органы?\s+/i, '').replace(/^УТК\s+/i, '');

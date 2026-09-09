@@ -3,11 +3,71 @@
 const KRIM = window.KRIM_DATA || {};
 const PASSPORTS = KRIM.passports || [];
 const GEO = KRIM.geo || {};
+const DISTRICTS = KRIM.districts || {};
 
 const SITE = {
   repo: 'https://github.com/adilkarimov50/krim-passport',
   pages: 'https://adilkarimov50.github.io/krim-passport/',
 };
+
+function passportStatus(p) {
+  return p?.passport_status === 'full' ? 'full' : (p?.passport_status === 'profile_only' ? 'profile_only' : 'full');
+}
+
+function isProfileOnly(p) {
+  return passportStatus(p) === 'profile_only';
+}
+
+function passportStatusBadge(p) {
+  return isProfileOnly(p)
+    ? '<span class="badge badge--profile">обзор</span>'
+    : '<span class="badge badge--full">полный паспорт</span>';
+}
+
+function localityProfileHtml(p) {
+  const lp = p?.locality_profile;
+  if (!lp) return '<div class="callout"><p>Социально-экономический профиль уточняется.</p></div>';
+  const pop = lp.population || {};
+  const ethnic = (lp.ethnic_composition || []).slice(0, 3)
+    .map((e) => `${esc(e.group)} ${String(e.share_pct).replace('.', ',')}%`).join(' · ');
+  const economy = (lp.economy?.primary_activity || []).join(', ') || '—';
+  const migrants = pop.internal_migrants_note || '—';
+  const prevention = (lp.prevention_factors || []).map((f) => `
+    <div class="card card-warn" style="margin-bottom:10px;padding:14px 16px">
+      <strong>${esc(f.factor)}</strong>
+      <span class="badge badge--risk badge--risk-${f.risk || 'medium'}" style="margin-left:8px">${esc(f.risk || 'medium')}</span>
+      <p style="margin:8px 0 0;font-size:14px;color:var(--muted)">${esc(f.implication || '')}</p>
+    </div>`).join('');
+  const highlights = (lp.highlights || []).map((h) => `<li><span>${esc(h)}</span></li>`).join('');
+  const sources = (lp.sources || []).map((s) =>
+    `<li><a href="${esc(s.url || '#')}" target="_blank" rel="noopener">${esc(s.title)}</a> · ${esc(s.as_of || '')}</li>`).join('');
+  function lpKpi(v, l, n) {
+    return `<div class="card kpi" style="padding:14px 16px;margin:0;box-shadow:none"><b style="font-size:22px">${v}</b><span style="font-size:12px;color:var(--muted)">${esc(l)}</span>${n ? `<div class="note" style="font-size:11px;margin-top:4px;color:var(--muted)">${esc(n)}</div>` : ''}</div>`;
+  }
+  return `
+    <div class="grid grid--4" style="margin-bottom:16px">
+      ${lpKpi(fmt(pop.total), 'Население', pop.year ? `оценка ${pop.year}` : '')}
+      ${lpKpi(pop.local_permanent ? fmt(pop.local_permanent) : '—', 'Местные (оценка)')}
+      ${lpKpi(lp.economy?.sme_registered ? fmt(lp.economy.sme_registered) : '—', 'Субъекты МСП')}
+      ${lpKpi(lp.settlement_type === 'city' ? 'город' : 'село', 'Тип НП')}
+    </div>
+    <div class="grid grid--2">
+      <div class="card">
+        <div class="card__title">Национальный состав (топ-3)</div>
+        <p style="margin:0">${ethnic || '—'}</p>
+        <p style="margin:12px 0 0;font-size:14px;color:var(--muted)"><b>Миграция:</b> ${esc(migrants)}</p>
+      </div>
+      <div class="card">
+        <div class="card__title">Экономика и занятость</div>
+        <p style="margin:0">${esc(economy)}</p>
+        <p style="margin:12px 0 0;font-size:14px;color:var(--muted)">${esc(lp.economy?.industry_services_note || '')}</p>
+      </div>
+    </div>
+    ${(lp.social_features || []).length ? `<div class="card" style="margin-top:16px"><div class="card__title">Особенности</div><p style="margin:0">${(lp.social_features || []).map((s) => esc(s)).join(' · ')}</p></div>` : ''}
+    ${highlights ? `<div class="card" style="margin-top:16px"><div class="card__title">Ключевые особенности</div><ul class="list-check">${highlights}</ul></div>` : ''}
+    ${prevention ? `<div style="margin-top:16px"><div class="card__title" style="margin-bottom:10px">Факторы профилактики</div>${prevention}</div>` : ''}
+    ${sources ? `<div class="card" style="margin-top:16px"><div class="card__title">Источники</div><ul style="margin:0;padding-left:18px;font-size:14px">${sources}</ul></div>` : ''}`;
+}
 
 const STAFF_KEY = 'krim-staff';
 
@@ -271,7 +331,7 @@ function renderTopbar(page, activeId) {
       <a class="brand" href="${p}index.html">
         <img class="brand__emblem" src="${p}assets/img/prokuratura-emblem.png" width="36" height="36" alt="Эмблема органов прокуратуры Республики Казахстан">
         <span class="brand__text">Криминологический паспорт
-          <small>Алматинская область · Карасайский и Уйгурский районы · 2026</small>
+          <small>9 населённых пунктов · Алматинская область и г. Алматы · 2026</small>
         </span>
       </a>
       <nav class="topbar__nav" aria-label="Разделы сайта">
@@ -339,6 +399,8 @@ function resolveSitePage() {
     'passport.html': 'passport',
     'map.html': 'map',
     'profilaktika_navigator.html': 'navigator',
+    'prokuror_zakon.html': 'navigator',
+    'legal_read.html': 'navigator',
     'mvk_kvartal.html': 'navigator',
     'nauka_profilaktika.html': 'library',
     'karasai_analysis.html': 'index',

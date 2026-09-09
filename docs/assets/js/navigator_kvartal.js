@@ -68,6 +68,7 @@
   function renderSidebar() {
     if (!sidebar) return;
     sidebar.innerHTML = `<a class="nav-sidebar__link nav-sidebar__link--back" href="profilaktika_navigator.html">← 12 субъектов ЗРК</a>
+      <a class="nav-sidebar__link nav-sidebar__link--back" href="prokuror_zakon.html">⚖ Работа с законами</a>
       <div class="nav-sidebar__title">Блоки МВК</div>`
       + (QUARTER.blocks || []).map((block) => {
         const { done, total, pct } = quarterProgress(block);
