@@ -13,14 +13,26 @@ async function loadDistrict(id) {
   return res.json();
 }
 
+function formatCardValue(v) {
+  if (v == null || v === '') return '—';
+  if (Array.isArray(v)) return String(v.length);
+  if (typeof v === 'object') return '—';
+  return String(v);
+}
+
 function renderCards(cards) {
   return `<div class="grid grid--3">${(cards || []).map((c) => {
     const tone = c.tone === 'danger' ? 'color:var(--down)' : c.tone === 'warn' ? 'color:var(--warn,#b8860b)' : '';
-    return `<div class="card">
-      <div class="card__title">${esc(c.label)}</div>
-      <b style="font-size:22px;${tone}">${esc(String(c.value))}</b>
-      ${c.note ? `<p style="margin:8px 0 0;font-size:13px;color:var(--muted)">${esc(c.note)}</p>` : ''}
-    </div>`;
+    const val = esc(formatCardValue(c.value));
+    const inner = `<div class="card__title">${esc(c.label)}</div>
+      <b style="font-size:22px;${tone}">${val}</b>
+      ${c.note ? `<p style="margin:8px 0 0;font-size:13px;color:var(--muted)">${esc(c.note)}</p>` : ''}`;
+    if (c.href) {
+      return `<a class="card link-card" href="${esc(c.href)}" style="text-decoration:none;color:inherit;display:block">
+        ${inner}
+      </a>`;
+    }
+    return `<div class="card">${inner}</div>`;
   }).join('')}</div>`;
 }
 
@@ -32,10 +44,12 @@ function renderSection(sec) {
     </tbody></table>`;
   }
   if (sec.table && sec.id === 'socio') {
-    body += `<table class="tbl"><thead><tr><th>Категория ЦКС</th><th class="num">Лиц</th></tr></thead><tbody>
+    body += `<p class="note" style="margin:0 0 10px">Нажмите на строку — откроется раздел «Категории» в ЦКС района.</p>
+      <table class="tbl tbl--click"><thead><tr><th>Категория ЦКС</th><th class="num">Лиц</th></tr></thead><tbody>
       ${sec.table.map((row) => {
-        const [label, , persons] = row;
-        return `<tr><td>${esc(label)}</td><td class="num">${fmt(persons)}</td></tr>`;
+        const [label, catId, persons] = row;
+        return `<tr class="district-cks-cat-row" data-cat-id="${esc(catId || '')}" tabindex="0">
+          <td>${esc(label)}</td><td class="num">${fmt(persons)}</td></tr>`;
       }).join('')}
     </tbody></table>`;
   }
@@ -112,6 +126,21 @@ async function main() {
   }
 
   document.getElementById('d-sections').innerHTML = html;
+
+  const cksBase = data.links?.cks || `cks_district.html?d=${data.id}`;
+  document.querySelectorAll('.district-cks-cat-row').forEach((row) => {
+    const open = () => {
+      const cid = row.dataset.catId;
+      location.href = cid ? `${cksBase}#cat-${encodeURIComponent(cid)}` : `${cksBase}#categories`;
+    };
+    row.addEventListener('click', open);
+    row.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter' || ev.key === ' ') {
+        ev.preventDefault();
+        open();
+      }
+    });
+  });
 
   if (typeof renderProkurorRecommendations === 'function') {
     renderProkurorRecommendations('prokuror-rec-district', {

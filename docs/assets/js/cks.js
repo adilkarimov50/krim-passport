@@ -76,7 +76,7 @@ function cksRenderCategoryLists(catLists) {
     const inner = persons.length
       ? cksRenderPersonTable(persons)
       : `<p class="note">Показаны агрегаты (${cksFmt(g.count_oblast)} лиц по области). Детальный список — в Excel private/.</p>`;
-    return `<details class="cks-violation-group"><summary>${cksEsc(g.title)} · ${cksFmt(g.count_oblast)}</summary>${inner}
+    return `<details class="cks-violation-group" data-cat-id="${cksEsc(g.id)}"><summary>${cksEsc(g.title)} · ${cksFmt(g.count_oblast)}</summary>${inner}
       ${persons.length ? `<button type="button" class="cks-csv-btn" data-cat="${cksEsc(g.id)}">CSV</button>` : ''}</details>`;
   }).join('');
 }
@@ -91,6 +91,19 @@ function cksShowPanel(id) {
   if (id && id.startsWith('sec-')) {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function cksOpenCategoryList(catId) {
+  cksShowPanel('categories');
+  const root = document.getElementById('cks-category-lists');
+  if (!root) return;
+  const det = catId
+    ? root.querySelector(`details[data-cat-id="${CSS.escape(String(catId))}"]`)
+    : root.querySelector('details');
+  if (det) {
+    det.open = true;
+    det.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -389,6 +402,10 @@ async function cksInitOblast() {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${cksEsc(c.label)}</td><td class="num">${cksFmt(c.persons)}</td>`;
     tr.dataset.label = c.label.toLowerCase();
+    tr.dataset.catId = c.id || '';
+    tr.style.cursor = 'pointer';
+    tr.title = 'Открыть список по категории';
+    tr.addEventListener('click', () => cksOpenCategoryList(c.id));
     catBody.appendChild(tr);
   });
   document.getElementById('cks-cat-filter')?.addEventListener('input', (e) => {
@@ -426,16 +443,29 @@ async function cksInitOblast() {
     mountRiskExportButton('risk-export-cks-wrap', { level: 'oblast', id: 'oblast' });
   }
 
-  document.querySelectorAll('.cks-kpi .card').forEach((card, i) => {
-    if (i === 3) {
-      card.style.cursor = 'pointer';
-      card.title = 'Открыть нарушения сверок';
-      card.addEventListener('click', () => cksShowPanel('violations'));
-    }
+  const kpiPanels = ['categories', 'categories', 'districts', 'violations', 'violations', 'violations'];
+  const kpiTitles = [
+    'Категории ЦКС',
+    'Записи в категориях',
+    'Районы и города',
+    'Нарушения сверок (умершие)',
+    'ЕИРПУ ∩ ЦКС',
+    '1-АД ∩ ЦКС',
+  ];
+  document.querySelectorAll('#cks-panel-overview .cks-kpi .card').forEach((card, i) => {
+    const panel = kpiPanels[i];
+    if (!panel) return;
+    card.style.cursor = 'pointer';
+    card.title = kpiTitles[i] || panel;
+    card.addEventListener('click', () => cksShowPanel(panel));
   });
 
   cksBindSubnav();
   if (location.hash === '#violations') cksShowPanel('violations');
+  if (location.hash === '#categories') cksShowPanel('categories');
+  if (location.hash.startsWith('#cat-')) {
+    cksOpenCategoryList(decodeURIComponent(location.hash.slice(5)));
+  }
 }
 
 function cksViolTable(id, col1, rows, labelKey) {
@@ -541,8 +571,10 @@ async function cksInitDistrict() {
             <table class="tbl" id="cks-d-cat-table">
               <thead><tr><th>Категория</th><th class="num">Лиц</th></tr></thead>
               <tbody>${(data.categories || []).map((c) =>
-                `<tr><td>${cksEsc(c.label)}</td><td class="num">${cksFmt(c.persons)}</td></tr>`).join('')}
+                `<tr class="cks-d-cat-row" data-cat-id="${cksEsc(c.id || '')}" tabindex="0">
+                  <td>${cksEsc(c.label)}</td><td class="num">${cksFmt(c.persons)}</td></tr>`).join('')}
               </tbody></table>
+          <p class="note" style="margin-top:12px">Детальные списки лиц — на вкладке «Нарушения сверок» области или в Excel private/.</p>
           </div>
         </div>
       </div>`;
@@ -580,21 +612,48 @@ async function cksInitDistrict() {
       location.href = `cks_district.html?d=${encodeURIComponent(e.target.value)}`;
     });
 
-    if (location.hash === '#violations') {
+    function showDistrictTab(tabKey) {
       document.querySelectorAll('.cks-panel').forEach((p) => p.classList.remove('active'));
-      document.getElementById('cks-panel-d-violations')?.classList.add('active');
-      document.querySelectorAll('.cks-subnav [data-cks-tab]').forEach((b) => b.classList.remove('active'));
-      document.querySelector('[data-cks-tab="d-violations"]')?.classList.add('active');
+      document.getElementById(`cks-panel-d-${tabKey}`)?.classList.add('active');
+      document.querySelectorAll('.cks-subnav [data-cks-tab]').forEach((b) => {
+        b.classList.toggle('active', b.dataset.cksTab === `d-${tabKey}`);
+      });
     }
+
+    const districtKpiPanels = ['overview', 'overview', 'violations', 'violations', 'violations'];
+    document.querySelectorAll('#cks-panel-d-overview .cks-kpi .card').forEach((card, i) => {
+      const tab = districtKpiPanels[i];
+      if (!tab || tab === 'overview') return;
+      card.style.cursor = 'pointer';
+      card.title = 'Открыть вкладку «Сверки»';
+      card.addEventListener('click', () => showDistrictTab(tab));
+    });
+
+    document.querySelectorAll('.cks-d-cat-row').forEach((row) => {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', () => {
+        showDistrictTab('categories');
+        row.classList.add('cks-row-highlight');
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
+
+    if (location.hash === '#violations' || location.hash === '#categories') {
+      showDistrictTab(location.hash.slice(1));
+    }
+    if (location.hash.startsWith('#cat-')) {
+      showDistrictTab('categories');
+      const cid = decodeURIComponent(location.hash.slice(5));
+      const row = document.querySelector(`.cks-d-cat-row[data-cat-id="${CSS.escape(cid)}"]`);
+      row?.classList.add('cks-row-highlight');
+      row?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    if (location.hash === '#settlements') showDistrictTab('settlements');
 
     document.querySelectorAll('.cks-subnav [data-cks-tab]').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        const tab = btn.dataset.cksTab.replace('d-', '');
-        document.querySelectorAll('.cks-panel').forEach((p) => p.classList.remove('active'));
-        document.getElementById(`cks-panel-d-${tab}`)?.classList.add('active');
-        document.querySelectorAll('.cks-subnav [data-cks-tab]').forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
+        showDistrictTab(btn.dataset.cksTab.replace('d-', ''));
       });
     });
 

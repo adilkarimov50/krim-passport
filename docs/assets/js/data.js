@@ -4157,7 +4157,7 @@ window.KRIM_DATA = {
    "year": 2026,
    "passport_status": "profile_only",
    "summary": {
-    "settlement": "г. Иссык",
+    "settlement": "г. Есик",
     "district": "Енбекшиказахский район",
     "population": 21000,
     "description": "Курортный город у озера Иссык",
@@ -5370,6 +5370,8 @@ window.KRIM_DATA = {
    "Талгар": "talgar",
    "Отеген батыр": "otegen_batyr",
    "Иссык": "issyk",
+   "Есик": "issyk",
+   "г. Есик": "issyk",
    "Конаев": "konaev"
   },
   "cks_units": [

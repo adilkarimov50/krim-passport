@@ -2,6 +2,14 @@
 
 mountSiteChrome('index');
 
+function kpiCard(value, label, note = '', badge = '') {
+  return `<div class="card kpi" style="padding:14px 16px;margin:0;box-shadow:none">
+    <b style="font-size:22px">${value} ${badge}</b>
+    <span style="font-size:12px;color:var(--muted)">${esc(label)}</span>
+    ${note ? `<div class="note" style="font-size:11px;margin-top:4px;color:var(--muted)">${esc(note)}</div>` : ''}
+  </div>`;
+}
+
 function renderOblastOverview() {
   const ov = window.OBLAST_OVERVIEW;
   if (!ov) return;
@@ -84,7 +92,6 @@ function renderOblastOverview() {
     mountRiskExportButton('risk-export-oblast-wrap', { level: 'oblast', id: 'oblast' });
   }
 }
-renderOblastOverview();
 
 if (!PASSPORTS.length) {
   document.getElementById('picker').innerHTML = '<div class="card" style="padding:20px"><p style="margin:0">Данные паспортов не загрузились. Обновите страницу.</p></div>';
@@ -247,14 +254,6 @@ const CRIME_INDICATOR_ALIASES = {
   'Телесные повреждения': ['Телесные повреждения'],
   'Убийства (ст.99)': ['Убийства (ст.99)'],
 };
-
-function kpiCard(value, label, note = '', badge = '') {
-  return `<div class="card kpi" style="padding:14px 16px;margin:0;box-shadow:none">
-    <b style="font-size:22px">${value} ${badge}</b>
-    <span style="font-size:12px;color:var(--muted)">${esc(label)}</span>
-    ${note ? `<div class="note" style="font-size:11px;margin-top:4px;color:var(--muted)">${esc(note)}</div>` : ''}
-  </div>`;
-}
 
 function findCrimeRow(p, name) {
   const names = [name, ...(CRIME_INDICATOR_ALIASES[name] || [])];
@@ -422,4 +421,5 @@ setHtml('hotspots', PASSPORTS.map((p) => {
 }).join(''));
 }
 
+renderOblastOverview();
 applyPublicView();
