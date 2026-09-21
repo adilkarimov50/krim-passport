@@ -2,6 +2,66 @@
 
 mountSiteChrome('index');
 
+function renderOblastOverview() {
+  const ov = window.OBLAST_OVERVIEW;
+  if (!ov) return;
+  const t = ov.totals || {};
+  const elUnits = document.getElementById('hero-oblast-units');
+  const elCks = document.getElementById('hero-cks');
+  if (elUnits) elUnits.textContent = `${t.district_units || 11} районов и городов области`;
+  if (elCks && t.cks_persons) elCks.textContent = `${fmt(t.cks_persons)} лиц в ЦКС`;
+
+  const kpi = document.getElementById('oblast-kpi');
+  if (kpi) {
+    kpi.innerHTML = [
+      kpiCard(fmt(t.cks_persons), 'Лиц в ЦКС', `${fmt(t.cks_rows || 0)} записей`),
+      kpiCard(fmt(t.cks_settlements), 'Населённых пунктов в ЦКС'),
+      kpiCard(fmt(t.population_proxy), 'Население (прокси по НП)', 'сумма профилей БНС'),
+    ].join('');
+  }
+
+  const tbl = document.getElementById('oblast-units-table');
+  if (tbl && ov.units) {
+    const cell = (v) => (v == null || v === '' ? '—' : fmt(v));
+    tbl.innerHTML = `
+      <thead><tr>
+        <th>Район / город</th>
+        <th class="num">Население</th>
+        <th class="num">Уголовных</th>
+        <th class="num">На 10 тыс.</th>
+        <th class="num">1-АД (прож.)</th>
+        <th class="num">ЦКС лиц</th>
+        <th class="num">3+ кат.</th>
+        <th class="num">NEET</th>
+        <th></th>
+      </tr></thead>
+      <tbody>${ov.units.map((u) => {
+        const crime = u.crimes_current != null
+          ? `${cell(u.crimes_current)}${u.crimes_previous ? ` / ${cell(u.crimes_previous)}` : ''}`
+          : '—';
+        return `<tr>
+          <td><a href="${esc(u.links.district)}">${esc(u.title)}</a></td>
+          <td class="num">${cell(u.population)}</td>
+          <td class="num">${crime}</td>
+          <td class="num">${u.crime_rate_per_10k != null ? String(u.crime_rate_per_10k).replace('.', ',') : '—'}</td>
+          <td class="num">${cell(u.adm_cases_residence)}</td>
+          <td class="num">${cell(u.cks_persons)}</td>
+          <td class="num">${cell(u.cks_multi)}</td>
+          <td class="num">${cell(u.neet)}</td>
+          <td><a class="tag" href="${esc(u.links.cks)}" style="font-size:12px;padding:6px 10px;text-decoration:none">ЦКС</a></td>
+        </tr>`;
+      }).join('')}</tbody>`;
+  }
+
+  if (typeof renderProkurorRecommendations === 'function') {
+    void renderProkurorRecommendations('prokuror-rec-oblast', { level: 'oblast', data: ov });
+  }
+  if (typeof mountRiskExportButton === 'function') {
+    mountRiskExportButton('risk-export-oblast-wrap', { level: 'oblast', id: 'oblast' });
+  }
+}
+renderOblastOverview();
+
 if (!PASSPORTS.length) {
   document.getElementById('picker').innerHTML = '<div class="card" style="padding:20px"><p style="margin:0">Данные паспортов не загрузились. Обновите страницу.</p></div>';
 } else {

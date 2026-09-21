@@ -319,7 +319,8 @@ function renderTopbarTab(p, href, label, title, key, page, activeId) {
 function renderTopbar(page, activeId) {
   const p = sitePrefix();
   const tabs = [
-    ['index.html', 'Обзор', 'Обзор разделов', 'index'],
+    ['index.html', 'Обзор', 'Обзор области и НП', 'index'],
+    ['district.html', 'Районы', '11 районов и городов области', 'district'],
     ['cks.html', 'ЦКС', 'Социальный мониторинг ЦКС по области', 'cks'],
     ['passport.html', 'Паспорт', 'Криминологический паспорт', 'passport'],
     ['map.html', 'Карта', 'Карта объектов и правонарушений', 'map'],
@@ -332,7 +333,7 @@ function renderTopbar(page, activeId) {
       <a class="brand" href="${p}index.html">
         <img class="brand__emblem" src="${p}assets/img/prokuratura-emblem.png" width="36" height="36" alt="Эмблема органов прокуратуры Республики Казахстан">
         <span class="brand__text">Криминологический паспорт
-          <small>9 населённых пунктов · Алматинская область и г. Алматы · 2026</small>
+          <small>11 районов и городов области · кримпаспорта НП · 2026</small>
         </span>
       </a>
       <nav class="topbar__nav" aria-label="Разделы сайта">
@@ -397,6 +398,7 @@ function resolveSitePage() {
   const file = location.pathname.split('/').pop() || 'index.html';
   const map = {
     'index.html': 'index',
+    'district.html': 'district',
     'passport.html': 'passport',
     'map.html': 'map',
     'cks.html': 'cks',

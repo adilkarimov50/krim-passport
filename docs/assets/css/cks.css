@@ -9,6 +9,13 @@
 }
 
 .cks-hero .wrap-inner { width: min(1240px, 100% - 48px); margin-inline: auto; }
+
+.cks-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
 .cks-hero a { color: var(--gold-soft); }
 .cks-hero p { color: rgba(255,255,255,.85); max-width: 52rem; margin: 12px 0 0; }
 
@@ -200,6 +207,77 @@
   font-size: 1.25rem;
   margin: 28px 0 14px;
   color: var(--navy-700);
+}
+
+.cks-verify-note {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.cks-legal-block {
+  font-size: 13px;
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.cks-legal-block p { margin: 0 0 10px; }
+
+.cks-viol-block {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.cks-viol-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 0;
+  background: var(--bg);
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cks-viol-toggle:hover { background: var(--navy-100); }
+
+.cks-viol-toggle .cks-viol-count {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--navy-700);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.cks-viol-toggle.kind-investigation .cks-viol-count {
+  background: #8a3b12;
+}
+
+.cks-viol-detail {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.cks-viol-detail.open { display: block; }
+
+.cks-viol-detail .cks-table-wrap { max-height: 360px; }
+
+.cks-viol-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0;
 }
 
 @media (max-width: 720px) {

@@ -1,0 +1,59 @@
+{
+  "units": [
+    {
+      "id": "karasai",
+      "title": "Карасайский район",
+      "href": "district.html?id=karasai"
+    },
+    {
+      "id": "talgar",
+      "title": "Талгарский район",
+      "href": "district.html?id=talgar"
+    },
+    {
+      "id": "enbekshi",
+      "title": "Енбекшиказахский район",
+      "href": "district.html?id=enbekshi"
+    },
+    {
+      "id": "ile",
+      "title": "Илийский район",
+      "href": "district.html?id=ile"
+    },
+    {
+      "id": "zhambyl",
+      "title": "Жамбылский район",
+      "href": "district.html?id=zhambyl"
+    },
+    {
+      "id": "uygur",
+      "title": "Уйгурский район",
+      "href": "district.html?id=uygur"
+    },
+    {
+      "id": "balkhash",
+      "title": "Балхашский район",
+      "href": "district.html?id=balkhash"
+    },
+    {
+      "id": "kegen",
+      "title": "Кегенский район",
+      "href": "district.html?id=kegen"
+    },
+    {
+      "id": "raiymbek",
+      "title": "Райымбекский район",
+      "href": "district.html?id=raiymbek"
+    },
+    {
+      "id": "konaev",
+      "title": "г. Конаев",
+      "href": "district.html?id=konaev"
+    },
+    {
+      "id": "alatau_oblast",
+      "title": "г. Алатау",
+      "href": "district.html?id=alatau_oblast"
+    }
+  ]
+}

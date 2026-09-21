@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Криминологический паспорт · 9 населённых пунктов · 2026</title>
+<title>Криминологический паспорт · Алматинская область · 2026</title>
 <meta name="description" content="Цифровой криминологический паспорт: Алатау, Конаев, Каскелен, Талгар, Отеген батыр, Иргели, Узынагаш, Чунджа, Иссык — профили и полные паспорта.">
 <link rel="icon" href="assets/img/prokuratura-emblem.png" type="image/png">
 <link rel="stylesheet" href="assets/css/app.css?v=20260909a">
@@ -14,20 +14,43 @@
 <section class="hero">
   <div class="wrap">
     <div class="hero__eyebrow">Алматинская область и г. Алматы · 2026</div>
-    <h1>Криминологический паспорт — 9 населённых пунктов</h1>
-    <p>Цифровое издание: социально-экономические профили по данным БНС и полные криминологические
-       паспорта (Каскелен, Иргели, Чунджа). Структура преступности, точки концентрации,
-       административная практика и мероприятия профилактики.</p>
+    <h1>Обзор · Алматинская область и кримпаспорта НП</h1>
+    <p>11 районов и городов области: преступность, административная практика, социально-экономические
+       показатели ЦКС и полные криминологические паспорта (Каскелен, Иргели, Чунджа).</p>
     <div class="hero__meta">
       <span class="chip chip--gold">2026 год</span>
+      <span class="chip" id="hero-oblast-units"></span>
       <span class="chip" id="hero-count"></span>
       <span class="chip" id="hero-pop"></span>
       <span class="chip" id="hero-crimes"></span>
+      <span class="chip" id="hero-cks"></span>
     </div>
+    <p class="hero__picker-lead" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <a href="district.html" class="chip chip--gold">Паспорта районов и городов →</a>
+      <a href="cks.html" class="chip">ЦКС · мониторинг</a>
+      <a href="kaskelen_map.html" class="chip">Карта Каскелена</a>
+      <a href="irgeli_map.html" class="chip">Карта Иргели</a>
+      <a href="chundzha_map.html" class="chip">Карта Чунджи</a>
+    </p>
     <h2 class="hero__picker-title">Выберите населённый пункт</h2>
     <p class="hero__picker-lead">Выберите населённый пункт: полный криминологический паспорт или обзорный профиль с данными БНС.</p>
-    <p class="hero__picker-lead" style="margin-top:12px"><a href="cks.html" class="chip chip--gold">ЦКС · социальный мониторинг по области</a></p>
   </div>
+</section>
+
+<section class="wrap section" id="oblast-overview-section">
+    <div class="section__head">
+      <div class="section__num">00</div>
+      <div class="section__title">
+        <h2>Алматинская область — сводка</h2>
+        <p>Ключевые показатели по 9 районам и 2 городам области (ЦКС, кримпаспорта НП, 1-АД). г. Алатау области не смешивать с районом «Алатау» г. Алматы.</p>
+      </div>
+    </div>
+    <div class="grid grid--3" id="oblast-kpi"></div>
+    <div class="card card--flush" style="margin-top:20px">
+      <table class="tbl" id="oblast-units-table"></table>
+    </div>
+    <div id="prokuror-rec-oblast" class="card" style="margin-top:20px;padding:20px 24px;display:none"></div>
+    <p style="margin-top:16px" id="risk-export-oblast-wrap"></p>
 </section>
 
 <div class="wrap picker-section">
@@ -209,8 +232,11 @@
 
 <div id="chrome-bottom"></div>
 
-<script src="assets/js/data.js?v=20260909a"></script>
-<script src="assets/js/ui.js?v=20260909a"></script>
-<script src="assets/js/index.js?v=20260909a"></script>
+<script src="assets/js/data.js?v=20260921"></script>
+<script src="assets/js/oblast_overview.js?v=20260921"></script>
+<script src="assets/js/prokuror_recommendations.js?v=20260921"></script>
+<script src="assets/js/risk_export.js?v=20260921"></script>
+<script src="assets/js/ui.js?v=20260921"></script>
+<script src="assets/js/index.js?v=20260921"></script>
 </body>
 </html>

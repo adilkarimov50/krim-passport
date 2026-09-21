@@ -554,6 +554,25 @@ function render(id) {
   bindScrollSpy();
   if (render.lastId && render.lastId !== id) window.scrollTo({ top: 0, behavior: 'auto' });
   render.lastId = id;
+
+  const PASSPORT_CKS_DISTRICT = {
+    kaskelen: 'karasai', irgeli: 'karasai', uzynagash: 'karasai', otegen_batyr: 'ile',
+    talgar: 'talgar', chundzha: 'uygur', issyk: 'enbekshi', konaev: 'konaev', alatau: 'alatau',
+  };
+  const c = s.crimes || {};
+  const metrics = {};
+  if (c.current != null && c.previous) {
+    metrics.crime_delta_pct = Math.round((c.current - c.previous) / c.previous * 1000) / 10;
+  }
+  if (typeof renderProkurorRecommendations === 'function') {
+    void renderProkurorRecommendations('prokuror-rec-passport', {
+      level: 'locality', title: p.name, data: metrics,
+    });
+  }
+  if (typeof mountRiskExportButton === 'function') {
+    const did = PASSPORT_CKS_DISTRICT[id] || 'oblast';
+    mountRiskExportButton('risk-export-passport-wrap', { level: 'district', id: did, settlement: p.name });
+  }
 }
 
 function bindTocNav() {

@@ -33,6 +33,54 @@ async function cksLoadJson(path) {
   return r.json();
 }
 
+function cksPassportIdForSettlement(name) {
+  const map = window.KRIM_DATA?.districts?.settlement_passport_map || {};
+  if (map[name]) return map[name];
+  const n = String(name || '').trim();
+  return map[n] || map[n.replace(/^г\.\s*/i, 'г. ')] || null;
+}
+
+function cksRenderCharts(oblast, violations) {
+  if (typeof Chart === 'undefined') return;
+  const catCtx = document.getElementById('cks-chart-categories');
+  if (catCtx) {
+    const top = (oblast.top_categories || []).slice(0, 8);
+    new Chart(catCtx, {
+      type: 'bar',
+      data: {
+        labels: top.map((c) => c.label.slice(0, 28)),
+        datasets: [{ label: 'Лиц', data: top.map((c) => c.persons), backgroundColor: '#1F4B73' }],
+      },
+      options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } },
+    });
+  }
+  const crossCtx = document.getElementById('cks-chart-cross');
+  if (crossCtx) {
+    const v = violations.summary || {};
+    const labels = ['Умершие∩ЦКС', 'ЕИРПУ∩ЦКС', '1-АД∩ЦКС', '3+ кат.'];
+    const data = [v.dead_in_cks, v.prof_in_cks, v.adm_in_cks, v.multi_3plus || oblast.crossmatch?.persons_3plus_categories];
+    new Chart(crossCtx, {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: ['#b83220', '#1a5c42', '#5B4B8A', '#c9a227'] }] },
+      options: { plugins: { legend: { position: 'bottom' } } },
+    });
+  }
+}
+
+function cksRenderCategoryLists(catLists) {
+  if (!catLists?.groups?.length) {
+    return '<p class="note">Запустите scripts/cks/build_category_lists.py для списков по категориям.</p>';
+  }
+  return catLists.groups.map((g) => {
+    const persons = g.persons || [];
+    const inner = persons.length
+      ? cksRenderPersonTable(persons)
+      : `<p class="note">Показаны агрегаты (${cksFmt(g.count_oblast)} лиц по области). Детальный список — в Excel private/.</p>`;
+    return `<details class="cks-violation-group"><summary>${cksEsc(g.title)} · ${cksFmt(g.count_oblast)}</summary>${inner}
+      ${persons.length ? `<button type="button" class="cks-csv-btn" data-cat="${cksEsc(g.id)}">CSV</button>` : ''}</details>`;
+  }).join('');
+}
+
 function cksShowPanel(id) {
   document.querySelectorAll('.cks-panel').forEach((el) => el.classList.remove('active'));
   document.querySelectorAll('.cks-subnav [data-cks-tab]').forEach((el) => {
@@ -84,11 +132,137 @@ function cksDistrictCount(violations, did, key) {
   return row ? row.count : 0;
 }
 
+function cksRenderPersonTable(persons, extraCols) {
+  if (!persons?.length) return '<p class="note">Записей нет.</p>';
+  const cols = [
+    ['fio', 'ФИО'],
+    ['iin', 'ИИН'],
+    ['district', 'Район'],
+    ['categories', 'Категории ЦКС'],
+    ['death_date', 'Дата смерти'],
+    ...(extraCols || []),
+  ];
+  const head = cols.map((c) => `<th>${cksEsc(c[1])}</th>`).join('');
+  const body = persons.map((p) => {
+    const cells = cols.map(([k]) => {
+      let v = p[k];
+      if (k === 'categories' && Array.isArray(v)) v = v.join('; ');
+      if (v == null || v === '') v = '—';
+      return `<td>${cksEsc(String(v))}</td>`;
+    }).join('');
+    return `<tr>${cells}</tr>`;
+  }).join('');
+  return `<div class="cks-table-wrap"><table class="tbl"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+function cksRenderViolationsLists(lists, violations) {
+  if (!lists?.groups?.length) {
+    return `<p class="note">Файл списков не найден. Запустите <code>build_violations_lists.py</code>.</p>
+      ${cksRenderViolationsAggregates(violations)}`;
+  }
+  const legal = lists.legal || {};
+  let html = `
+    <p class="cks-verify-note"><strong>Обязательно перепроверить</strong> каждую запись по первичным
+    документам и актуальным реестрам перед использованием в документах прокурорского реагирования.</p>
+    <div class="cks-callout cks-legal-block">
+      <h3>Рекомендации прокурору</h3>
+      <p>${cksEsc(legal.supervision || '')}</p>
+      <p>${cksEsc(legal.investigation || '')}</p>
+    </div>
+    <h2 class="cks-section-title">Выявленные нарушения — списки лиц</h2>
+    <p class="note">Нажмите на строку, чтобы раскрыть список. Данные служебные (временная публикация для проверки).</p>`;
+
+  lists.groups.forEach((g) => {
+    const kindClass = g.kind === 'investigation' ? 'kind-investigation' : '';
+    const extra = [];
+    if (g.id === 'dead_in_adm' || g.id === 'adm_in_cks') {
+      extra.push(['adm_materials', '№ материала 1-АД'], ['adm_article', 'Квалификация']);
+    }
+    if (g.id === 'suicide_in_cks' || g.id === 'pregnant_minors') {
+      extra.push(['erdr_check', 'КУИ/ЕРДР'], ['erdr_hint', 'ЕРДР (выгрузка 2025–2026)']);
+    }
+    html += `
+      <div class="cks-viol-block" data-gid="${cksEsc(g.id)}">
+        <button type="button" class="cks-viol-toggle ${kindClass}" aria-expanded="false">
+          <span>${cksEsc(g.title)}</span>
+          <span class="cks-viol-count">${cksFmt(g.count)}</span>
+        </button>
+        <div class="cks-viol-detail">
+          ${g.note ? `<p class="cks-viol-meta">${cksEsc(g.note)}</p>` : ''}
+          ${cksRenderPersonTable(g.persons, extra)}
+        </div>
+      </div>`;
+  });
+
+  html += `<h2 class="cks-section-title">Агрегаты сверок</h2>`;
+  html += cksRenderViolationsAggregates(violations);
+  return html;
+}
+
+function cksRenderViolationsAggregates(violations) {
+  const dead = violations.dead_in_active_cks || {};
+  const prof = violations.prof_accountability || {};
+  const adm = violations.admin_accountability || {};
+  return `
+    ${cksViolTable('cks-dead-dist', 'Район / город', dead.by_district)}
+    ${cksViolTable('cks-dead-cat', 'Категория ЦКС', dead.by_category, 'label')}
+    <h3 class="cks-section-title" style="font-size:1.05rem">ЕИРПУ · 1-АД</h3>
+    ${cksViolTable('cks-prof-dist', 'ЕИРПУ по районам', prof.by_district)}
+    ${cksViolTable('cks-adm-dist', '1-АД по районам', adm.by_district)}`;
+}
+
+function cksBindViolationToggles(root) {
+  root.querySelectorAll('.cks-viol-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const detail = btn.nextElementSibling;
+      const open = detail.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+}
+
+function cksFilterListsByDistrict(lists, did, districtTitle) {
+  if (!lists?.groups) return lists;
+  const titleKey = (districtTitle || '').toLowerCase();
+  const matchPerson = (p) => {
+    if (p.district_id === did) return true;
+    const d = (p.district || '').toLowerCase();
+    return titleKey && d.includes(titleKey.slice(0, 6));
+  };
+  const groups = lists.groups.map((g) => {
+    const persons = (g.persons || []).filter(matchPerson);
+    return { ...g, persons, count: persons.length };
+  });
+  return { ...lists, groups, district_filter: did };
+}
+
+function cksRenderDistrictViolations(lists, did, data, violations) {
+  const filtered = cksFilterListsByDistrict(lists, did, data.title);
+  const hasLists = filtered?.groups?.some((g) => g.count > 0);
+  let html = `
+    <p class="cks-verify-note"><strong>Обязательно перепроверить</strong> каждую запись по первичным документам.</p>
+    <p class="note">Полный областной срез (все районы):
+      <a href="cks.html#violations"><strong>ЦКС → Нарушения сверок</strong></a></p>`;
+  if (!hasLists) {
+    html += `<p class="note">По фильтру «${cksEsc(data.title)}» в загруженных списках нет строк
+      (часть категорий — только на уровне области). Смотрите областную вкладку или Excel в <code>passports/private/</code>.</p>`;
+    html += cksRenderViolationsAggregates(violations);
+    return html;
+  }
+  html += cksRenderViolationsLists(
+    { ...filtered, groups: filtered.groups.filter((g) => g.count > 0) },
+    violations,
+  );
+  return html;
+}
+
 async function cksInitOblast() {
   const base = cksDataBase();
-  const [oblast, violations] = await Promise.all([
+  const [oblast, violations, lists, catLists] = await Promise.all([
     cksLoadJson(`${base}oblast.json`),
     cksLoadJson(`${base}violations_public.json`).catch(() => ({})),
+    cksLoadJson(`${base}violations_lists.json`).catch(() => null),
+    cksLoadJson(`${base}category_lists.json`).catch(() => null),
   ]);
   const root = document.getElementById('cks-app');
   if (!root) return;
@@ -126,6 +300,10 @@ async function cksInitOblast() {
           <div class="card"><b>${cksFmt(v.prof_in_cks)}</b><span>ЕИРПУ ∩ ЦКС</span></div>
           <div class="card"><b>${cksFmt(v.adm_in_cks)}</b><span>1-АД ∩ ЦКС</span></div>
         </div>
+        <div class="cks-charts">
+          <div class="card"><canvas id="cks-chart-categories" height="220"></canvas></div>
+          <div class="card"><canvas id="cks-chart-cross" height="220"></canvas></div>
+        </div>
         <div class="cks-callout">
           <h3>На что обратить внимание прокурору</h3>
           <p style="margin:0;font-size:14px;line-height:1.55">
@@ -136,6 +314,8 @@ async function cksInitOblast() {
             <strong>${cksFmt(v.adm_in_cks)}</strong> пересечениях с соцучётом.
           </p>
         </div>
+        <div id="prokuror-rec-cks" class="card" style="margin-top:16px;padding:16px 20px;display:none"></div>
+        <p id="risk-export-cks-wrap" style="margin-top:12px"></p>
       </div>
 
       <div id="cks-panel-districts" class="cks-panel">
@@ -162,6 +342,8 @@ async function cksInitOblast() {
             <tbody></tbody>
           </table>
         </div>
+        <h3 style="margin:24px 0 12px">Списки по категориям</h3>
+        <div id="cks-category-lists"></div>
       </div>
     </div>`;
 
@@ -192,23 +374,8 @@ async function cksInitOblast() {
   });
 
   const vEl = document.getElementById('cks-violations-content');
-  const dead = violations.dead_in_active_cks || {};
-  const prof = violations.prof_accountability || {};
-  const adm = violations.admin_accountability || {};
-  vEl.innerHTML = `
-    <h2 class="cks-section-title">Умершие в действующих списках ЦКС</h2>
-    <p class="note">Лица из реестра умерших (2015–2026), которые одновременно числятся в категориях ЦКС.</p>
-    ${cksViolTable('cks-dead-dist', 'Район / город', dead.by_district)}
-    ${cksViolTable('cks-dead-cat', 'Категория ЦКС', dead.by_category, 'label')}
-    <h2 class="cks-section-title">Уголовный контур (ЕИРПУ «проф дела»)</h2>
-    <p class="note">Всего пересечений с ЦКС: <strong>${cksFmt(prof.prof_dela_in_cks_total)}</strong>.
-       Умершие, но остающиеся в выгрузке ЕИРПУ: <strong>${cksFmt(prof.dead_still_in_prof_dela)}</strong>.</p>
-    ${cksViolTable('cks-prof-dist', 'Район', prof.by_district)}
-    <h2 class="cks-section-title">Административная практика (1-АД)</h2>
-    <p class="note">Пересечений с ЦКС: <strong>${cksFmt(adm.adm_protocols_in_cks_total)}</strong>.
-       Умершие в протоколах: <strong>${cksFmt(adm.dead_still_in_adm)}</strong>.
-       Протоколы с местом жительства в другом регионе: <strong>${cksFmt(adm.adm_other_region_protocols)}</strong>.</p>
-    ${cksViolTable('cks-adm-dist', 'Район', adm.by_district)}`;
+  vEl.innerHTML = cksRenderViolationsLists(lists, violations);
+  cksBindViolationToggles(vEl);
 
   vEl.querySelectorAll('th[data-col]').forEach((th) => {
     th.addEventListener('click', () => {
@@ -234,7 +401,41 @@ async function cksInitOblast() {
     th.addEventListener('click', () => cksSortTable('cks-cat-table', +th.dataset.col, th.dataset.col === '1'));
   });
 
+  const catListsEl = document.getElementById('cks-category-lists');
+  if (catListsEl) {
+    catListsEl.innerHTML = cksRenderCategoryLists(catLists);
+    catListsEl.querySelectorAll('.cks-csv-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const g = (catLists?.groups || []).find((x) => x.id === btn.dataset.cat);
+        if (!g?.persons?.length) return;
+        const csv = '\uFEFF' + ['ИИН;ФИО;Район;НП', ...g.persons.map((p) =>
+          `${p.iin};${(p.fio || '').replace(/;/g, ',')};${p.district_id || ''};${(p.settlement || '').replace(/;/g, ',')}`)].join('\r\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+        a.download = `cks_${g.id}.csv`;
+        a.click();
+      });
+    });
+  }
+
+  cksRenderCharts(oblast, violations);
+  if (typeof renderProkurorRecommendations === 'function') {
+    void renderProkurorRecommendations('prokuror-rec-cks', { level: 'oblast', data: oblast });
+  }
+  if (typeof mountRiskExportButton === 'function') {
+    mountRiskExportButton('risk-export-cks-wrap', { level: 'oblast', id: 'oblast' });
+  }
+
+  document.querySelectorAll('.cks-kpi .card').forEach((card, i) => {
+    if (i === 3) {
+      card.style.cursor = 'pointer';
+      card.title = 'Открыть нарушения сверок';
+      card.addEventListener('click', () => cksShowPanel('violations'));
+    }
+  });
+
   cksBindSubnav();
+  if (location.hash === '#violations') cksShowPanel('violations');
 }
 
 function cksViolTable(id, col1, rows, labelKey) {
@@ -257,8 +458,11 @@ async function cksInitDistrict() {
   if (!root) return;
 
   const base = cksDataBase();
-  const oblast = await cksLoadJson(`${base}oblast.json`);
-  const violations = await cksLoadJson(`${base}violations_public.json`).catch(() => ({}));
+  const [oblast, violations, lists] = await Promise.all([
+    cksLoadJson(`${base}oblast.json`),
+    cksLoadJson(`${base}violations_public.json`).catch(() => ({})),
+    cksLoadJson(`${base}violations_lists.json`).catch(() => null),
+  ]);
 
   async function renderDistrict() {
     const data = await cksLoadJson(`${base}districts/${did}.json`);
@@ -266,7 +470,10 @@ async function cksInitDistrict() {
     const profN = (violations.prof_accountability?.by_district || []).find((x) => x.id === did)?.count || 0;
     const admN = (violations.admin_accountability?.by_district || []).find((x) => x.id === did)?.count || 0;
     const mp = data.mini_passport || {};
-    const hl = (mp.highlights || []).map((h) => `<li><span>${cksEsc(h)}</span></li>`).join('');
+    const hl = (mp.stats || mp.highlights || []).map((h) => {
+      if (typeof h === 'string') return `<li><span>${cksEsc(h)}</span></li>`;
+      return `<li><span>${cksEsc(h.label)}: <strong>${cksFmt(h.value)}</strong></span></li>`;
+    }).join('');
 
     const districtOptions = (oblast.districts || []).map((d) =>
       `<option value="${cksEsc(d.id)}" ${d.id === did ? 'selected' : ''}>${cksEsc(d.title)}</option>`).join('');
@@ -300,6 +507,10 @@ async function cksInitDistrict() {
             <div class="card"><b>${cksFmt(admN)}</b><span>1-АД ∩ ЦКС</span></div>
           </div>
           <div class="card"><div class="card__title">Ключевые показатели</div><ul class="list-check">${hl}</ul></div>
+          <p style="margin-top:12px"><a href="district.html?id=${encodeURIComponent(did)}">Кримпаспорт района</a>
+            · <a href="kaskelen_map.html">Карты эталона (Каскелен/Иргели/Чунджа)</a></p>
+          <div id="prokuror-rec-cks-district" class="card" style="margin-top:16px;padding:16px 20px;display:none"></div>
+          <p id="risk-export-cks-district-wrap" style="margin-top:12px"></p>
         </div>
         <div id="cks-panel-d-settlements" class="cks-panel">
           <p class="note">Для выгрузок «неработающее население» НП в источнике часто отсутствует — учёт на уровне района.</p>
@@ -323,7 +534,7 @@ async function cksInitDistrict() {
             <p style="margin:0">Умершие в списках ЦКС: <strong>${cksFmt(deadN)}</strong> ·
             ЕИРПУ ∩ ЦКС: <strong>${cksFmt(profN)}</strong> · 1-АД ∩ ЦКС: <strong>${cksFmt(admN)}</strong></p>
           </div>
-          <p class="note">Детальные списки лиц — в служебном файле <code>passports/private/cks_operativ.html</code>.</p>
+          <div id="cks-d-violations-content"></div>
         </div>
         <div id="cks-panel-d-categories" class="cks-panel">
           <div class="cks-table-wrap">
@@ -359,9 +570,22 @@ async function cksInitDistrict() {
       el.addEventListener('click', () => showNp(el.dataset.np, data));
     });
 
+    const dViol = document.getElementById('cks-d-violations-content');
+    if (dViol) {
+      dViol.innerHTML = cksRenderDistrictViolations(lists, did, data, violations);
+      cksBindViolationToggles(dViol);
+    }
+
     document.getElementById('cks-district-jump')?.addEventListener('change', (e) => {
       location.href = `cks_district.html?d=${encodeURIComponent(e.target.value)}`;
     });
+
+    if (location.hash === '#violations') {
+      document.querySelectorAll('.cks-panel').forEach((p) => p.classList.remove('active'));
+      document.getElementById('cks-panel-d-violations')?.classList.add('active');
+      document.querySelectorAll('.cks-subnav [data-cks-tab]').forEach((b) => b.classList.remove('active'));
+      document.querySelector('[data-cks-tab="d-violations"]')?.classList.add('active');
+    }
 
     document.querySelectorAll('.cks-subnav [data-cks-tab]').forEach((btn) => {
       btn.addEventListener('click', (e) => {
@@ -373,6 +597,21 @@ async function cksInitDistrict() {
         btn.classList.add('active');
       });
     });
+
+    if (typeof renderProkurorRecommendations === 'function') {
+      const metrics = {};
+      (mp.stats || []).forEach((s) => {
+        if (String(s.label).includes('NEET')) metrics.neet = s.value;
+        if (String(s.label).includes('3+')) metrics.multi_category = s.value;
+        if (String(s.label).includes('Умершие')) metrics.dead_in_cks = s.value;
+      });
+      void renderProkurorRecommendations('prokuror-rec-cks-district', {
+        level: 'district', id: did, title: data.title, data: metrics,
+      });
+    }
+    if (typeof mountRiskExportButton === 'function') {
+      mountRiskExportButton('risk-export-cks-district-wrap', { level: 'district', id: did });
+    }
 
     if (npParam) showNp(npParam, data);
   }
@@ -390,9 +629,16 @@ async function cksInitDistrict() {
       return;
     }
     const mp = s.mini_passport;
-    box.innerHTML = `<div class="card"><div class="card__title">${cksEsc(mp.settlement)}</div>
-      <p>Округ: ${cksEsc(mp.okrug)} · Лиц: ${cksFmt(mp.persons)}</p>
-      <p>Категории: ${(mp.top_categories || []).map(cksEsc).join(', ')}</p></div>`;
+    const pid = cksPassportIdForSettlement(name);
+    const passportLink = pid ? `<p><a class="tag" href="passport.html?id=${encodeURIComponent(pid)}">Полный кримпаспорт →</a></p>` : '';
+    box.innerHTML = `<div class="card"><div class="card__title">${cksEsc(mp.settlement || name)}</div>
+      <p>Округ: ${cksEsc(mp.okrug)} · Лиц: ${cksFmt(mp.persons || s.persons)}</p>
+      <p>Категории: ${(mp.top_categories || []).map(cksEsc).join(', ')}</p>
+      ${passportLink}
+      <p id="risk-export-np-wrap"></p></div>`;
+    if (typeof mountRiskExportButton === 'function') {
+      mountRiskExportButton('risk-export-np-wrap', { level: 'district', id: did, settlement: name });
+    }
     box.scrollIntoView({ behavior: 'smooth' });
   }
 

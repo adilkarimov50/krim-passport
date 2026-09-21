@@ -5288,6 +5288,90 @@ window.KRIM_DATA = {
     ]
    }
   ],
+  "oblast_units": [
+   {
+    "id": "karasai",
+    "title": "Карасайский район",
+    "localities": [
+     "kaskelen",
+     "irgeli",
+     "uzynagash"
+    ]
+   },
+   {
+    "id": "talgar",
+    "title": "Талгарский район",
+    "localities": [
+     "talgar"
+    ]
+   },
+   {
+    "id": "enbekshi",
+    "title": "Енбекшиказахский район",
+    "localities": [
+     "issyk"
+    ]
+   },
+   {
+    "id": "ile",
+    "title": "Илийский район",
+    "localities": [
+     "otegen_batyr"
+    ]
+   },
+   {
+    "id": "zhambyl",
+    "title": "Жамбылский район",
+    "localities": []
+   },
+   {
+    "id": "uygur",
+    "title": "Уйгурский район",
+    "localities": [
+     "chundzha"
+    ]
+   },
+   {
+    "id": "balkhash",
+    "title": "Балхашский район",
+    "localities": []
+   },
+   {
+    "id": "kegen",
+    "title": "Кегенский район",
+    "localities": []
+   },
+   {
+    "id": "raiymbek",
+    "title": "Райымбекский район",
+    "localities": []
+   },
+   {
+    "id": "konaev",
+    "title": "г. Конаев",
+    "localities": [
+     "konaev"
+    ]
+   },
+   {
+    "id": "alatau_oblast",
+    "title": "г. Алатау (область)",
+    "localities": []
+   }
+  ],
+  "settlement_passport_map": {
+   "Каскелен": "kaskelen",
+   "г. Каскелен": "kaskelen",
+   "Иргели": "irgeli",
+   "с. Иргели": "irgeli",
+   "Чунджа": "chundzha",
+   "с. Чунджа": "chundzha",
+   "Узынагаш": "uzynagash",
+   "Талгар": "talgar",
+   "Отеген батыр": "otegen_batyr",
+   "Иссык": "issyk",
+   "Конаев": "konaev"
+  },
   "cks_units": [
    {
     "id": "karasai",

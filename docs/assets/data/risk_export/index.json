@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-09-21T16:25:27",
+  "method": "scoring desc (Туран) + флаги ЦКС",
+  "shards": [
+    {
+      "level": "oblast",
+      "id": "oblast",
+      "file": "oblast.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "unknown",
+      "file": "district_unknown.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "talgar",
+      "file": "district_talgar.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "enbekshi",
+      "file": "district_enbekshi.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "ile",
+      "file": "district_ile.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "karasai",
+      "file": "district_karasai.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "zhambyl",
+      "file": "district_zhambyl.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "balkhash",
+      "file": "district_balkhash.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "alatau_oblast",
+      "file": "district_alatau_oblast.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "konaev",
+      "file": "district_konaev.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "raiymbek",
+      "file": "district_raiymbek.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "kegen",
+      "file": "district_kegen.json",
+      "count": 2000
+    },
+    {
+      "level": "district",
+      "id": "uygur",
+      "file": "district_uygur.json",
+      "count": 2000
+    }
+  ]
+}
