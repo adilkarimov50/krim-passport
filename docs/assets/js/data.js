@@ -3,9 +3,9 @@ window.KRIM_DATA = {
  "passports": [
   {
    "id": "alatau",
-   "name": "г. Алатау",
-   "title": "Криминологический профиль — г. Алатау",
-   "district": "г. Алматы, район «Алатау»",
+   "name": "район «Алатау» (г. Алматы)",
+   "title": "Криминологический профиль — район «Алатау», г. Алматы",
+   "district": "г. Алматы · не Алматинская область",
    "year": 2026,
    "passport_status": "profile_only",
    "summary": {
@@ -103,14 +103,14 @@ window.KRIM_DATA = {
    "id": "konaev",
    "name": "г. Конаев",
    "title": "Криминологический профиль — г. Конаев",
-   "district": "Капшагайский район",
+   "district": "г. Конаев · город областного значения",
    "year": 2026,
    "passport_status": "profile_only",
    "summary": {
     "settlement": "г. Конаев",
-    "district": "Капшагайский район",
-    "population": 52000,
-    "description": "Город у Капшагайского моря — курорт и промышленная зона",
+    "district": "г. Конаев · город областного значения",
+    "population": 82000,
+    "description": "Город у Капшагайского водохранилища — курортная и промышленная зона, административный центр области",
     "crimes": {
      "current": null,
      "previous": null,
@@ -120,10 +120,10 @@ window.KRIM_DATA = {
    },
    "locality_profile": {
     "settlement_type": "city",
-    "admin_unit": "Капшагайский район",
+    "admin_unit": "г. Конаев (город областного значения)",
     "region": "Алматинская область",
     "population": {
-     "total": 52000,
+     "total": 82000,
      "year": 2025,
      "local_permanent": 37440,
      "arrivals": null,
@@ -170,7 +170,7 @@ window.KRIM_DATA = {
      }
     ],
     "highlights": [
-     "Город у Капшагайского моря — курорт и промышленная зона",
+     "Город у Капшагайского водохранилища — курорт и промышленная зона",
      "Сезонная занятость и миграция летом"
     ],
     "sources": [
@@ -5281,7 +5281,7 @@ window.KRIM_DATA = {
     ]
    },
    {
-    "id": "alatau",
+    "id": "almaty_alatau",
     "title": "район «Алатау», г. Алматы",
     "localities": [
      "alatau"
@@ -5355,7 +5355,7 @@ window.KRIM_DATA = {
    },
    {
     "id": "alatau_oblast",
-    "title": "г. Алатау (область)",
+    "title": "г. Алатау (город областного значения)",
     "localities": []
    }
   ],

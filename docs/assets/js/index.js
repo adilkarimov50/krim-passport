@@ -8,15 +8,15 @@ function renderOblastOverview() {
   const t = ov.totals || {};
   const elUnits = document.getElementById('hero-oblast-units');
   const elCks = document.getElementById('hero-cks');
-  if (elUnits) elUnits.textContent = `${t.district_units || 11} районов и городов области`;
+  if (elUnits) elUnits.textContent = `${t.district_units || 11} единиц · 9 районов + 2 города`;
   if (elCks && t.cks_persons) elCks.textContent = `${fmt(t.cks_persons)} лиц в ЦКС`;
 
   const kpi = document.getElementById('oblast-kpi');
   if (kpi) {
     kpi.innerHTML = [
-      kpiCard(fmt(t.cks_persons), 'Лиц в ЦКС', `${fmt(t.cks_rows || 0)} записей`),
-      kpiCard(fmt(t.cks_settlements), 'Населённых пунктов в ЦКС'),
-      kpiCard(fmt(t.population_proxy), 'Население (прокси по НП)', 'сумма профилей БНС'),
+      kpiCard(fmt(t.population_bns), 'Население области', `БНС РК · ${t.population_bns_year || 2025}`),
+      kpiCard(fmt(t.unemployed_cks), 'Неработающие (ЦКС)', 'по выгрузкам категорий'),
+      kpiCard(fmt(t.neet_cks), 'Молодёжь NEET (ЦКС)', `${fmt(t.cks_persons)} лиц в мониторинге`),
     ].join('');
   }
 
@@ -25,32 +25,56 @@ function renderOblastOverview() {
     const cell = (v) => (v == null || v === '' ? '—' : fmt(v));
     tbl.innerHTML = `
       <thead><tr>
-        <th>Район / город</th>
-        <th class="num">Население</th>
-        <th class="num">Уголовных</th>
-        <th class="num">На 10 тыс.</th>
-        <th class="num">1-АД (прож.)</th>
-        <th class="num">ЦКС лиц</th>
-        <th class="num">3+ кат.</th>
+        <th>Территория</th>
+        <th>Адм. центр</th>
+        <th class="num">Население · БНС</th>
+        <th class="num">Неработающие · ЦКС</th>
         <th class="num">NEET</th>
+        <th class="num">Зарег. безраб.</th>
+        <th class="num">Уголовных</th>
+        <th class="num">ЦКС лиц</th>
         <th></th>
       </tr></thead>
       <tbody>${ov.units.map((u) => {
         const crime = u.crimes_current != null
           ? `${cell(u.crimes_current)}${u.crimes_previous ? ` / ${cell(u.crimes_previous)}` : ''}`
           : '—';
+        const sub = u.territory_note ? `<div class="note" style="font-size:11px;margin-top:4px;color:var(--muted)">${esc(u.territory_note)}</div>` : '';
         return `<tr>
-          <td><a href="${esc(u.links.district)}">${esc(u.title)}</a></td>
+          <td><a href="${esc(u.links.district)}"><strong>${esc(u.title)}</strong></a>${sub}</td>
+          <td>${esc(u.admin_center || '—')}</td>
           <td class="num">${cell(u.population)}</td>
-          <td class="num">${crime}</td>
-          <td class="num">${u.crime_rate_per_10k != null ? String(u.crime_rate_per_10k).replace('.', ',') : '—'}</td>
-          <td class="num">${cell(u.adm_cases_residence)}</td>
-          <td class="num">${cell(u.cks_persons)}</td>
-          <td class="num">${cell(u.cks_multi)}</td>
+          <td class="num">${cell(u.unemployed_cks)}</td>
           <td class="num">${cell(u.neet)}</td>
+          <td class="num">${cell(u.registered_unemployed_cks)}</td>
+          <td class="num">${crime}</td>
+          <td class="num">${cell(u.cks_persons)}</td>
           <td><a class="tag" href="${esc(u.links.cks)}" style="font-size:12px;padding:6px 10px;text-decoration:none">ЦКС</a></td>
         </tr>`;
       }).join('')}</tbody>`;
+  }
+
+  const tree = document.getElementById('oblast-territory-tree');
+  if (tree && ov.units) {
+    tree.innerHTML = ov.units.map((u) => {
+      const locs = (u.localities || []).map((l) =>
+        `<li><a href="${esc(l.passport_href)}">${esc(l.name)}</a> <span class="muted" style="font-size:12px">${esc(l.admin_unit_text || '')}</span></li>`).join('');
+      return `<div class="card" style="padding:14px 16px;margin-bottom:12px">
+        <strong><a href="${esc(u.links.district)}">${esc(u.title)}</a></strong>
+        <span class="muted" style="font-size:13px"> · ${esc(u.admin_center || '')} · ${fmt(u.population)} жит. (БНС)</span>
+        ${locs ? `<ul style="margin:10px 0 0;padding-left:1.2rem;font-size:14px">${locs}</ul>` : '<p class="note" style="margin:8px 0 0">Паспорта НП на сайте — по мере оцифровки; полные данные в ЦКС.</p>'}
+      </div>`;
+    }).join('');
+  }
+
+  const sep = ov.almaty_city_separate;
+  const sepEl = document.getElementById('oblast-almaty-separate');
+  if (sepEl && sep) {
+    sepEl.innerHTML = `<div class="card" style="padding:16px 18px;border-left:4px solid var(--gold)">
+      <strong>${esc(sep.title)}</strong>
+      <p style="margin:8px 0 0;font-size:14px;color:var(--muted)">${esc(sep.note)}</p>
+      <p style="margin:12px 0 0"><a class="tag" href="${esc(sep.link)}" style="padding:8px 14px;text-decoration:none">Профиль на сайте →</a></p>
+    </div>`;
   }
 
   if (typeof renderProkurorRecommendations === 'function') {
@@ -65,19 +89,24 @@ renderOblastOverview();
 if (!PASSPORTS.length) {
   document.getElementById('picker').innerHTML = '<div class="card" style="padding:20px"><p style="margin:0">Данные паспортов не загрузились. Обновите страницу.</p></div>';
 } else {
-const totalPop = PASSPORTS.reduce((sum, p) => sum + (p.summary.population || 0), 0);
+const ovTotals = window.OBLAST_OVERVIEW?.totals || {};
+const totalPop = ovTotals.population_bns
+  || PASSPORTS.reduce((sum, p) => sum + (p.summary.population || 0), 0);
 const FULL_PASSPORTS = PASSPORTS.filter((p) => !isProfileOnly(p));
 const totalCrimes = FULL_PASSPORTS.reduce((sum, p) => sum + (p.summary.crimes?.current || 0), 0);
 
 document.getElementById('hero-count').textContent = `${PASSPORTS.length} ${PASSPORTS.length === 1 ? 'населённый пункт' : PASSPORTS.length < 5 ? 'населённых пункта' : 'населённых пунктов'}`;
-document.getElementById('hero-pop').textContent = `${fmt(totalPop)} жителей`;
+document.getElementById('hero-pop').textContent = ovTotals.population_bns
+  ? `${fmt(totalPop)} жителей области (БНС ${ovTotals.population_bns_year || 2025})`
+  : `${fmt(totalPop)} жителей`;
 document.getElementById('hero-crimes').textContent = FULL_PASSPORTS.length
   ? `${fmt(totalCrimes)} уголовных (3 полных паспорта)`
   : 'кримпаспорта уточняются';
 
 /* Карточки выбора паспорта */
 const MAP_LINKS = { kaskelen: 'kaskelen_map.html', irgeli: 'irgeli_map.html', chundzha: 'chundzha_map.html' };
-document.getElementById('picker').innerHTML = PASSPORTS.map((p) => {
+
+function passportPickerCard(p) {
   const c = p.summary.crimes || {};
   const mapLink = MAP_LINKS[p.id];
   const lp = p.locality_profile || {};
@@ -109,7 +138,35 @@ document.getElementById('picker').innerHTML = PASSPORTS.map((p) => {
     ${mapLink ? `<a href="${mapLink}" style="display:block;margin:0;padding:10px 16px;background:var(--up);color:#fff;text-decoration:none;font-size:13px;font-weight:600;text-align:center">
       Карта + маршруты патрулирования →</a>` : ''}
   </div>`;
-}).join('');
+}
+
+function renderGroupedPicker() {
+  const byId = Object.fromEntries(PASSPORTS.map((p) => [p.id, p]));
+  const units = window.OBLAST_OVERVIEW?.units || (DISTRICTS.oblast_units || []);
+  const chunks = units.map((u) => {
+    const locIds = (u.localities || []).map((l) => (typeof l === 'string' ? l : l.id));
+    const cards = locIds.map((id) => byId[id]).filter(Boolean).map(passportPickerCard).join('');
+    const head = `<div class="locality-group__head" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin-bottom:12px">
+      <h3 class="locality-group__title" style="margin:0">${esc(u.title)}</h3>
+      <a href="${esc(u.links?.district || `district.html?id=${u.id}`)}" class="tag" style="font-size:12px;padding:4px 10px;text-decoration:none">Паспорт территории</a>
+      <a href="${esc(u.links?.cks || `cks_district.html?d=${u.id}`)}" class="tag" style="font-size:12px;padding:4px 10px;text-decoration:none">ЦКС</a>
+      ${u.population ? `<span class="muted" style="font-size:13px">${fmt(u.population)} жит. (БНС)</span>` : ''}
+    </div>`;
+    if (!cards) {
+      return `<div class="locality-group">${head}<p class="note" style="margin:0;font-size:14px">Профили НП на сайте — по мере оцифровки; сводка — в ЦКС и паспорте территории.</p></div>`;
+    }
+    return `<div class="locality-group">${head}<div class="picker">${cards}</div></div>`;
+  });
+  const sep = window.OBLAST_OVERVIEW?.almaty_city_separate;
+  if (sep && byId[sep.id]) {
+    chunks.push(`<div class="locality-group"><h3 class="locality-group__title">${esc(sep.title)}</h3>
+      <p class="note" style="margin:0 0 12px;font-size:14px">${esc(sep.note || '')}</p>
+      <div class="picker">${passportPickerCard(byId[sep.id])}</div></div>`);
+  }
+  return chunks.join('');
+}
+
+document.getElementById('picker').innerHTML = renderGroupedPicker();
 
 function renderLocalityCards(filter) {
   const list = PASSPORTS.filter((p) => {
@@ -117,8 +174,10 @@ function renderLocalityCards(filter) {
     if (filter === 'village') return p.locality_profile?.settlement_type === 'village';
     return true;
   });
-  const groups = (DISTRICTS.districts || []).length ? DISTRICTS.districts : [{ id: 'all', title: 'Все', localities: list.map((p) => p.id) }];
-  return groups.map((g) => {
+  const groups = (DISTRICTS.oblast_units || []).length
+    ? DISTRICTS.oblast_units
+    : ((DISTRICTS.districts || []).length ? DISTRICTS.districts : [{ id: 'all', title: 'Все', localities: list.map((p) => p.id) }]);
+  const body = groups.map((g) => {
     const items = list.filter((p) => !g.localities || g.localities.includes(p.id));
     if (!items.length) return '';
     return `<div class="locality-group"><h3 class="locality-group__title">${esc(g.title)}</h3>
@@ -136,6 +195,21 @@ function renderLocalityCards(filter) {
         </div>`;
       }).join('')}</div></div>`;
   }).join('');
+  const sep = window.OBLAST_OVERVIEW?.almaty_city_separate;
+  const alm = sep ? list.find((p) => p.id === sep.id) : null;
+  if (!alm) return body;
+  const lp = alm.locality_profile || {};
+  const ethnic = (lp.ethnic_composition || []).slice(0, 3).map((e) => `${e.group} ${e.share_pct}%`).join(', ');
+  const extra = `<div class="locality-group"><h3 class="locality-group__title">${esc(sep.title)}</h3>
+    <p class="note" style="margin:0 0 12px">${esc(sep.note || '')}</p>
+    <div class="grid grid--3"><div class="card locality-card">
+      <div class="locality-card__head">${passportStatusBadge(alm)} <strong>${esc(alm.name)}</strong></div>
+      <p style="margin:8px 0;font-size:14px;color:var(--muted)">${esc((lp.highlights || [])[0] || alm.summary.description)}</p>
+      <div class="stat-row"><span class="stat-row__label">Население</span><span class="stat-row__value">${fmt(lp.population?.total || alm.summary.population)}</span></div>
+      <div class="stat-row"><span class="stat-row__label">Этнос (топ-3)</span><span class="stat-row__value">${esc(ethnic || '—')}</span></div>
+      <p style="margin:12px 0 0"><a class="tag" href="passport.html?id=${alm.id}" style="padding:8px 14px;text-decoration:none;font-size:13px">Подробнее →</a></p>
+    </div></div></div>`;
+  return body + extra;
 }
 
 const localityEl = document.getElementById('locality-profiles');
