@@ -441,9 +441,16 @@ function resolveActiveId(page) {
 
 /** Переключатель населённого пункта; при выборе меняет ?id= в адресе. */
 function renderSwitch(activeId, onChange) {
-  const html = `<div class="switch">${PASSPORTS.map((p) => `
-      <button type="button" data-id="${p.id}" aria-pressed="${p.id === activeId}">${esc(p.name)}</button>
-    `).join('')}</div>`;
+  const almatyIds = new Set(
+    (DISTRICTS.groups || []).find((g) => g.id === 'almaty_city')?.localities || [],
+  );
+  const oblastList = PASSPORTS.filter((p) => !almatyIds.has(p.id));
+  const almatyList = PASSPORTS.filter((p) => almatyIds.has(p.id));
+  const btn = (p) => `<button type="button" data-id="${p.id}" aria-pressed="${p.id === activeId}">${esc(p.name)}</button>`;
+  const html = `<div class="switch switch--grouped">
+    <div class="switch__group"><span class="switch__label">Алматинская область</span>${oblastList.map(btn).join('')}</div>
+    ${almatyList.length ? `<div class="switch__group"><span class="switch__label">г. Алматы</span>${almatyList.map(btn).join('')}</div>` : ''}
+  </div>`;
 
   queueMicrotask(() => {
     document.querySelectorAll('.switch button').forEach((btn) => {

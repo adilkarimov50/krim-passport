@@ -108,6 +108,9 @@ a { color: inherit; }
 
 /* Переключатель населённого пункта */
 .switch { display: inline-flex; gap: 4px; padding: 4px; background: rgba(255, 255, 255, .09); border-radius: 11px; max-width: 100%; overflow-x: auto; }
+.switch--grouped { flex-direction: column; align-items: stretch; gap: 10px; padding: 10px 12px; max-width: min(100%, 920px); }
+.switch__group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.switch__label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #b9c7dd; width: 100%; margin-bottom: 2px; }
 .switch button {
   border: 0; background: transparent; color: #c3cfe2; cursor: pointer;
   padding: 8px 16px; border-radius: 8px; font: 600 14px/1 inherit; white-space: nowrap; transition: .16s;

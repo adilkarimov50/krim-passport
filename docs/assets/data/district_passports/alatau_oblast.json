@@ -2,7 +2,7 @@
   "id": "alatau_oblast",
   "title": "г. Алатау",
   "year": 2026,
-  "generated_at": "2026-09-21T17:02:13",
+  "generated_at": "2026-09-21T17:17:55",
   "cards": [
     {
       "label": "Население",
@@ -31,8 +31,17 @@
     {
       "id": "crime",
       "title": "2. Преступность",
-      "paragraphs": [],
-      "table": []
+      "paragraphs": [
+        "Суммарные показатели по населённым пунктам с оцифрованными кримпаспортами."
+      ],
+      "table": [
+        {
+          "locality": "г. Алатау",
+          "current": null,
+          "previous": null,
+          "rate_per_10k": null
+        }
+      ]
     },
     {
       "id": "admin",
@@ -55,7 +64,14 @@
       ]
     }
   ],
-  "locality_links": [],
+  "locality_links": [
+    {
+      "id": "alatau",
+      "name": "г. Алатау",
+      "href": "passport.html?id=alatau",
+      "full_passport": false
+    }
+  ],
   "settlements_preview": [
     {
       "okrug": "Алматинская",

@@ -3,16 +3,17 @@ window.KRIM_DATA = {
  "passports": [
   {
    "id": "alatau",
-   "name": "район «Алатау» (г. Алматы)",
-   "title": "Криминологический профиль — район «Алатау», г. Алматы",
-   "district": "г. Алматы · не Алматинская область",
+   "name": "г. Алатау",
+   "title": "г. Алатау",
+   "district": "г. Алатау · город областного значения",
    "year": 2026,
    "passport_status": "profile_only",
+   "oblast_unit_id": "alatau_oblast",
    "summary": {
     "settlement": "г. Алатау",
-    "district": "г. Алматы, район «Алатау»",
-    "population": 312000,
-    "description": "Новый административный район Алматы с высокой плотностью застройки",
+    "district": "Алматинская область · город областного значения",
+    "population": 127000,
+    "description": "Город областного значения Алматинской области (с 2024 г.). Не район «Алатау» г. Алматы.",
     "crimes": {
      "current": null,
      "previous": null,
@@ -22,76 +23,42 @@ window.KRIM_DATA = {
    },
    "locality_profile": {
     "settlement_type": "city",
-    "admin_unit": "г. Алматы, район «Алатау»",
-    "region": "г. Алматы",
+    "admin_unit": "г. Алатау (город областного значения)",
+    "region": "Алматинская область",
     "population": {
-     "total": 312000,
+     "total": 127000,
      "year": 2025,
-     "local_permanent": 180960,
-     "arrivals": null,
-     "departures": null,
-     "internal_migrants_note": "Значительная доля приезжих и внутренних мигрантов; спутник Алматы"
+     "local_permanent": null,
+     "internal_migrants_note": "Самостоятельная единица области; данные БНС РК"
     },
-    "ethnic_composition": [
-     {
-      "group": "казахи",
-      "share_pct": 62.5
-     },
-     {
-      "group": "русские",
-      "share_pct": 24.0
-     },
-     {
-      "group": "другие",
-      "share_pct": 13.5
-     }
-    ],
     "economy": {
      "primary_activity": [
-      "торговля",
-      "услуги",
-      "строительство"
+      "промышленность",
+      "логистика",
+      "услуги"
      ],
-     "sme_registered": 28500,
-     "agriculture": {
-      "livestock": false,
-      "crops": []
-     },
-     "industry_services_note": "торговля; услуги; строительство"
+     "sme_registered": null
     },
-    "social_features": [
-     "спутник Алматы",
-     "транзит",
-     "плотная застройка"
-    ],
-    "prevention_factors": [
-     {
-      "factor": "Высокая мобильность и концентрация торговых объектов",
-      "risk": "high",
-      "implication": "Требуется адресная профилактика в ТПУ и торговых центрах"
-     }
-    ],
     "highlights": [
-     "Новый административный район Алматы с высокой плотностью застройки",
-     "Ежедневный pendular-поток в центр Алматы"
+     "Город областного значения — не входит в состав г. Алматы",
+     "Сводка ЦКС и районный кримпаспорт — на странице «г. Алатау» в разделе районов"
     ],
     "sources": [
      {
-      "title": "Бюро национальной статистики РК",
-      "url": "https://stat.gov.kz",
+      "title": "БНС РК — численность на начало 2025 г.",
+      "url": "https://taldau.stat.gov.kz",
       "as_of": "2025"
-     },
-     {
-      "title": "Перепись населения РК 2021",
-      "url": "https://stat.gov.kz",
-      "as_of": "2021"
      }
     ]
    },
+   "links": {
+    "district_passport": "district.html?id=alatau_oblast",
+    "cks": "cks_district.html?d=alatau_oblast"
+   },
    "data_quality": {
     "completeness": "profile",
-    "as_of": "2026-09-09",
-    "verified_by": "manual_stats.csv + БНС"
+    "as_of": "2026-09-21",
+    "verified_by": "oblast_bns_population.csv + ЦКС"
    },
    "crime_structure": [],
    "admin_practice": [],
@@ -4246,6 +4213,52 @@ window.KRIM_DATA = {
    "registry": [],
    "measures": [],
    "expected_results": []
+  },
+  {
+   "id": "almaty_alatau",
+   "name": "район «Алатау» (г. Алматы)",
+   "title": "Криминологический профиль — район «Алатау», г. Алматы",
+   "district": "г. Алматы · не Алматинская область",
+   "year": 2026,
+   "passport_status": "profile_only",
+   "summary": {
+    "settlement": "район «Алатау»",
+    "district": "г. Алматы, район «Алатау»",
+    "population": 312000,
+    "description": "Административный район г. Алматы (не путать с г. Алатау Алматинской области)",
+    "crimes": {
+     "current": null,
+     "previous": null,
+     "delta_pct": null
+    },
+    "rate_per_10k": null
+   },
+   "locality_profile": {
+    "settlement_type": "city",
+    "admin_unit": "г. Алматы, район «Алатау»",
+    "region": "г. Алматы",
+    "population": {
+     "total": 312000,
+     "year": 2025,
+     "local_permanent": 180960,
+     "internal_migrants_note": "Спутник Алматы; не город Алатау области"
+    },
+    "highlights": [
+     "Район г. Алматы — отдельно от г. Алатау (город областного значения)",
+     "Ежедневный pendular-поток в центр Алматы"
+    ],
+    "sources": [
+     {
+      "title": "БНС РК / справочные данные",
+      "as_of": "2025"
+     }
+    ]
+   },
+   "crime_structure": [],
+   "admin_practice": [],
+   "registry": [],
+   "measures": [],
+   "expected_results": []
   }
  ],
  "geo": {
@@ -5217,13 +5230,14 @@ window.KRIM_DATA = {
     "id": "almaty_city",
     "title": "г. Алматы",
     "localities": [
-     "alatau"
+     "almaty_alatau"
     ]
    },
    {
     "id": "almaty_region",
     "title": "Алматинская область",
     "localities": [
+     "alatau",
      "konaev",
      "kaskelen",
      "talgar",
@@ -5281,10 +5295,17 @@ window.KRIM_DATA = {
     ]
    },
    {
+    "id": "alatau_oblast",
+    "title": "г. Алатау",
+    "localities": [
+     "alatau"
+    ]
+   },
+   {
     "id": "almaty_alatau",
     "title": "район «Алатау», г. Алматы",
     "localities": [
-     "alatau"
+     "almaty_alatau"
     ]
    }
   ],
@@ -5356,7 +5377,9 @@ window.KRIM_DATA = {
    {
     "id": "alatau_oblast",
     "title": "г. Алатау (город областного значения)",
-    "localities": []
+    "localities": [
+     "alatau"
+    ]
    }
   ],
   "settlement_passport_map": {
@@ -5372,7 +5395,9 @@ window.KRIM_DATA = {
    "Иссык": "issyk",
    "Есик": "issyk",
    "г. Есик": "issyk",
-   "Конаев": "konaev"
+   "Конаев": "konaev",
+   "Алатау": "alatau",
+   "г. Алатау": "alatau"
   },
   "cks_units": [
    {

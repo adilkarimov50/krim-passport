@@ -1,6 +1,6 @@
 /* Сформировано scripts/build.py — не редактировать вручную. */
 window.OBLAST_OVERVIEW = {
-  "generated_at": "2026-09-21T16:44:20",
+  "generated_at": "2026-09-21T17:17:54",
   "title": "Алматинская область — обзор",
   "totals": {
     "population_bns": 1651361,
@@ -509,7 +509,16 @@ window.OBLAST_OVERVIEW = {
       "crime_source": null,
       "adm_cases_residence": null,
       "criminal_suspects_matched": 114,
-      "localities": [],
+      "localities": [
+        {
+          "id": "alatau",
+          "name": "г. Алатау",
+          "role": "город областного значения; кримпаспорт на сайте",
+          "population_np_bns": 127000,
+          "admin_unit_text": "г. Алатау (областного значения)",
+          "passport_href": "passport.html?id=alatau"
+        }
+      ],
       "territory_note": "Самостоятельная единица Алматинской области; не путать с районом «Алатау» г. Алматы.",
       "links": {
         "district": "district.html?id=alatau_oblast",
@@ -518,10 +527,10 @@ window.OBLAST_OVERVIEW = {
     }
   ],
   "almaty_city_separate": {
-    "id": "alatau",
+    "id": "almaty_alatau",
     "title": "район «Алатау», г. Алматы",
-    "note": "Входит в состав г. Алматы, не в 11 единиц Алматинской области.",
-    "link": "passport.html?id=alatau"
+    "note": "Входит в состав г. Алматы. Не путать с г. Алатау — городом областного значения.",
+    "link": "passport.html?id=almaty_alatau"
   }
 }
 ;
