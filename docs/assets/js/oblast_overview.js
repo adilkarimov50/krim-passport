@@ -1,6 +1,6 @@
 /* Сформировано scripts/build.py — не редактировать вручную. */
 window.OBLAST_OVERVIEW = {
-  "generated_at": "2026-09-21T17:17:54",
+  "generated_at": "2026-09-22T12:10:51",
   "title": "Алматинская область — обзор",
   "totals": {
     "population_bns": 1651361,
