@@ -4,16 +4,15 @@ window.KRIM_DATA = {
   {
    "id": "alatau",
    "name": "г. Алатау",
-   "title": "г. Алатау",
-   "district": "г. Алатау · город областного значения",
+   "title": "Криминологический профиль — г. Алатау",
+   "district": "г. Алатау (город областного значения)",
    "year": 2026,
    "passport_status": "profile_only",
-   "oblast_unit_id": "alatau_oblast",
    "summary": {
     "settlement": "г. Алатау",
-    "district": "Алматинская область · город областного значения",
+    "district": "г. Алатау, Алматинская область",
     "population": 127000,
-    "description": "Город областного значения Алматинской области (с 2024 г.). Не район «Алатау» г. Алматы.",
+    "description": "Город областного значения Алматинской области (с 2022 г.); не путать с районом «Алатау» г. Алматы",
     "crimes": {
      "current": null,
      "previous": null,
@@ -28,37 +27,71 @@ window.KRIM_DATA = {
     "population": {
      "total": 127000,
      "year": 2025,
-     "local_permanent": null,
-     "internal_migrants_note": "Самостоятельная единица области; данные БНС РК"
+     "local_permanent": 96520,
+     "arrivals": null,
+     "departures": null,
+     "internal_migrants_note": "Самостоятельный город областного значения, выделен из территории г. Алматы в 2022 г."
     },
+    "ethnic_composition": [
+     {
+      "group": "казахи",
+      "share_pct": 62.5
+     },
+     {
+      "group": "русские",
+      "share_pct": 24.0
+     },
+     {
+      "group": "другие",
+      "share_pct": 13.5
+     }
+    ],
     "economy": {
      "primary_activity": [
-      "промышленность",
-      "логистика",
-      "услуги"
+      "торговля",
+      "услуги",
+      "строительство"
      ],
-     "sme_registered": null
+     "sme_registered": 28500,
+     "agriculture": {
+      "livestock": false,
+      "crops": []
+     },
+     "industry_services_note": "торговля; услуги; строительство"
     },
+    "social_features": [
+     "город областного значения",
+     "выделен из г. Алматы в 2022 г.",
+     "промышленные и жилые массивы"
+    ],
+    "prevention_factors": [
+     {
+      "factor": "Высокая мобильность и концентрация торговых объектов",
+      "risk": "high",
+      "implication": "Адресная профилактика в ТПУ, торговых центрах и промышленных зонах"
+     }
+    ],
     "highlights": [
-     "Город областного значения — не входит в состав г. Алматы",
-     "Сводка ЦКС и районный кримпаспорт — на странице «г. Алатау» в разделе районов"
+     "Самостоятельный город областного значения Алматинской области (выделен в 2022 г.)",
+     "Не является районом г. Алматы — самостоятельная территориальная единица"
     ],
     "sources": [
      {
-      "title": "БНС РК — численность на начало 2025 г.",
-      "url": "https://taldau.stat.gov.kz",
+      "title": "Бюро национальной статистики РК",
+      "url": "https://stat.gov.kz",
       "as_of": "2025"
+     },
+     {
+      "title": "Перепись населения РК 2021",
+      "url": "https://stat.gov.kz",
+      "as_of": "2021"
      }
     ]
    },
-   "links": {
-    "district_passport": "district.html?id=alatau_oblast",
-    "cks": "cks_district.html?d=alatau_oblast"
-   },
    "data_quality": {
     "completeness": "profile",
-    "as_of": "2026-09-21",
-    "verified_by": "oblast_bns_population.csv + ЦКС"
+    "as_of": "2026-09-09",
+    "verified_by": "manual_stats.csv + БНС"
    },
    "crime_structure": [],
    "admin_practice": [],
@@ -70,14 +103,14 @@ window.KRIM_DATA = {
    "id": "konaev",
    "name": "г. Конаев",
    "title": "Криминологический профиль — г. Конаев",
-   "district": "г. Конаев · город областного значения",
+   "district": "Капшагайский район",
    "year": 2026,
    "passport_status": "profile_only",
    "summary": {
     "settlement": "г. Конаев",
-    "district": "г. Конаев · город областного значения",
-    "population": 82000,
-    "description": "Город у Капшагайского водохранилища — курортная и промышленная зона, административный центр области",
+    "district": "Капшагайский район",
+    "population": 52000,
+    "description": "Город у Капшагайского водохранилища — курорт и промышленная зона",
     "crimes": {
      "current": null,
      "previous": null,
@@ -87,10 +120,10 @@ window.KRIM_DATA = {
    },
    "locality_profile": {
     "settlement_type": "city",
-    "admin_unit": "г. Конаев (город областного значения)",
+    "admin_unit": "Капшагайский район",
     "region": "Алматинская область",
     "population": {
-     "total": 82000,
+     "total": 52000,
      "year": 2025,
      "local_permanent": 37440,
      "arrivals": null,
@@ -137,7 +170,7 @@ window.KRIM_DATA = {
      }
     ],
     "highlights": [
-     "Город у Капшагайского водохранилища — курорт и промышленная зона",
+     "Город у Капшагайского водохранилища — административный центр и курортно-промышленная зона",
      "Сезонная занятость и миграция летом"
     ],
     "sources": [
@@ -4118,13 +4151,13 @@ window.KRIM_DATA = {
   },
   {
    "id": "issyk",
-   "name": "г. Есик",
-   "title": "Криминологический профиль — г. Есик (Енбекшиказахский район)",
+   "name": "г. Иссык",
+   "title": "Криминологический профиль — г. Иссык",
    "district": "Енбекшиказахский район",
    "year": 2026,
    "passport_status": "profile_only",
    "summary": {
-    "settlement": "г. Есик",
+    "settlement": "г. Иссык",
     "district": "Енбекшиказахский район",
     "population": 21000,
     "description": "Курортный город у озера Иссык",
@@ -4207,52 +4240,6 @@ window.KRIM_DATA = {
     "completeness": "profile",
     "as_of": "2026-09-09",
     "verified_by": "manual_stats.csv + БНС"
-   },
-   "crime_structure": [],
-   "admin_practice": [],
-   "registry": [],
-   "measures": [],
-   "expected_results": []
-  },
-  {
-   "id": "almaty_alatau",
-   "name": "район «Алатау» (г. Алматы)",
-   "title": "Криминологический профиль — район «Алатау», г. Алматы",
-   "district": "г. Алматы · не Алматинская область",
-   "year": 2026,
-   "passport_status": "profile_only",
-   "summary": {
-    "settlement": "район «Алатау»",
-    "district": "г. Алматы, район «Алатау»",
-    "population": 312000,
-    "description": "Административный район г. Алматы (не путать с г. Алатау Алматинской области)",
-    "crimes": {
-     "current": null,
-     "previous": null,
-     "delta_pct": null
-    },
-    "rate_per_10k": null
-   },
-   "locality_profile": {
-    "settlement_type": "city",
-    "admin_unit": "г. Алматы, район «Алатау»",
-    "region": "г. Алматы",
-    "population": {
-     "total": 312000,
-     "year": 2025,
-     "local_permanent": 180960,
-     "internal_migrants_note": "Спутник Алматы; не город Алатау области"
-    },
-    "highlights": [
-     "Район г. Алматы — отдельно от г. Алатау (город областного значения)",
-     "Ежедневный pendular-поток в центр Алматы"
-    ],
-    "sources": [
-     {
-      "title": "БНС РК / справочные данные",
-      "as_of": "2025"
-     }
-    ]
    },
    "crime_structure": [],
    "admin_practice": [],
@@ -5227,13 +5214,6 @@ window.KRIM_DATA = {
  "districts": {
   "groups": [
    {
-    "id": "almaty_city",
-    "title": "г. Алматы",
-    "localities": [
-     "almaty_alatau"
-    ]
-   },
-   {
     "id": "almaty_region",
     "title": "Алматинская область",
     "localities": [
@@ -5296,16 +5276,9 @@ window.KRIM_DATA = {
    },
    {
     "id": "alatau_oblast",
-    "title": "г. Алатау",
+    "title": "г. Алатау (Алматинская обл.)",
     "localities": [
      "alatau"
-    ]
-   },
-   {
-    "id": "almaty_alatau",
-    "title": "район «Алатау», г. Алматы",
-    "localities": [
-     "almaty_alatau"
     ]
    }
   ],
@@ -5376,10 +5349,8 @@ window.KRIM_DATA = {
    },
    {
     "id": "alatau_oblast",
-    "title": "г. Алатау (город областного значения)",
-    "localities": [
-     "alatau"
-    ]
+    "title": "г. Алатау (область)",
+    "localities": []
    }
   ],
   "settlement_passport_map": {
@@ -5393,11 +5364,7 @@ window.KRIM_DATA = {
    "Талгар": "talgar",
    "Отеген батыр": "otegen_batyr",
    "Иссык": "issyk",
-   "Есик": "issyk",
-   "г. Есик": "issyk",
-   "Конаев": "konaev",
-   "Алатау": "alatau",
-   "г. Алатау": "alatau"
+   "Конаев": "konaev"
   },
   "cks_units": [
    {

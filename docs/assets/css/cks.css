@@ -81,12 +81,6 @@
   margin-bottom: 24px;
 }
 
-.cks-kpi .card { cursor: pointer; }
-.cks-kpi .card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.cks-row-highlight { background: #fff8e6 !important; }
-#cks-cat-table tbody tr { cursor: pointer; }
-#cks-cat-table tbody tr:hover { background: #eef3fa; }
-
 .cks-kpi .card {
   padding: 16px 18px;
   text-align: center;

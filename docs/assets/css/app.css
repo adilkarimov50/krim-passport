@@ -108,9 +108,6 @@ a { color: inherit; }
 
 /* Переключатель населённого пункта */
 .switch { display: inline-flex; gap: 4px; padding: 4px; background: rgba(255, 255, 255, .09); border-radius: 11px; max-width: 100%; overflow-x: auto; }
-.switch--grouped { flex-direction: column; align-items: stretch; gap: 10px; padding: 10px 12px; max-width: min(100%, 920px); }
-.switch__group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.switch__label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #b9c7dd; width: 100%; margin-bottom: 2px; }
 .switch button {
   border: 0; background: transparent; color: #c3cfe2; cursor: pointer;
   padding: 8px 16px; border-radius: 8px; font: 600 14px/1 inherit; white-space: nowrap; transition: .16s;
@@ -147,14 +144,7 @@ a { color: inherit; }
 
 /* ---------- Карточки выбора паспорта ---------- */
 
-.picker-section { margin-top: 28px; padding-bottom: 8px; position: relative; z-index: 1; }
-.picker-section .locality-group { margin-bottom: 28px; }
-.picker-section .locality-group__title { font-size: 1.15rem; margin: 0 0 8px; }
-#oblast-overview-section { position: relative; z-index: 2; }
-.tbl--click tbody tr.district-cks-cat-row { cursor: pointer; }
-.tbl--click tbody tr.district-cks-cat-row:hover { background: #eef3fa; }
-.link-card { transition: box-shadow .15s, border-color .15s; }
-.link-card:hover { box-shadow: var(--shadow-lg); border-color: var(--gold); }
+.picker-section { margin-top: -36px; padding-bottom: 8px; position: relative; z-index: 2; }
 .picker-section__title {
   font-size: clamp(22px, 2.8vw, 28px); color: #fff; margin: 0 0 8px;
   text-shadow: 0 1px 12px rgba(0, 0, 0, .35);
